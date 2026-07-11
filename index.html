@@ -1483,8 +1483,8 @@
   function poolCounts() {
     var c = {all:0, takip:0, sicak:0, randevu:0, fiyat:0, wp:0, reply:0};
     scopedLeads().forEach(function(l){
+      c.all++; // Tümü: HEPSİ (WhatsApp'a gönderilenler dahil)
       if (l.waSent) { c.wp++; return; }
-      c.all++; // Tümü: WhatsApp'a gönderilenler hariç
       var p = STATUS[l.durum].pool;
       if (p==="takip") c.takip++;
       if (p==="sicak") c.sicak++;
@@ -1505,7 +1505,7 @@
       if (state.tagFilter && (l.tags||[]).indexOf(state.tagFilter) < 0) return false;
       if (state.filter === "wp") { if (!l.waSent) return false; }
       else {
-        if (l.waSent) return false; // WhatsApp'a gönderilenler yalnızca "WP Gönderildi"de
+        if (l.waSent && state.filter !== "all") return false; // WhatsApp gönderilenler "Tümü" ve "WP Gönderildi"de görünür
         var p = STATUS[l.durum].pool;
         if (state.filter==="reply" && replyState(l).turn!=="me") return false;
         if (state.filter==="sicak" && p!=="sicak") return false;
