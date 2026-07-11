@@ -2596,6 +2596,25 @@
     setTimeout(function(){ document.title = "LeadDm"; }, 6000);
     toast(who + " yeni mesaj gönderdi ✉");
   }
+  // ---- Telefon algılama → otomatik "İletişim Alındı" ----
+  function detectPhone(t){
+    if(!t) return null;
+    var m = String(t).match(/(\+?\d[\d\s\-()]{8,}\d)/g);
+    if(!m) return null;
+    for(var i=0;i<m.length;i++){ var d=m[i].replace(/\D/g,""); if(d.length>=10 && d.length<=13) return d; }
+    return null;
+  }
+  function autoPromotePhone(l){
+    if(!l || l.telefon) return;                        // telefon zaten varsa dokunma
+    if(l.durum!=="yeni" && l.durum!=="bilgiBekleniyor") return; // elle işlenmişse dokunma
+    var ph = null;
+    (l.messages||[]).forEach(function(m){ if(!ph && m.from==="in") ph = detectPhone(m.text); });
+    if(!ph && l.lastDir==="in") ph = detectPhone(l.lastText);
+    if(ph){
+      l.telefon = ph; l.durum = "cevapVerdi"; persistLead(l);
+      if(state.selectedId===l.id){ renderContact(); toast("Telefon algılandı → İletişim Alındı ✓"); }
+    }
+  }
   function liveLoad(){
     if(!LIVE) return;
     sbGet("ig_conversations?select=*&order=last_time.desc.nullslast").then(function(rows){
@@ -2603,6 +2622,7 @@
       notifyIncoming(rows);
       var keep = {}; leads.forEach(function(l){ keep[l.id] = l.messages; });
       leads = rows.map(function(r){ var l = liveRowToLead(r); l.messages = keep[l.id] || []; return l; });
+      leads.forEach(autoPromotePhone);
       if((!state.selectedId || !byId(state.selectedId)) && leads.length){ state.selectedId = leads[0].id; liveMessages(state.selectedId); }
       renderTop(); renderList(); renderChat(); renderContact();
     }).catch(function(e){ console.error("liveLoad", e); });
@@ -2616,6 +2636,7 @@
       var seen = {}; dbMsgs.forEach(function(m){ seen[m.from + "|" + m.text] = 1; });
       var pend = (l.messages || []).filter(function(m){ return m.pending && !seen[m.from + "|" + m.text]; });
       l.messages = dbMsgs.concat(pend);
+      autoPromotePhone(l);
       if(state.selectedId === id) renderChat();
       renderList();
     }).catch(function(e){ console.error("liveMessages", e); });
