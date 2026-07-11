@@ -1,0 +1,2640 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>LeadDm</title><script>window.LEADDM={"url":"https://rjjdcnosmhahhbmtgvvx.supabase.co","anon":"sb_publishable_0OlsGD1LUT1S3pQf6rp3dg_RNO2sQDp","account":{"id":"17841478686687054","handle":"yucelsinmedia","name":"yucelsinmedia","col":["#14A6B0","#0A6D75"]}};</script></head><body><style>
+  :root {
+    --ground: #EDF3F2;
+    --paper: #FFFFFF;
+    --panel: #FBFDFC;
+    --ink: #0E2027;
+    --ink2: #4E656C;
+    --ink3: #90A2A6;
+    --line: #E0E9E8;
+    --line2: #EDF3F2;
+    --brand: #0C8A94;
+    --brand-d: #0A6D75;
+    --brand-050: #E5F3F3;
+    --brand-100: #C9E7E8;
+    --emerald: #0E9F6E;
+    --emerald-bg: #E3F6EE;
+    --amber: #B4820A;
+    --amber-bg: #FBF1D8;
+    --rose: #E0475A;
+    --rose-bg: #FCE6E9;
+    --unread: #2D7FF9;
+    --unread-bg: #EDF3FF;
+    --violet: #6D5AE0;
+    --shadow-sm: 0 1px 2px rgba(14,32,39,.06), 0 1px 3px rgba(14,32,39,.04);
+    --shadow-md: 0 4px 16px rgba(14,32,39,.10);
+    --shadow-lg: 0 12px 40px rgba(14,32,39,.16);
+    --r: 14px;
+    --ease-out: cubic-bezier(.22,.61,.36,1);
+    --ease-spring: cubic-bezier(.34,1.56,.64,1);
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--ground);
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #C6D4D3; border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: #A9BBBA; }
+  :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 6px; }
+
+  /* ---------- App shell ---------- */
+  .app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 20px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    z-index: 40;
+  }
+  .brand-mark {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .logo {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: linear-gradient(135deg, #14A6B0, var(--brand-d));
+    display: grid; place-items: center; color: #fff;
+    box-shadow: 0 4px 12px rgba(12,138,148,.35);
+  }
+  .logo svg { width: 22px; height: 22px; }
+  .wordmark { display: flex; flex-direction: column; line-height: 1.15; }
+  .wordmark .name {
+    font-family: var(--serif);
+    font-size: 19px; font-weight: 600; letter-spacing: .1px;
+  }
+  .wordmark .sub {
+    font-size: 11px; color: var(--ink3); font-weight: 500;
+    letter-spacing: .3px;
+  }
+  .stats { display: flex; gap: 8px; margin-left: 6px; }
+  .stat {
+    display: flex; align-items: baseline; gap: 6px;
+    padding: 7px 12px; border-radius: 10px;
+    background: var(--panel); border: 1px solid var(--line);
+  }
+  .stat b { font-size: 16px; font-variant-numeric: tabular-nums; letter-spacing: -.2px; }
+  .stat span { font-size: 11px; color: var(--ink2); font-weight: 600; letter-spacing: .2px; }
+  .stat.sicak b { color: var(--emerald); }
+  .stat.takip b { color: var(--rose); }
+  .stat.randevu b { color: var(--brand); }
+
+  .spacer { flex: 1; }
+
+  .live-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 999px;
+    background: var(--emerald-bg); color: #0A7A54;
+    font-weight: 700; font-size: 13px;
+    border: 1px solid #BFE9D6;
+  }
+  .live-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--emerald);
+    box-shadow: 0 0 0 0 rgba(14,159,110,.6);
+    animation: livePulse 2s infinite;
+  }
+  @keyframes livePulse {
+    0% { box-shadow: 0 0 0 0 rgba(14,159,110,.5); }
+    70% { box-shadow: 0 0 0 7px rgba(14,159,110,0); }
+    100% { box-shadow: 0 0 0 0 rgba(14,159,110,0); }
+  }
+
+  .bell {
+    position: relative;
+    width: 42px; height: 42px; border-radius: 12px;
+    background: var(--panel); border: 1px solid var(--line);
+    display: grid; place-items: center; color: var(--ink2);
+    transition: background .15s;
+  }
+  .bell:hover { background: #F0F5F4; }
+  .bell svg { width: 20px; height: 20px; }
+  .bell .badge {
+    position: absolute; top: -6px; right: -6px;
+    min-width: 20px; height: 20px; padding: 0 5px;
+    border-radius: 999px; background: var(--rose); color: #fff;
+    font-size: 11px; font-weight: 800; display: grid; place-items: center;
+    border: 2px solid var(--paper);
+  }
+
+  /* ---------- Kalıcı Havuz Özeti şeridi ---------- */
+  .summary {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; background: var(--panel); border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+  }
+  .summary::-webkit-scrollbar { height: 0; }
+  .sum-title { font-size: 11px; font-weight: 800; letter-spacing: .6px; color: var(--ink3); flex: 0 0 auto; margin-right: 2px; }
+  .sum-card {
+    display: flex; align-items: center; gap: 11px; padding: 8px 16px 8px 11px; border-radius: 13px;
+    border: 1px solid var(--line); background: var(--paper); position: relative; flex: 0 0 auto;
+  }
+  .sum-card .sc-bar { width: 4px; height: 32px; border-radius: 4px; flex: 0 0 auto; }
+  .sum-card .sc-n { font-size: 23px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.6px; line-height: 1; }
+  .sum-card .sc-l { font-size: 12.5px; font-weight: 600; color: var(--ink2); text-align: left; }
+  .sum-card .sc-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rose); }
+  .sum-card.ok .sc-bar { background: var(--emerald); } .sum-card.ok .sc-n { color: var(--emerald); }
+  .sum-card.no .sc-bar { background: var(--rose); } .sum-card.no .sc-n { color: var(--rose); }
+  .sum-card.rv .sc-bar { background: var(--brand); } .sum-card.rv .sc-n { color: var(--brand-d); }
+  .sum-title { line-height: 1.15; }
+  /* Dikkat çekici "aktarılan data" sayaçları */
+  .dgroup { display: flex; gap: 10px; flex: 0 0 auto; }
+  .dcard {
+    display: flex; align-items: center; gap: 11px; padding: 9px 16px; border-radius: 15px;
+    color: #fff; position: relative; box-shadow: 0 4px 14px rgba(12,138,148,.28);
+    transition: transform .15s var(--ease-out), box-shadow .18s;
+  }
+  .dcard:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(12,138,148,.4); }
+  .dcard .dic { width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,.22); display: grid; place-items: center; flex: 0 0 auto; }
+  .dcard .dic svg { width: 18px; height: 18px; }
+  .dcard .dmeta { display: flex; flex-direction: column; line-height: 1.05; }
+  .dcard .dn { font-size: 25px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.6px; }
+  .dcard .dl { font-size: 11.5px; font-weight: 600; opacity: .92; margin-top: 3px; }
+  .dcard.today { background: linear-gradient(135deg,#13A6B1,#0A6D75); }
+  .dcard.week { background: linear-gradient(135deg,#12A472,#0A7A54); box-shadow: 0 4px 14px rgba(14,159,110,.3); }
+  .dcard.month { background: linear-gradient(135deg,#7A67E6,#4B37C4); box-shadow: 0 4px 14px rgba(109,90,224,.3); }
+  .dcard .pulse-live { position: absolute; top: 8px; right: 9px; width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 0 rgba(255,255,255,.7); animation: livePulse 1.8s infinite; }
+  .sum-div { width: 1px; height: 40px; background: var(--line); flex: 0 0 auto; margin: 0 3px; }
+
+  .app-footer {
+    flex: 0 0 auto; text-align: center; font-size: 12px; color: var(--ink3);
+    padding: 7px 12px; border-top: 1px solid var(--line); background: var(--paper); letter-spacing: .3px;
+  }
+  .app-footer b { color: var(--brand-d); font-weight: 700; }
+
+  /* WhatsApp gönder butonları */
+  .cta-wa {
+    display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; margin-bottom: 20px;
+    padding: 12px; border-radius: 13px; border: none; text-decoration: none;
+    background: linear-gradient(135deg,#25D366,#128C7E); color: #fff; font-weight: 700; font-size: 14px;
+    box-shadow: 0 5px 16px rgba(37,211,102,.32); transition: transform .1s, box-shadow .16s;
+  }
+  .cta-wa:hover { box-shadow: 0 7px 20px rgba(37,211,102,.45); transform: translateY(-1px); }
+  .cta-wa:active { transform: translateY(1px); }
+  .cta-wa svg { width: 19px; height: 19px; }
+  .qbtn.wa { background: #25D366; color: #fff; display: inline-flex; align-items: center; gap: 6px; margin-left: auto; }
+  .qbtn.wa:hover { background: #1FBE5A; }
+  .qbtn.wa svg { width: 15px; height: 15px; }
+
+  .sum-spacer { flex: 1; min-width: 8px; }
+  .sum-detail {
+    flex: 0 0 auto; padding: 9px 15px; border-radius: 11px; border: 1px solid var(--line);
+    background: var(--paper); font-weight: 700; font-size: 12.5px; color: var(--brand-d);
+  }
+  .sum-detail:hover { background: var(--brand-050); border-color: var(--brand-100); }
+  .sum-excel {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px; margin-right: 8px;
+    padding: 9px 15px; border-radius: 11px; border: 1px solid #BFE9D6;
+    background: var(--emerald-bg); color: #0A7A54; font-weight: 700; font-size: 12.5px;
+  }
+  .sum-excel:hover { background: #D3EFE2; }
+  .sum-excel svg { width: 15px; height: 15px; }
+  .board-export {
+    display: inline-flex; align-items: center; gap: 7px; margin-left: auto;
+    padding: 9px 15px; border-radius: 11px; border: 1px solid #BFE9D6;
+    background: var(--emerald-bg); color: #0A7A54; font-weight: 700; font-size: 13px;
+    transition: background .14s, transform .12s;
+  }
+  .board-export:hover { background: #D3EFE2; }
+  .board-export:active { transform: scale(.96); }
+  .board-export svg { width: 15px; height: 15px; }
+  .board-export + .board-close { margin-left: 10px; }
+
+  /* ---------- Body: 3 panes ---------- */
+  .body {
+    flex: 1; display: grid;
+    grid-template-columns: 68px 340px 1fr 340px;
+    min-height: 0;
+  }
+
+  /* ---------- Hesap rayı ---------- */
+  .rail {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 12px 0; background: linear-gradient(180deg, #0B7178, #084F55);
+    overflow-y: auto;
+  }
+  .rail::-webkit-scrollbar { width: 0; }
+  .rail-item {
+    position: relative; width: 46px; height: 46px; border-radius: 15px; border: none;
+    display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 14px;
+    background: rgba(255,255,255,.12); transition: border-radius .16s, background .16s, transform .1s;
+    flex: 0 0 auto;
+  }
+  .rail-item:hover { border-radius: 13px; background: rgba(255,255,255,.22); }
+  .rail-item.active { border-radius: 14px; }
+  .rail-item.active::before {
+    content: ""; position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
+    width: 4px; height: 26px; background: #fff; border-radius: 0 4px 4px 0;
+  }
+  .rail-item .ravatar {
+    width: 46px; height: 46px; border-radius: inherit; display: grid; place-items: center;
+    font-weight: 700; letter-spacing: .3px;
+  }
+  .rail-item.active .ravatar { box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 0 0 5px rgba(255,255,255,.25); }
+  .rail-item svg { width: 20px; height: 20px; }
+  .rail-item.all { background: rgba(255,255,255,.16); }
+  .rail-item.add { background: rgba(255,255,255,.1); color: #CFEDEF; border: 1.5px dashed rgba(255,255,255,.4); }
+  .rail-item.add:hover { background: rgba(255,255,255,.2); color: #fff; }
+  .rail-sep { width: 26px; height: 1px; background: rgba(255,255,255,.2); flex: 0 0 auto; margin: 2px 0; }
+  .rail-badge {
+    position: absolute; top: -3px; right: -3px; min-width: 17px; height: 17px; padding: 0 4px;
+    border-radius: 999px; background: var(--rose); color: #fff; font-size: 10px; font-weight: 800;
+    display: grid; place-items: center; border: 2px solid #0A5A61;
+  }
+  .rail .tip {
+    position: absolute; left: 56px; top: 50%; transform: translateY(-50%);
+    background: var(--ink); color: #fff; font-size: 12px; font-weight: 600; padding: 5px 9px;
+    border-radius: 8px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .12s; z-index: 50;
+  }
+  .rail-item:hover .tip { opacity: 1; }
+
+  .acct-chip {
+    font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+    background: #EAF0F0; color: #5B7075; border: 1px solid #E1E9E8;
+  }
+
+  /* Instagram profil avatarı + rozet */
+  .acct-av { position: relative; display: inline-flex; flex: 0 0 auto; }
+  .acct-av .ravatar .pf, .avatar .pf { width: 60%; height: 60%; }
+  .ig-badge-dot {
+    position: absolute; right: -3px; bottom: -3px; width: 19px; height: 19px; border-radius: 50%;
+    background: linear-gradient(45deg, #F58529, #DD2A7B 55%, #8134AF); color: #fff;
+    display: grid; place-items: center; border: 2px solid var(--paper); box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  }
+  .ig-badge-dot svg { width: 12px; height: 12px; }
+  .acct-av.sm .ig-badge-dot { width: 16px; height: 16px; }
+  .acct-av.sm .ig-badge-dot svg { width: 10px; height: 10px; }
+  .rail-item .ig-badge-dot { border-color: #0A5A61; }
+  .rail-item .acct-av { width: 46px; height: 46px; }
+  .pane { min-height: 0; display: flex; flex-direction: column; background: var(--paper); }
+  .pane.list { border-right: 1px solid var(--line); background: var(--panel); }
+  .pane.contact { border-left: 1px solid var(--line); background: var(--panel); }
+
+  /* ---------- List pane ---------- */
+  .list-head { flex: 0 0 auto; padding: 14px 14px 10px; border-bottom: 1px solid var(--line2); }
+  .search {
+    position: relative;
+  }
+  .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--ink3); }
+  .search input {
+    width: 100%; padding: 10px 12px 10px 36px; border-radius: 11px;
+    border: 1px solid var(--line); background: var(--paper); outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .search input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-050); }
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .chip {
+    padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--paper); color: var(--ink2); font-weight: 600; font-size: 12.5px;
+    display: inline-flex; align-items: center; gap: 6px; transition: all .13s;
+  }
+  .chip:hover { border-color: var(--brand-100); }
+  .chip .c { font-variant-numeric: tabular-nums; color: var(--ink3); }
+  .chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .chip.active .c { color: rgba(255,255,255,.8); }
+  .list-hint { font-size: 11px; color: var(--ink3); margin-top: 9px; padding-left: 2px; }
+  .list-hint b { color: var(--ink2); font-weight: 700; }
+
+  .convo-scroll { flex: 1; overflow-y: auto; }
+  .convo {
+    width: 100%; text-align: left; background: none; border: none;
+    display: flex; gap: 12px; padding: 12px 14px;
+    border-bottom: 1px solid var(--line2); transition: background .12s;
+    position: relative;
+  }
+  .convo:hover { background: #F2F7F6; }
+  .convo.sel { background: var(--brand-050); }
+  .convo.sel::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--brand);
+  }
+  .avatar {
+    flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%;
+    display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 15px;
+    position: relative; letter-spacing: .3px;
+  }
+  .status-dot {
+    position: absolute; right: -1px; bottom: -1px; width: 14px; height: 14px;
+    border-radius: 50%; border: 2.5px solid var(--paper);
+  }
+  .convo.sel .status-dot { border-color: var(--brand-050); }
+  .dot-attn { background: var(--rose); animation: dotPulse 1.4s ease-in-out infinite; }
+  @keyframes dotPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(224,71,90,.55); }
+    50% { box-shadow: 0 0 0 5px rgba(224,71,90,0); }
+  }
+  .convo-main { min-width: 0; flex: 1; }
+  .convo-top { display: flex; align-items: center; gap: 8px; }
+  .convo-name { font-weight: 650; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .convo-time { margin-left: auto; font-size: 11px; color: var(--ink3); flex: 0 0 auto; }
+  .convo-preview { font-size: 13px; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+  .convo-preview.none { color: var(--ink3); font-style: italic; }
+  .convo-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+
+  .tag {
+    font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+    letter-spacing: .1px; border: 1px solid transparent; white-space: nowrap;
+  }
+  .tag.st-yeni { background: #EEF2F2; color: #5B7075; border-color: #E1E9E8; }
+  .tag.st-bilgiBekleniyor { background: var(--amber-bg); color: var(--amber); border-color: #F1E1B4; }
+  .tag.st-cevapVermedi { background: var(--rose-bg); color: var(--rose); border-color: #F6CDD2; }
+  .tag.st-cevapVerdi { background: var(--emerald-bg); color: #0A7A54; border-color: #C4EAD8; }
+  .tag.st-randevu { background: var(--brand-050); color: var(--brand-d); border-color: var(--brand-100); }
+  .tag.st-kayip { background: #F0F2F2; color: #99A8AC; border-color: #E4EAE9; }
+  .tag.warn { background: var(--rose-bg); color: var(--rose); border-color: #F6CDD2; }
+  .tag.due { background: var(--amber-bg); color: var(--amber); border-color: #F1E1B4; }
+  .tag.overdue { background: var(--rose); color: #fff; }
+  .tag.wa-sent { background: #DCFCE7; color: #128C7E; border-color: #A7E9C4; }
+  .tag.fiyat { background: #EDE9FE; color: #5B44C7; border-color: #D8CFF7; }
+  .chip.wp.active { background: #128C7E; border-color: #128C7E; }
+  .c-id { margin-top: 8px; font-size: 12.5px; color: var(--ink3); }
+  .c-id b { color: var(--brand-d); font-variant-numeric: tabular-nums; letter-spacing: .3px; }
+  .c-wasent {
+    display: inline-block; margin-top: 8px; padding: 4px 12px; border-radius: 999px;
+    background: #DCFCE7; color: #128C7E; font-size: 12px; font-weight: 700; border: 1px solid #A7E9C4;
+  }
+  .cta-wa.sent { background: linear-gradient(135deg,#34C759,#1FA855); opacity: .92; }
+
+  [data-theme="dark"] .tag.wa-sent { background: #10331F; color: #4FE0A6; border-color: #1E4A3B; }
+  [data-theme="dark"] .tag.fiyat { background: #241E3D; color: #B7A6F5; border-color: #3A2E63; }
+  [data-theme="dark"] .c-wasent { background: #10331F; color: #4FE0A6; border-color: #1E4A3B; }
+
+  /* ===== Konuşma "top kimde" — sol şerit + okunmamış vurgusu ===== */
+  .convo::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent; border-radius: 0 3px 3px 0; }
+  .convo.needs-reply::before { background: var(--amber); }
+  .convo.unread::before { background: var(--unread); }
+  .convo.sel::before { background: var(--brand); }
+  .convo.unread:not(.sel) { background: var(--unread-bg); }
+  .convo.unread .convo-name { font-weight: 800; color: var(--ink); }
+  .convo.unread .convo-preview { color: var(--ink); font-weight: 600; }
+  .unread-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--unread); margin-left: 6px; flex: 0 0 auto; box-shadow: 0 0 0 0 rgba(45,127,249,.5); animation: unreadPulse 1.7s infinite; }
+  @keyframes unreadPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(45,127,249,.5); } 50% { box-shadow: 0 0 0 5px rgba(45,127,249,0); } }
+  .tag.turn-new { background: var(--unread-bg); color: var(--unread); border-color: transparent; font-weight: 800; }
+  .tag.turn-me { background: var(--amber-bg); color: var(--amber); border-color: #F1E1B4; }
+  .tag.turn-them { background: #EEF2F2; color: #7C9196; border-color: #E1E9E8; }
+  .chip.reply.active { background: var(--amber); border-color: var(--amber); color: #4A3600; }
+  [data-theme="dark"] .tag.turn-me { border-color: #4A3E1A; }
+  [data-theme="dark"] .tag.turn-them { background: #1B2A2F; color: #8AA0A4; border-color: #26393E; }
+  [data-theme="dark"] .chip.reply.active { color: #16110A; }
+
+  /* bekleme süresi rengi */
+  .convo-time.wait { color: var(--amber); font-weight: 700; }
+  .convo-time.wait-long { color: var(--rose); font-weight: 800; }
+
+  /* composer araçları */
+  .compose-tools { display: flex; gap: 8px; padding: 9px 18px 0; }
+  .ctool { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink2); font-weight: 650; font-size: 12.5px; transition: background .13s, border-color .13s; }
+  .ctool:hover { background: var(--panel); border-color: var(--brand-100); }
+  .ctool.ai { background: linear-gradient(135deg,#EDE9FE,#F3E8FF); color: #5B44C7; border-color: #D8CFF7; }
+  [data-theme="dark"] .ctool.ai { background: #241E3D; color: #B7A6F5; border-color: #3A2E63; }
+
+  /* hazır yanıt menüsü */
+  .tpl-menu { position: fixed; z-index: 95; width: 340px; max-height: 62vh; overflow-y: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-lg); padding: 6px; animation: pop .12s ease-out; }
+  .tpl-head { font-size: 11px; font-weight: 800; letter-spacing: .4px; color: var(--ink3); padding: 8px 10px 6px; }
+  .tpl-item { display: block; width: 100%; text-align: left; border: none; background: none; padding: 9px 10px; border-radius: 9px; cursor: pointer; }
+  .tpl-item:hover { background: var(--panel); }
+  .tpl-t { display: block; font-weight: 700; font-size: 13px; color: var(--brand-d); margin-bottom: 2px; }
+  .tpl-m { display: block; font-size: 12.5px; color: var(--ink2); line-height: 1.4; }
+
+  /* lead skoru */
+  .score-box { margin-bottom: 18px; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); }
+  .score-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+  .score-lbl { font-size: 12.5px; font-weight: 700; color: var(--ink2); }
+  .score-val { font-size: 23px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .score-val small { font-size: 12px; color: var(--ink3); font-weight: 600; }
+  .score-bar { height: 8px; border-radius: 6px; background: var(--line2); overflow: hidden; }
+  .score-bar span { display: block; height: 100%; border-radius: 6px; transition: width .6s var(--ease-out); }
+  .score-tag { margin-top: 9px; font-size: 12px; font-weight: 700; display: inline-block; padding: 3px 11px; border-radius: 999px; }
+  .score-box.hot .score-val, .score-box.hot .score-tag { color: #C6395A; }
+  .score-box.hot .score-bar span { background: linear-gradient(90deg,#F0708A,#C6395A); }
+  .score-box.hot .score-tag { background: var(--rose-bg); }
+  .score-box.warm .score-val, .score-box.warm .score-tag { color: var(--amber); }
+  .score-box.warm .score-bar span { background: linear-gradient(90deg,#E4B657,#B4820A); }
+  .score-box.warm .score-tag { background: var(--amber-bg); }
+  .score-box.cold .score-val, .score-box.cold .score-tag { color: var(--ink3); }
+  .score-box.cold .score-bar span { background: linear-gradient(90deg,#9FB3B4,#6E8388); }
+  .score-box.cold .score-tag { background: var(--line2); }
+
+  /* takip planı */
+  .nurture { display: flex; flex-direction: column; gap: 6px; }
+  .nstep { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); text-align: left; cursor: pointer; transition: background .12s; }
+  .nstep:hover { background: var(--panel); }
+  .nstep .nic { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; flex: 0 0 auto; background: var(--line2); color: var(--ink3); }
+  .nstep .ntxt { flex: 1; font-size: 13px; font-weight: 600; }
+  .nstep .ndate { font-size: 11.5px; color: var(--ink3); }
+  .nstep.done .nic { background: var(--emerald); color: #fff; }
+  .nstep.done .ntxt { text-decoration: line-through; color: var(--ink3); }
+  .nstep.today .nic { background: var(--amber); color: #fff; }
+  .nstep.today { border-color: var(--amber); }
+  .nstep.missed .nic { background: var(--rose); color: #fff; }
+  .nstep.missed { border-color: #F0C4CA; }
+  [data-theme="dark"] .nstep.missed { border-color: #4E2830; }
+  .nurture-hint { margin-top: 8px; font-size: 11px; color: var(--ink3); }
+
+  /* dosyalar */
+  .files { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .file-thumb { position: relative; width: 58px; height: 58px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--panel); display: grid; place-items: center; }
+  .file-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .file-ic { font-size: 9px; font-weight: 700; color: var(--ink3); }
+  .file-x { position: absolute; top: -6px; right: -6px; width: 19px; height: 19px; border-radius: 50%; border: 2px solid var(--paper); background: var(--rose); color: #fff; font-size: 13px; line-height: 1; cursor: pointer; padding: 0; }
+  .file-add { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 10px; border: 1px dashed var(--line); background: var(--panel); color: var(--brand-d); font-weight: 650; font-size: 13px; cursor: pointer; }
+  .file-add:hover { background: var(--brand-050); }
+
+  /* analitik */
+  .board.analytics { max-width: 940px; }
+  .an-tiles { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; padding: 18px 22px; }
+  .an-tile { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: var(--panel); }
+  .an-tile .at-n { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
+  .an-tile .at-l { font-size: 12px; color: var(--ink2); font-weight: 600; margin-top: 3px; }
+  .an-tile.ok .at-n { color: var(--emerald); }
+  .an-tile.no .at-n { color: var(--rose); }
+  .an-tile.rv .at-n { color: var(--brand-d); }
+  .an-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 0 22px 22px; }
+  .an-card { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: var(--paper); }
+  .an-h { font-size: 12.5px; font-weight: 700; color: var(--ink2); margin-bottom: 13px; }
+  .an-bars { display: flex; flex-direction: column; gap: 9px; }
+  .an-row { display: flex; align-items: center; gap: 10px; }
+  .an-lab { width: 40%; font-size: 12px; color: var(--ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .an-track { flex: 1; height: 9px; border-radius: 6px; background: var(--line2); overflow: hidden; }
+  .an-fill { display: block; height: 100%; border-radius: 6px; transition: width .6s var(--ease-out); }
+  .an-n { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; width: 22px; text-align: right; color: var(--ink); }
+  .an-trend { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding-top: 12px; }
+  .an-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 5px; }
+  .an-coln { font-size: 11px; font-weight: 700; color: var(--ink2); font-variant-numeric: tabular-nums; }
+  .an-bar { width: 100%; max-width: 34px; border-radius: 6px 6px 0 0; background: linear-gradient(180deg,#13A6B1,#0A6D75); transition: height .6s var(--ease-out); }
+  .an-coll { font-size: 11px; color: var(--ink3); }
+  .an-empty { font-size: 12.5px; color: var(--ink3); padding: 8px 0; }
+  @media (max-width: 760px) { .an-tiles { grid-template-columns: 1fr 1fr; } .an-grid { grid-template-columns: 1fr; } }
+
+  /* etiketler & temsilci */
+  .tag.lead-tag { background: #EEF2F2; color: #5B7075; border-color: #E1E9E8; cursor: pointer; }
+  .tag.lead-tag:hover { background: var(--brand-050); color: var(--brand-d); }
+  [data-theme="dark"] .tag.lead-tag { background: #1E2F34; color: #A2B6B7; border-color: #2A3B40; }
+  .tag.tem-chip { color: #fff; background: var(--tc,#0C8A94); border-color: transparent; font-weight: 700; }
+  .tagfilter-bar { display: flex; align-items: center; gap: 8px; padding: 9px 14px; background: var(--brand-050); border-bottom: 1px solid var(--line2); font-size: 12.5px; color: var(--brand-d); }
+  .tagfilter-bar b { font-weight: 800; }
+  .tagfilter-bar button { margin-left: auto; border: none; background: none; color: var(--ink3); cursor: pointer; font-size: 15px; line-height: 1; }
+  .ctags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .ctag { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px 4px 11px; border-radius: 999px; background: var(--brand-050); color: var(--brand-d); font-size: 12px; font-weight: 600; }
+  .ctag button { border: none; background: none; color: var(--brand-d); cursor: pointer; font-size: 14px; line-height: 1; opacity: .7; padding: 0; }
+  .ctag button:hover { opacity: 1; }
+  .ctags-empty { font-size: 12px; color: var(--ink3); }
+  .tagsugs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tagsug { padding: 4px 11px; border-radius: 999px; border: 1px dashed var(--line); background: none; color: var(--ink2); font-size: 12px; font-weight: 600; cursor: pointer; }
+  .tagsug:hover { border-color: var(--brand-100); color: var(--brand-d); background: var(--brand-050); }
+
+  /* randevu */
+  .randevu-info { margin-top: 9px; font-size: 13px; font-weight: 700; color: var(--brand-d); }
+  .randevu-hint { margin-top: 9px; font-size: 12px; color: var(--ink3); }
+  .cta-wa.alt { margin-top: 11px; margin-bottom: 0; font-size: 13px; padding: 11px; }
+
+  /* kanban */
+  .board.kanban { max-width: 1200px; width: 100%; }
+  .kb-board { display: flex; gap: 12px; padding: 16px 20px 22px; overflow-x: auto; }
+  .kb-col { flex: 0 0 244px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; display: flex; flex-direction: column; max-height: 62vh; transition: border-color .12s, box-shadow .12s; }
+  .kb-col.over { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-100) inset; }
+  .kb-head { padding: 11px 13px; font-weight: 700; font-size: 12.5px; border-bottom: 1px solid var(--line2); display: flex; align-items: center; gap: 7px; }
+  .kb-hdot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+  .kb-cnt { margin-left: auto; font-size: 11px; font-weight: 800; color: var(--ink3); background: var(--line2); padding: 1px 8px; border-radius: 999px; }
+  .kb-list { padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; min-height: 44px; }
+  .kb-card { background: var(--paper); border: 1px solid var(--line); border-radius: 11px; padding: 10px 11px; cursor: grab; box-shadow: var(--shadow-sm); transition: box-shadow .12s, transform .1s; }
+  .kb-card:hover { box-shadow: var(--shadow-md); }
+  .kb-card:active { cursor: grabbing; }
+  .kb-card.dragging { opacity: .4; }
+  .kb-name { font-weight: 700; font-size: 13.5px; display: flex; align-items: center; gap: 6px; }
+  .kb-dot { width: 8px; height: 8px; border-radius: 50%; margin-left: auto; flex: 0 0 auto; }
+  .kb-dot.hot { background: #C6395A; } .kb-dot.warm { background: var(--amber); } .kb-dot.cold { background: var(--ink3); }
+  .kb-sub { font-size: 12px; color: var(--ink3); margin-top: 3px; }
+  .kb-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+  .kb-empty { color: var(--ink3); font-size: 12px; text-align: center; padding: 10px; }
+
+  /* takvim (ajanda) */
+  .board.takvim { max-width: 640px; }
+  .tk-body { padding: 16px 22px 22px; max-height: 70vh; overflow-y: auto; }
+  .tk-group { margin-bottom: 16px; }
+  .tk-day { font-size: 11.5px; font-weight: 800; letter-spacing: .3px; color: var(--brand-d); text-transform: uppercase; margin-bottom: 9px; }
+  .tk-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; }
+  .tk-time { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--ink); font-size: 14px; flex: 0 0 auto; width: 52px; }
+  .tk-main { flex: 1; text-align: left; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+  .tk-name { font-weight: 650; font-size: 14px; }
+  .tk-islem { font-size: 12px; color: var(--ink3); }
+  .tk-wa { width: 40px; height: 40px; border-radius: 10px; background: #25D366; color: #fff; display: grid; place-items: center; flex: 0 0 auto; }
+  .tk-wa svg { width: 19px; height: 19px; }
+  .tk-empty { padding: 30px 20px; text-align: center; color: var(--ink3); font-size: 13px; line-height: 1.5; }
+  @media (max-width: 760px) { .kb-col { flex-basis: 208px; } }
+
+  /* Filtre düğmesi + genel açılır menü + renk açıklaması */
+  .filter-toggle { display: inline-flex; align-items: center; gap: 8px; width: 100%; padding: 9px 12px; border-radius: 11px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font-weight: 650; font-size: 13.5px; cursor: pointer; transition: border-color .13s, background .13s; }
+  .filter-toggle:hover { border-color: var(--brand-100); background: var(--panel); }
+  .filter-toggle > svg:first-child { width: 16px; height: 16px; color: var(--ink3); flex: 0 0 auto; }
+  .filter-toggle .ft-lab { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .filter-toggle .ft-cnt { margin-left: auto; font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 800; color: var(--brand-d); background: var(--brand-050); padding: 1px 9px; border-radius: 999px; flex: 0 0 auto; }
+  .filter-toggle .ft-caret { width: 15px; height: 15px; color: var(--ink3); flex: 0 0 auto; }
+  .tools-btn { display: inline-flex; align-items: center; gap: 6px; }
+
+  .drop-menu { position: fixed; z-index: 96; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-lg); padding: 6px; animation: pop .12s ease-out; max-height: 72vh; overflow-y: auto; }
+  .dm-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 11px; border: none; background: none; border-radius: 9px; font-size: 13.5px; font-weight: 600; color: var(--ink); cursor: pointer; text-align: left; }
+  .dm-item:hover { background: var(--panel); }
+  .dm-item.on { background: var(--brand-050); color: var(--brand-d); }
+  .dm-lab { flex: 1; white-space: nowrap; }
+  .dm-cnt { font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 800; color: var(--ink3); background: var(--line2); padding: 1px 8px; border-radius: 999px; }
+  .dm-item.on .dm-cnt { color: var(--brand-d); background: var(--brand-100); }
+
+  .list-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 11.5px; color: var(--ink3); }
+  .list-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .lg-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .lg-dot.new { background: var(--unread); }
+  .lg-dot.me { background: var(--amber); }
+  .lg-dot.them { background: var(--ink3); }
+
+  /* Panel katlama (açılır/kapanır sekmeler) */
+  .pane-toggle { display: none; width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); background: var(--paper); color: var(--ink3); align-items: center; justify-content: center; flex: 0 0 auto; transition: background .13s, color .13s, border-color .13s; }
+  .pane-toggle svg { width: 18px; height: 18px; }
+  .pane-toggle:hover { background: var(--panel); color: var(--ink); }
+  @media (min-width: 1081px) {
+    .pane-toggle { display: inline-flex; }
+    body.list-collapsed .pane.list { display: none; }
+    body.contact-collapsed .pane.contact { display: none; }
+    body.list-collapsed .body { grid-template-columns: 68px 1fr 340px; }
+    body.contact-collapsed .body { grid-template-columns: 68px 340px 1fr; }
+    body.list-collapsed.contact-collapsed .body { grid-template-columns: 68px 1fr; }
+    body.list-collapsed .pane-toggle[data-toggle="list"],
+    body.contact-collapsed .pane-toggle[data-toggle="contact"] { color: var(--brand-d); border-color: var(--brand-100); background: var(--brand-050); }
+  }
+
+  /* ---------- Chat pane ---------- */
+  .chat-empty { flex: 1; display: grid; place-items: center; text-align: center; color: var(--ink3); }
+  .chat-empty .ic { width: 64px; height: 64px; border-radius: 20px; background: var(--brand-050); display: grid; place-items: center; margin: 0 auto 14px; color: var(--brand); }
+  .chat-empty .ic svg { width: 30px; height: 30px; }
+
+  .chat-head {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 12px;
+    padding: 12px 18px; border-bottom: 1px solid var(--line);
+  }
+  .chat-head .avatar { width: 40px; height: 40px; font-size: 14px; }
+  .chat-head .meta { min-width: 0; }
+  .chat-head .meta .n { font-weight: 650; font-size: 15px; }
+  .chat-head .meta .h { font-size: 12px; color: var(--brand); }
+  .chat-head .meta .h a { color: inherit; text-decoration: none; }
+  .chat-head .meta .h a:hover { text-decoration: underline; }
+
+  .thread { flex: 1; overflow-y: auto; padding: 22px 18px; background:
+      linear-gradient(var(--ground), var(--ground)); background-attachment: local; }
+  .day-sep { text-align: center; margin: 6px 0 16px; }
+  .day-sep span { font-size: 11px; font-weight: 700; color: var(--ink3); background: var(--paper); padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); }
+  .msg-row { display: flex; margin-bottom: 12px; }
+  .msg-row.out { justify-content: flex-end; }
+  .bubble {
+    max-width: 74%; padding: 10px 14px; border-radius: 16px;
+    font-size: 13.5px; line-height: 1.45; box-shadow: var(--shadow-sm);
+    position: relative; word-wrap: break-word;
+  }
+  .msg-row.in .bubble { background: var(--paper); border: 1px solid var(--line); border-bottom-left-radius: 5px; }
+  .msg-row.out .bubble { background: linear-gradient(135deg, #12A0AB, var(--brand-d)); color: #fff; border-bottom-right-radius: 5px; }
+  .bubble .t { display: block; margin-top: 5px; font-size: 10.5px; opacity: .65; text-align: right; }
+  .msg-row.in .bubble .t { color: var(--ink3); opacity: 1; }
+
+  .quickbar {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
+    padding: 9px 18px; border-top: 1px solid var(--line); background: var(--panel);
+  }
+  .quickbar .lbl { font-size: 11px; font-weight: 700; color: var(--ink3); letter-spacing: .3px; }
+  .qbtn {
+    padding: 6px 11px; border-radius: 9px; border: 1px solid transparent;
+    font-weight: 650; font-size: 12.5px; transition: all .13s;
+  }
+  .qbtn.ok { background: var(--emerald); color: #fff; }
+  .qbtn.ok:hover { background: #0C8C60; }
+  .qbtn.brand { background: var(--brand-050); color: var(--brand-d); }
+  .qbtn.brand:hover { background: var(--brand-100); }
+  .qbtn.warn { background: var(--rose-bg); color: var(--rose); }
+  .qbtn.warn:hover { background: #F9D6DB; }
+  .qbtn.ghost { background: #EFF4F3; color: var(--ink2); margin-left: auto; }
+  .qbtn.ghost:hover { background: #E4ECEB; }
+
+  .composer { flex: 0 0 auto; display: flex; gap: 10px; padding: 12px 18px; border-top: 1px solid var(--line); align-items: flex-end; }
+  .composer textarea {
+    flex: 1; resize: none; min-height: 44px; max-height: 120px; padding: 11px 14px;
+    border-radius: 13px; border: 1px solid var(--line); background: var(--paper); outline: none;
+    transition: border-color .15s, box-shadow .15s; line-height: 1.4;
+  }
+  .composer textarea:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-050); }
+  .send {
+    flex: 0 0 auto; padding: 12px 20px; border-radius: 13px; border: none;
+    background: linear-gradient(135deg, #12A0AB, var(--brand-d)); color: #fff; font-weight: 700;
+    box-shadow: 0 4px 12px rgba(12,138,148,.3); transition: transform .1s, box-shadow .15s;
+  }
+  .send:hover { box-shadow: 0 6px 18px rgba(12,138,148,.42); }
+  .send:active { transform: translateY(1px); }
+
+  /* ---------- Contact pane ---------- */
+  .contact-scroll { flex: 1; overflow-y: auto; padding: 20px 18px; }
+  .contact-empty { flex: 1; display: grid; place-items: center; text-align: center; color: var(--ink3); font-size: 13px; padding: 24px; }
+  .c-head { text-align: center; margin-bottom: 18px; }
+  .c-head .avatar { width: 64px; height: 64px; font-size: 22px; margin: 0 auto 10px; }
+  .c-head .n { font-weight: 700; font-size: 17px; }
+  .c-head .src { font-size: 12px; color: var(--ink3); margin-top: 2px; }
+
+  .cta-hot {
+    width: 100%; padding: 12px; border-radius: 13px; border: none; margin-bottom: 20px;
+    background: var(--emerald); color: #fff; font-weight: 700; font-size: 13.5px;
+    box-shadow: 0 5px 16px rgba(14,159,110,.32); transition: transform .1s;
+  }
+  .cta-hot:hover { background: #0C8C60; }
+  .cta-hot:active { transform: translateY(1px); }
+
+  .section { margin-bottom: 18px; }
+  .section > .h { font-size: 11px; font-weight: 800; letter-spacing: .6px; color: var(--ink3); text-transform: uppercase; margin-bottom: 9px; }
+  .fields { display: flex; flex-direction: column; gap: 9px; }
+  .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .field label { display: block; font-size: 11px; font-weight: 600; color: var(--ink2); margin-bottom: 3px; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 8px 10px; border-radius: 9px; border: 1px solid var(--line);
+    background: var(--paper); outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-050); }
+  .field input.missing { border-color: #F0B8BF; background: #FEF5F6; }
+
+  .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .sbtn {
+    display: flex; align-items: center; gap: 7px; padding: 8px 9px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--paper); color: var(--ink2);
+    font-weight: 600; font-size: 12px; text-align: left; transition: all .12s;
+  }
+  .sbtn:hover { background: #F2F7F6; }
+  .sbtn .sd { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+  .sbtn.on { border-color: var(--brand); background: var(--brand-050); color: var(--brand-d); box-shadow: 0 0 0 1px var(--brand-100) inset; }
+
+  .date-input { width: 100%; padding: 8px 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--paper); outline: none; }
+  .date-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-050); }
+  .date-quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .dq { padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); color: var(--ink2); font-size: 12px; font-weight: 600; transition: all .12s; }
+  .dq:hover { border-color: var(--brand-100); background: var(--brand-050); color: var(--brand-d); }
+  .due-note { margin-top: 9px; padding: 8px 11px; border-radius: 9px; font-size: 12px; font-weight: 700; }
+  .due-note.overdue { background: var(--rose-bg); color: var(--rose); }
+  .due-note.today { background: var(--amber-bg); color: var(--amber); }
+  .due-note.future { background: #EFF4F3; color: var(--ink2); }
+
+  .del {
+    width: 100%; padding: 9px; border-radius: 10px; border: 1px solid #F0C4CA;
+    background: var(--paper); color: var(--rose); font-weight: 650; transition: background .12s;
+  }
+  .del:hover { background: var(--rose-bg); }
+
+  /* ---------- Context menu ---------- */
+  .ctx {
+    position: fixed; z-index: 90; width: 224px; background: var(--paper);
+    border: 1px solid var(--line); border-radius: 13px; box-shadow: var(--shadow-lg);
+    padding: 6px; animation: pop .12s ease-out;
+  }
+  @keyframes pop { from { opacity: 0; transform: scale(.97) translateY(-3px); } to { opacity: 1; transform: none; } }
+  .ctx .ctx-head { font-size: 10.5px; font-weight: 800; letter-spacing: .5px; color: var(--ink3); text-transform: uppercase; padding: 7px 10px 6px; }
+  .ctx button {
+    width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+    border: none; background: none; border-radius: 9px; font-weight: 600; font-size: 13px; color: var(--ink); text-align: left;
+    transition: background .1s;
+  }
+  .ctx button:hover { background: #F2F7F6; }
+  .ctx button .mi { width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center; background: #EFF4F3; flex: 0 0 auto; }
+  .ctx button .mi svg { width: 14px; height: 14px; }
+  .ctx button .desc { margin-left: auto; font-size: 11px; color: var(--ink3); font-weight: 500; }
+  .ctx .sep { height: 1px; background: var(--line2); margin: 5px 6px; }
+  .ctx button.danger { color: var(--rose); }
+  .ctx button.danger .mi { background: var(--rose-bg); color: var(--rose); }
+  .ctx button.good .mi { background: var(--emerald-bg); color: var(--emerald); }
+  .ctx button.brand .mi { background: var(--brand-050); color: var(--brand-d); }
+
+  /* ---------- Reminders popover ---------- */
+  .pop {
+    position: fixed; z-index: 85; top: 66px; right: 20px; width: 380px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: var(--shadow-lg); overflow: hidden; animation: pop .14s ease-out;
+  }
+  .pop-head { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--line2); }
+  .pop-head .t { font-weight: 700; font-size: 14px; }
+  .pop-head .cnt { font-size: 11px; font-weight: 800; color: #fff; background: var(--rose); padding: 2px 8px; border-radius: 999px; }
+  .pop-list { max-height: 380px; overflow-y: auto; }
+  .pop-item { display: flex; align-items: center; gap: 11px; padding: 11px 16px; border-bottom: 1px solid var(--line2); width: 100%; background: none; border-left: none; border-right: none; border-top: none; text-align: left; transition: background .1s; }
+  .pop-item:hover { background: #F2F7F6; }
+  .pop-item .rdot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+  .pop-item .pi-main { min-width: 0; flex: 1; }
+  .pop-item .pi-name { font-weight: 650; font-size: 13.5px; }
+  .pop-item .pi-sub { font-size: 11.5px; color: var(--ink3); }
+  .pop-item .pi-when { font-size: 11.5px; font-weight: 700; flex: 0 0 auto; }
+  .pop-empty { padding: 30px 20px; text-align: center; color: #0A7A54; font-size: 13px; font-weight: 600; background: var(--emerald-bg); }
+
+  /* ---------- Toast ---------- */
+  #toasts { position: fixed; z-index: 100; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .toast {
+    background: var(--ink); color: #fff; padding: 11px 18px; border-radius: 12px;
+    font-weight: 600; font-size: 13px; box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; gap: 9px; animation: toastIn .2s ease-out;
+  }
+  .toast .ti { width: 18px; height: 18px; color: #4FE0A6; }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .demo-flag {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
+    color: var(--brand-d); background: var(--brand-050); padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--brand-100);
+  }
+
+  .board-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 12px;
+    border: 1px solid var(--line); background: var(--panel); color: var(--ink); font-weight: 700; font-size: 13px;
+    transition: background .13s, border-color .13s;
+  }
+  .board-btn:hover { background: #F0F5F4; border-color: var(--brand-100); }
+  .board-btn svg { width: 17px; height: 17px; color: var(--brand); }
+
+  /* ---------- Board overlay ---------- */
+  .overlay {
+    position: fixed; inset: 0; z-index: 80; background: rgba(14,32,39,.45);
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+    display: flex; align-items: flex-start; justify-content: center; padding: 44px 20px; overflow-y: auto;
+    animation: ovIn .15s ease-out;
+  }
+  @keyframes ovIn { from { opacity: 0; } to { opacity: 1; } }
+  .board {
+    width: 100%; max-width: 960px; background: var(--paper); border-radius: 20px;
+    box-shadow: var(--shadow-lg); overflow: hidden; animation: pop .18s ease-out;
+  }
+  .board-head { display: flex; align-items: center; gap: 12px; padding: 18px 24px; border-bottom: 1px solid var(--line2); }
+  .board-head .bt { font-family: var(--serif); font-size: 21px; font-weight: 600; }
+  .board-head .bsub { font-size: 12.5px; color: var(--ink3); }
+  .board-close {
+    margin-left: auto; width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--paper); color: var(--ink2); display: grid; place-items: center;
+  }
+  .board-close:hover { background: #F0F5F4; }
+  .board-close svg { width: 18px; height: 18px; }
+
+  .board-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 20px 24px; }
+  .btile { border-radius: 16px; padding: 18px; border: 1px solid var(--line); position: relative; overflow: hidden; }
+  .btile .big { font-size: 40px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+  .btile .bl { font-size: 13px; font-weight: 700; margin-top: 7px; }
+  .btile .bd { font-size: 11.5px; color: var(--ink3); margin-top: 2px; }
+  .btile.ok { background: var(--emerald-bg); border-color: #C4EAD8; }
+  .btile.ok .big, .btile.ok .bl { color: #0A7A54; }
+  .btile.no { background: var(--rose-bg); border-color: #F6CDD2; }
+  .btile.no .big, .btile.no .bl { color: var(--rose); }
+  .btile.rv { background: var(--brand-050); border-color: var(--brand-100); }
+  .btile.rv .big, .btile.rv .bl { color: var(--brand-d); }
+
+  .board-cols { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line2); }
+  .bcol { min-height: 0; }
+  .bcol + .bcol { border-left: 1px solid var(--line2); }
+  .bcol-head { display: flex; align-items: center; gap: 8px; padding: 13px 20px; font-weight: 700; font-size: 13.5px; position: sticky; top: 0; background: var(--paper); }
+  .bcol-head .cc { font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 800; padding: 2px 9px; border-radius: 999px; }
+  .bcol.ok .bcol-head { color: #0A7A54; } .bcol.ok .cc { background: var(--emerald-bg); color: #0A7A54; }
+  .bcol.no .bcol-head { color: var(--rose); } .bcol.no .cc { background: var(--rose-bg); color: var(--rose); }
+  .bcol-list { max-height: 340px; overflow-y: auto; padding: 0 12px 14px; }
+  .brow {
+    width: 100%; display: flex; align-items: center; gap: 11px; padding: 10px 10px; border-radius: 12px;
+    background: none; border: none; text-align: left; transition: background .1s;
+  }
+  .brow:hover { background: #F2F7F6; }
+  .brow .avatar { width: 38px; height: 38px; font-size: 13px; }
+  .brow .bm { min-width: 0; flex: 1; }
+  .brow .bn { font-weight: 650; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .brow .bi { font-size: 11.5px; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .brow .bph { font-size: 11.5px; font-weight: 600; color: var(--ink2); flex: 0 0 auto; font-variant-numeric: tabular-nums; }
+  .brow .bph.no { color: var(--rose); }
+  .bcol-empty { padding: 26px 16px; text-align: center; color: var(--ink3); font-size: 12.5px; }
+
+  @media (max-width: 720px) {
+    .board-tiles { grid-template-columns: 1fr; }
+    .board-cols { grid-template-columns: 1fr; }
+    .bcol + .bcol { border-left: none; border-top: 1px solid var(--line2); }
+  }
+
+  /* ---------- Hesap bağlama ekranı ---------- */
+  .board.connect { max-width: 520px; }
+  .conn-body { padding: 20px 24px 24px; }
+  .conn-section { margin-bottom: 20px; }
+  .cs-h { font-size: 11px; font-weight: 800; letter-spacing: .5px; color: var(--ink3); margin-bottom: 10px; }
+  .conn-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 13px; margin-bottom: 8px; }
+  .ravatar.sm { width: 40px; height: 40px; border-radius: 12px; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 14px; flex: 0 0 auto; }
+  .conn-row .cm { min-width: 0; flex: 1; }
+  .conn-row .cn { font-weight: 650; font-size: 14px; }
+  .conn-row .ch { font-size: 12px; color: var(--ink3); }
+  .conn-tag { font-size: 11.5px; font-weight: 700; color: #0A7A54; background: var(--emerald-bg); padding: 4px 10px; border-radius: 999px; border: 1px solid #C4EAD8; }
+  .conn-add { border: 1px dashed var(--line); border-radius: 16px; padding: 18px; background: var(--panel); }
+  .ig-badge {
+    display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13.5px; color: var(--ink);
+    background: linear-gradient(135deg, #FCE8D8, #F7DCE9); padding: 8px 14px; border-radius: 11px; margin-bottom: 16px;
+  }
+  .ig-badge svg { width: 18px; height: 18px; color: #C6395A; }
+  .cadd-lbl { display: block; font-size: 12px; font-weight: 600; color: var(--ink2); margin-bottom: 6px; }
+  .cadd-row { display: flex; align-items: center; gap: 0; position: relative; }
+  .cadd-row .at { position: absolute; left: 13px; color: var(--ink3); font-weight: 600; pointer-events: none; }
+  .cadd-row input {
+    flex: 1; padding: 11px 14px 11px 28px; border-radius: 11px 0 0 11px; border: 1px solid var(--line);
+    border-right: none; background: var(--paper); outline: none;
+  }
+  .cadd-row input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-050); z-index: 1; }
+  .cadd-btn {
+    padding: 11px 20px; border-radius: 0 11px 11px 0; border: none;
+    background: linear-gradient(135deg, #12A0AB, var(--brand-d)); color: #fff; font-weight: 700; flex: 0 0 auto;
+  }
+  .cadd-btn:hover { filter: brightness(1.05); }
+  .cadd-note { display: flex; gap: 8px; margin-top: 14px; font-size: 12px; color: var(--ink2); line-height: 1.45; }
+  .cadd-note svg { width: 15px; height: 15px; flex: 0 0 auto; margin-top: 1px; color: var(--brand); }
+
+  /* ============ HAREKET & PARLATMA ============ */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideDownTop { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
+  @keyframes railIn { from { opacity: 0; transform: translateX(-18px) scale(.75); } to { opacity: 1; transform: none; } }
+  @keyframes bubbleIn { from { opacity: 0; transform: translateY(10px) scale(.95); } to { opacity: 1; transform: none; } }
+  @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+  @keyframes shimmer { 0% { background-position: -450px 0; } 100% { background-position: 450px 0; } }
+  @keyframes glow { 0%,100% { box-shadow: 0 4px 12px rgba(12,138,148,.35); } 50% { box-shadow: 0 7px 24px rgba(12,138,148,.55); } }
+  @keyframes badgePop { 0% { transform: scale(0); } 70% { transform: scale(1.28); } 100% { transform: scale(1); } }
+  @keyframes overlayFade { from { opacity: 0; } to { opacity: 1; } }
+
+  /* Açılış koreografisi (yalnızca ilk yüklemede) */
+  body.booting .topbar { animation: slideDownTop .55s var(--ease-out) both; }
+  body.booting .rail-item { animation: railIn .5s var(--ease-out) both; }
+  body.booting .list-head { animation: fadeUp .5s var(--ease-out) both; animation-delay: .12s; }
+  body.booting .convo { animation: fadeUp .5s var(--ease-out) both; }
+  body.booting .pane.chat { animation: fadeIn .8s ease both; animation-delay: .18s; }
+  body.booting .pane.contact { animation: fadeUp .6s var(--ease-out) both; animation-delay: .28s; }
+  body.booting .stat { animation: fadeUp .5s var(--ease-out) both; }
+  body.booting .stat:nth-child(2) { animation-delay: .06s; }
+  body.booting .stat:nth-child(3) { animation-delay: .12s; }
+
+  /* Seçim / görünüm girişi */
+  .anim-in { animation: fadeUp .4s var(--ease-out) both; }
+  .thread.anim-in { animation: fadeIn .5s ease both; }
+  .msg-row.msg-new .bubble { animation: bubbleIn .42s var(--ease-spring) both; }
+
+  /* Logo yumuşak parıltı */
+  .logo { animation: glow 5s ease-in-out infinite; }
+
+  /* Hover mikro-etkileşimleri */
+  .convo { transition: background .14s, transform .14s var(--ease-out); }
+  .convo:hover { transform: translateX(3px); }
+  .convo-scroll { overflow-x: hidden; }
+  .qbtn, .send, .cta-hot, .chip, .dq, .sbtn, .board-btn, .bell, .cadd-btn { transition: transform .12s var(--ease-out), background .14s, box-shadow .16s, border-color .14s, filter .14s; }
+  .qbtn:active, .send:active, .cta-hot:active, .dq:active, .sbtn:active, .board-btn:active { transform: scale(.96); }
+  .send:hover, .cta-hot:hover { transform: translateY(-1px); }
+  .stat { transition: transform .16s var(--ease-out), box-shadow .16s; }
+  .stat:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .btile { transition: transform .18s var(--ease-out), box-shadow .18s; }
+  .btile:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .brow, .pop-item { transition: background .12s, transform .12s var(--ease-out); }
+  .brow:hover { transform: translateX(3px); }
+  .bcol-list { overflow-x: hidden; }
+  .rail-item { transition: border-radius .16s var(--ease-out), background .16s, transform .12s var(--ease-out); }
+  .rail-item:active { transform: scale(.9); }
+  .rail-badge { animation: badgePop .4s var(--ease-spring) both; }
+  .conn-row { transition: transform .14s var(--ease-out), box-shadow .16s; }
+  .conn-row:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .overlay { animation: overlayFade .18s ease both; }
+  .sum-card { transition: transform .14s var(--ease-out), box-shadow .16s, border-color .14s; }
+  .sum-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--brand-100); }
+  .sum-card:active { transform: scale(.97); }
+  .sum-card.no .sc-dot { animation: dotPulse 1.4s ease-in-out infinite; }
+  .sum-detail { transition: background .14s, border-color .14s, transform .12s; }
+  .sum-detail:active { transform: scale(.96); }
+  body.booting .summary { animation: fadeUp .5s var(--ease-out) both; animation-delay: .1s; }
+
+  /* Dokulu sohbet zemini */
+  .thread {
+    background-color: #F4F8F8;
+    background-image: radial-gradient(rgba(12,138,148,.06) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  /* Yüzen boş-durum ikonu */
+  .chat-empty .ic { animation: floaty 3.6s ease-in-out infinite; }
+
+  /* İskelet yükleme (hesap geçişinde) */
+  .skel-row { display: flex; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line2); }
+  .skel-av { width: 44px; height: 44px; border-radius: 50%; flex: 0 0 auto; }
+  .skel-lines { flex: 1; display: flex; flex-direction: column; gap: 9px; padding-top: 6px; }
+  .skel-line { height: 10px; border-radius: 6px; }
+  .skel-line.s { width: 52%; }
+  .skel-line.m { width: 78%; }
+  .skel-av, .skel-line {
+    background: linear-gradient(90deg, #EDF3F2 25%, #E0EBEA 37%, #EDF3F2 63%);
+    background-size: 900px 100%; animation: shimmer 1.25s infinite linear;
+  }
+
+  /* ============ OKUNURLUK: daha büyük yazı + nefes alanı ============ */
+  body { font-size: 15px; }
+  .convo { padding: 15px 16px; }
+  .convo-name { font-size: 15.5px; }
+  .convo-preview { font-size: 14px; }
+  .convo-time { font-size: 12px; }
+  .convo-tags { gap: 6px; margin-top: 8px; }
+  .tag { font-size: 12px; padding: 3px 9px; }
+  .acct-chip { font-size: 11.5px; padding: 3px 8px; }
+  .list-head { padding: 16px 16px 13px; }
+  .list-hint { font-size: 12.5px; line-height: 1.5; }
+  .search input { font-size: 15px; padding: 12px 14px 12px 38px; }
+  .chip { font-size: 13px; padding: 7px 12px; }
+  .summary { padding: 12px 22px; gap: 12px; }
+  .sum-title { font-size: 12px; }
+  .sum-card .sc-l { font-size: 13px; }
+  .sum-card { padding: 9px 17px 9px 12px; }
+  .sum-excel, .sum-detail { font-size: 13px; }
+  .chat-head { padding: 14px 18px; }
+  .chat-head .meta .n { font-size: 17px; }
+  .chat-head .meta .h { font-size: 13px; }
+  .bubble { font-size: 15px; }
+  .bubble .t { font-size: 11.5px; }
+  .quickbar { padding: 11px 18px; }
+  .quickbar .lbl { font-size: 12px; }
+  .qbtn { font-size: 13.5px; padding: 7px 12px; }
+  .composer textarea { font-size: 15px; }
+  .c-head .n { font-size: 18px; }
+  .c-head .src { font-size: 13px; }
+  .cta-hot { font-size: 14.5px; padding: 13px; }
+  .section > .h { font-size: 12px; }
+  .field label { font-size: 12.5px; }
+  .field input, .field select, .field textarea, .date-input { font-size: 14.5px; padding: 10px 12px; }
+  .sbtn { font-size: 13px; padding: 9px 10px; }
+  .dq { font-size: 13px; padding: 6px 12px; }
+  .due-note { font-size: 13px; }
+  .board-head .bsub { font-size: 13.5px; }
+  .btile .bl { font-size: 14px; }
+  .btile .bd { font-size: 12.5px; }
+  .bcol-head { font-size: 15px; }
+  .brow .bn { font-size: 15px; }
+  .brow .bi { font-size: 13px; }
+  .brow .bph { font-size: 13px; }
+  .pop-item .pi-name { font-size: 14.5px; }
+  .pop-item .pi-sub, .pop-item .pi-when { font-size: 12.5px; }
+  .rail .tip { font-size: 13px; }
+  .cs-h { font-size: 12px; }
+  .conn-row .cn { font-size: 15px; }
+  .conn-row .ch { font-size: 13px; }
+  .cadd-lbl { font-size: 13px; }
+  .cadd-note { font-size: 13px; }
+
+  /* yumuşak tema geçişi */
+  body, .topbar, .summary, .pane, .rail, .sum-card, .tag, .bubble, .field input, .field select, .field textarea {
+    transition: background-color .3s ease, border-color .3s ease, color .3s ease;
+  }
+
+  /* ============ GECE MODU ============ */
+  [data-theme="dark"] {
+    --ground: #0A1417;
+    --paper: #16272C;
+    --panel: #11201F;
+    --ink: #E9F1F0;
+    --ink2: #A2B6B7;
+    --ink3: #677D82;
+    --line: #26393E;
+    --line2: #1C2A2F;
+    --brand: #26B3BD;
+    --brand-d: #5CCDD4;
+    --brand-050: #143439;
+    --brand-100: #1F4149;
+    --emerald: #2FD196;
+    --emerald-bg: #12332A;
+    --amber: #E4B657;
+    --amber-bg: #2F2713;
+    --rose: #F26B7D;
+    --rose-bg: #3A1F25;
+    --unread: #4C93FF;
+    --unread-bg: #14243F;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+    --shadow-md: 0 6px 20px rgba(0,0,0,.5);
+    --shadow-lg: 0 16px 44px rgba(0,0,0,.6);
+  }
+  [data-theme="dark"] .thread { background-color: #0E1C21; background-image: radial-gradient(rgba(92,205,212,.07) 1px, transparent 1px); }
+  [data-theme="dark"] .skel-av, [data-theme="dark"] .skel-line { background: linear-gradient(90deg,#182A2F 25%,#213538 37%,#182A2F 63%); background-size: 900px 100%; }
+  [data-theme="dark"] .convo:hover,
+  [data-theme="dark"] .brow:hover,
+  [data-theme="dark"] .pop-item:hover,
+  [data-theme="dark"] .sbtn:hover,
+  [data-theme="dark"] .board-close:hover,
+  [data-theme="dark"] .bell:hover,
+  [data-theme="dark"] .ctx button:hover { background: #1D2F34; }
+  [data-theme="dark"] .qbtn.ghost, [data-theme="dark"] .ctx button .mi { background: #1E2F34; }
+  [data-theme="dark"] .tag.st-yeni { background: #1E2F34; color: #AABDBE; border-color: #2A3B40; }
+  [data-theme="dark"] .tag.st-kayip { background: #17262A; color: #6E8388; border-color: #24363B; }
+  [data-theme="dark"] .tag.st-bilgiBekleniyor, [data-theme="dark"] .tag.due { border-color: #4A3E1A; }
+  [data-theme="dark"] .tag.st-cevapVermedi, [data-theme="dark"] .tag.warn { border-color: #4E2830; }
+  [data-theme="dark"] .tag.st-cevapVerdi { border-color: #1E4A3B; }
+  [data-theme="dark"] .tag.st-cevapVerdi,
+  [data-theme="dark"] .live-pill,
+  [data-theme="dark"] .conn-tag,
+  [data-theme="dark"] .bcol.ok .bcol-head,
+  [data-theme="dark"] .bcol.ok .cc,
+  [data-theme="dark"] .pop-empty,
+  [data-theme="dark"] .btile.ok .big,
+  [data-theme="dark"] .btile.ok .bl,
+  [data-theme="dark"] .sum-excel,
+  [data-theme="dark"] .board-export { color: #4FE0A6; }
+  [data-theme="dark"] .live-pill,
+  [data-theme="dark"] .conn-tag,
+  [data-theme="dark"] .sum-excel,
+  [data-theme="dark"] .board-export,
+  [data-theme="dark"] .btile.ok { border-color: #1E4A3B; }
+  [data-theme="dark"] .sum-excel:hover, [data-theme="dark"] .board-export:hover { background: #184A3B; }
+  [data-theme="dark"] .acct-chip { background: #1E2F34; color: #A2B6B7; border-color: #2A3B40; }
+  [data-theme="dark"] .field input.missing { background: #331E22; border-color: #5A2E36; }
+  [data-theme="dark"] .ig-badge { background: linear-gradient(135deg,#2A2320,#2A2027); color: #E9F1F0; }
+  [data-theme="dark"] .ig-badge svg { color: #F26B7D; }
+  [data-theme="dark"] .msg-row.out .bubble,
+  [data-theme="dark"] .send,
+  [data-theme="dark"] .cadd-btn { background: linear-gradient(135deg,#0F8A93,#0B6870); }
+  [data-theme="dark"] .toast { background: #0A1A1E; color: #E9F1F0; border: 1px solid var(--line); }
+  [data-theme="dark"] .overlay { background: rgba(0,0,0,.62); }
+  [data-theme="dark"] .logo { box-shadow: 0 4px 14px rgba(0,0,0,.5); }
+
+  /* ============ MOBİL ============ */
+  /* Mobil-özel gezinme düğmeleri (varsayılan gizli, mobilde görünür) */
+  .chat-back, .contact-btn {
+    display: none; width: 40px; height: 40px; border-radius: 11px; border: 1px solid var(--line);
+    background: var(--paper); color: var(--ink2); align-items: center; justify-content: center; flex: 0 0 auto;
+  }
+  .chat-back svg, .contact-btn svg { width: 21px; height: 21px; }
+  .chat-back:active, .contact-btn:active { background: var(--brand-050); }
+  .contact-close {
+    display: none; width: 100%; padding: 12px; margin-bottom: 14px; border-radius: 11px;
+    border: 1px solid var(--line); background: var(--panel); color: var(--ink2); font-weight: 700; font-size: 14px;
+    align-items: center; justify-content: center; gap: 8px;
+  }
+
+  @media (max-width: 760px) {
+    .topbar { padding: 10px 14px; gap: 10px; }
+    .wordmark .name { font-size: 17px; }
+    .wordmark .sub { font-size: 10.5px; }
+    .demo-flag { display: none; }
+    .live-pill { padding: 7px 12px; }
+
+    .summary { padding: 9px 14px; gap: 9px; }
+    .sum-title, .sum-spacer, .sum-div { display: none; }
+    .sum-card { padding: 8px 14px 8px 10px; }
+    .sum-card .sc-n { font-size: 20px; }
+    .dcard { padding: 8px 13px; gap: 9px; }
+    .dcard .dn { font-size: 21px; }
+    .dcard .dic { width: 30px; height: 30px; }
+    .app-footer { font-size: 11.5px; padding: 6px; }
+
+    .body { display: flex; flex-direction: column; }
+    .rail {
+      flex-direction: row; width: 100%; height: auto; padding: 9px 12px; gap: 10px;
+      border-right: none; border-bottom: 1px solid var(--line); overflow-x: auto; overflow-y: hidden;
+    }
+    .rail-sep { width: 1px; height: 30px; margin: 0 2px; }
+    .rail-item { width: 44px; height: 44px; }
+    .rail-item.active::before { left: 50%; top: auto; bottom: -9px; transform: translateX(-50%); width: 24px; height: 3px; border-radius: 4px 4px 0 0; }
+    .rail .tip { display: none; }
+
+    .pane.list { flex: 1; border-right: none; min-height: 0; }
+    .pane.chat { display: none; min-height: 0; }
+    body.show-chat .pane.list { display: none; }
+    body.show-chat .pane.chat { display: flex; flex: 1; }
+
+    .pane.contact { display: none; }
+    body.show-contact .pane.contact {
+      display: flex; position: fixed; inset: 0; z-index: 70; width: auto; border-left: none;
+      animation: fadeUp .26s var(--ease-out) both;
+    }
+
+    .chat-back, .contact-btn { display: inline-flex !important; }
+    .contact-close { display: flex !important; }
+
+    .bubble { max-width: 82%; }
+    .quickbar { gap: 6px; }
+    .overlay { padding: 16px 12px; }
+    .board-tiles { grid-template-columns: 1fr; }
+    .board-cols { grid-template-columns: 1fr; }
+    .bcol + .bcol { border-left: none; border-top: 1px solid var(--line2); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  @media (max-width: 1080px) {
+    .body { grid-template-columns: 68px 300px 1fr; }
+    .pane.contact { display: none; }
+    .stats { display: none; }
+  }
+</style>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand-mark">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="wordmark">
+        <span class="name">LeadDm</span>
+        <span class="sub" id="acctLabel">Instagram DM Hasta Takip</span>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+    <span class="demo-flag" title="Bu bir demodur — veriler örnektir">● DEMO</span>
+    <span class="live-pill" title="Instagram'a bağlı — DM'ler otomatik geliyor"><span class="live-dot"></span>Canlı</span>
+    <button class="bell" id="themeBtn" title="Gece / Gündüz modu" aria-label="Tema değiştir"></button>
+    <button class="bell" id="bell" title="Bugünün hatırlatmaları" aria-label="Hatırlatmalar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="badge" id="bellBadge">0</span>
+    </button>
+  </header>
+
+  <div class="summary" id="summary" aria-label="Havuz özeti"></div>
+
+  <div class="body">
+    <nav class="rail" id="rail" aria-label="Bağlı hesaplar"></nav>
+
+    <aside class="pane list">
+      <div class="list-head">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg>
+          <input id="search" type="text" placeholder="Sohbet, isim, telefon ara…" autocomplete="off" aria-label="Sohbet ara">
+        </div>
+        <div class="filters" id="filters"></div>
+        <div class="list-legend"><span><i class="lg-dot new"></i>Yeni</span><span><i class="lg-dot me"></i>Yanıt bekliyor</span><span><i class="lg-dot them"></i>Yanıtladınız</span></div>
+      </div>
+      <div class="convo-scroll" id="convoList"></div>
+    </aside>
+
+    <main class="pane chat" id="chatPane"></main>
+
+    <aside class="pane contact" id="contactPane"></aside>
+  </div>
+
+  <footer class="app-footer">LeadDm · <b>yucelsinmedia</b> · <span style="opacity:.6">v2-canli</span></footer>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Yardımcılar ----------
+  var DAY = 86400000;
+  var REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  function countUp(el, to, prefix, dur) {
+    prefix = prefix || "";
+    if (REDUCED) { el.textContent = prefix + to; return; }
+    var t0 = null;
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3);
+      el.textContent = prefix + Math.round(to * e);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function renderSkeleton() {
+    var el = document.getElementById("convoList");
+    var rows = "";
+    for (var i = 0; i < 6; i++) rows += '<div class="skel-row"><div class="skel-av"></div><div class="skel-lines"><div class="skel-line m"></div><div class="skel-line s"></div></div></div>';
+    el.innerHTML = rows;
+  }
+  function booting(){ return document.body.classList.contains("booting"); }
+
+  // ---------- Excel dışa aktarma (tek tık) ----------
+  function iletisimDurum(l){
+    var p = STATUS[l.durum].pool;
+    return p==="sicak" ? "İletişim Alındı" : (p==="kayip" ? "Kaybedildi" : "İletişim Alınamadı");
+  }
+  function exportExcel(list, label){
+    var headers = ["Hesap","Ad","Soyad","Telefon","Instagram","İlgilendiği İşlem","Kaynak","Durum","İletişim Durumu","Sonraki Takip","Not","Son Mesaj"];
+    var rows = list.map(function(l){
+      var a = acctById(l.accountId);
+      var cells = [
+        a ? ("@"+a.handle) : "",
+        l.ad, l.soyad, l.telefon, l.username ? ("@"+l.username) : "",
+        l.islem, l.kaynak, STATUS[l.durum].label, iletisimDurum(l),
+        l.takip || "", l.not, l.lastText
+      ];
+      return "<tr>"+cells.map(function(v){ return '<td>'+esc(v==null?"":String(v))+'</td>'; }).join("")+"</tr>";
+    }).join("");
+    var thead = '<tr>'+headers.map(function(h){ return '<th style="background:#0C8A94;color:#fff;padding:6px 10px;text-align:left">'+esc(h)+'</th>'; }).join("")+'</tr>';
+    var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">'+
+      '<head><meta charset="utf-8"><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8"></head>'+
+      '<body><table border="1" cellspacing="0">'+thead+rows+'</table></body></html>';
+    try {
+      var blob = new Blob(["﻿"+html], { type: "application/vnd.ms-excel;charset=utf-8" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "dentakip-"+(label||"tum")+"-"+new Date().toISOString().slice(0,10)+".xls";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+      toast(list.length+" kayıt Excel'e aktarıldı ⬇");
+    } catch (err) {
+      toast("Dışa aktarma engellendi");
+    }
+  }
+  function exportLabel(){ return state.account==="all" ? "tum-hesaplar" : acctById(state.account).handle; }
+  function todayMid() { var d = new Date(); d.setHours(0,0,0,0); return d; }
+  function pad(n){ return String(n).length<2 ? "0"+n : ""+n; }
+  function isoDay(offset) { var d = new Date(todayMid().getTime() + offset*DAY); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+  function nowMinus(mins) { return new Date(Date.now() - mins*60000).toISOString(); }
+
+  var AV_COLORS = [
+    ["#14A6B0","#0A6D75"], ["#F0708A","#C6395A"], ["#7C6BF0","#4B37C4"],
+    ["#F0994B","#C66A1F"], ["#3BB2A0","#1E7E72"], ["#5AA6F0","#2B6FC4"],
+    ["#E0637A","#B23B54"], ["#57B98A","#2E8E62"]
+  ];
+  function avColor(seed) { var s=0; for (var i=0;i<seed.length;i++) s+=seed.charCodeAt(i); return AV_COLORS[s % AV_COLORS.length]; }
+  function initials(l) {
+    var a = (l.ad||"").trim(), b=(l.soyad||"").trim();
+    var r = ((a[0]||"") + (b[0]||"")).toUpperCase();
+    return r || (l.username||"?").slice(0,2).toUpperCase();
+  }
+  function fullName(l) {
+    var n = ((l.ad||"")+" "+(l.soyad||"")).trim();
+    return n || (l.username ? "@"+l.username : "İsimsiz");
+  }
+  function esc(s) { return (s==null?"":String(s)).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+  function relTime(iso) {
+    if (!iso) return "";
+    var diff = Math.round((Date.now() - new Date(iso).getTime())/60000);
+    if (diff < 1) return "az önce";
+    if (diff < 60) return diff+" dk";
+    var h = Math.round(diff/60); if (h < 24) return h+" saat";
+    var g = Math.round(h/24); if (g < 7) return g+" gün";
+    return Math.round(g/7)+" hf";
+  }
+  function fmtDate(iso) {
+    if (!iso) return "—";
+    var d = new Date(iso.length<=10 ? iso+"T00:00:00" : iso);
+    return d.toLocaleDateString("tr-TR", {day:"2-digit", month:"short"});
+  }
+  function fmtTime(iso) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    return d.toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"}) + " · " + fmtDate(iso);
+  }
+  function daysTo(iso) {
+    if (!iso) return null;
+    return Math.round((new Date(iso+"T00:00:00") - todayMid())/DAY);
+  }
+  function followup(l) {
+    if (!l.takip) return {key:"yok"};
+    var d = daysTo(l.takip);
+    if (d < 0) return {key:"overdue", label:Math.abs(d)+" gün gecikti"};
+    if (d === 0) return {key:"today", label:"Bugün"};
+    if (d <= 2) return {key:"soon", label:d+" gün sonra"};
+    return {key:"future", label:d+" gün sonra"};
+  }
+
+  // ---------- Durum tanımları ----------
+  var STATUS = {
+    yeni:            {label:"Yeni Mesaj",        dot:"#90A2A6", pool:"takip"},
+    bilgiBekleniyor: {label:"Bilgi Bekleniyor",  dot:"#B4820A", pool:"takip"},
+    cevapVermedi:    {label:"Cevap Vermedi",     dot:"#E0475A", pool:"takip"},
+    cevapVerdi:      {label:"Cevap Verdi",        dot:"#0E9F6E", pool:"sicak"},
+    randevu:         {label:"Randevu Aldı",       dot:"#0C8A94", pool:"sicak"},
+    kayip:           {label:"Kaybedildi",         dot:"#B8C4C4", pool:"kayip"}
+  };
+  var STATUS_ORDER = ["yeni","bilgiBekleniyor","cevapVermedi","cevapVerdi","randevu","kayip"];
+
+  // Konuşmada "top kimde": son mesajın yönü + okunma durumu
+  // turn 'me' = sana yazdı, cevap sende | turn 'them' = sen yazdın, onlardan bekleniyor
+  function replyState(l) {
+    var m = l.messages || [];
+    if (m.length) {
+      var last = m[m.length-1];
+      return last.from === "in" ? { turn: "me", unread: !l.read } : { turn: "them", unread: false };
+    }
+    if (l.lastDir) return l.lastDir === "in" ? { turn: "me", unread: !l.read } : { turn: "them", unread: false };
+    return { turn: "me", unread: !l.read };
+  }
+
+  function bilgiEksik(l) { return !l.telefon || !l.ad; }
+  function needsAttention(l) {
+    if (l.durum==="cevapVerdi"||l.durum==="randevu"||l.durum==="kayip") return false;
+    var f = followup(l);
+    if (f.key==="overdue"||f.key==="today") return true;
+    if (l.durum==="cevapVermedi") return true;
+    return bilgiEksik(l);
+  }
+
+  // ---------- Ekip & etiketler ----------
+  var TEMSILCILER = [
+    { id:"t1", ad:"Dr. Elif", col:["#14A6B0","#0A6D75"] },
+    { id:"t2", ad:"Dr. Kaan", col:["#7C6BF0","#4B37C4"] },
+    { id:"t3", ad:"Resepsiyon", col:["#F0994B","#C66A1F"] }
+  ];
+  function temById(id){ return TEMSILCILER.filter(function(t){return t.id===id;})[0]; }
+  var TAG_SUGGEST = ["VIP","Şehir dışı","Sigortalı","Acil","Tekrar hasta","Fiyat hassas"];
+
+  // ---------- Bağlı hesaplar ----------
+  var accounts = [
+    { id:"a1", handle:"gulusdisklinik",  name:"Gülüş Diş Kliniği",       col:["#14A6B0","#0A6D75"] },
+    { id:"a2", handle:"gulus.ortodonti", name:"Gülüş Ortodonti · Şube",  col:["#7C6BF0","#4B37C4"] }
+  ];
+
+  // ---------- Demo verisi ----------
+  var leads = [
+    { id:"c1", username:"elifnaz.k", ad:"", soyad:"", telefon:"", islem:"İmplant", kaynak:"Instagram DM",
+      durum:"yeni", takip:isoDay(0), not:"",
+      messages:[ {from:"in", text:"Merhaba, tek diş implant fiyatınız ne kadar acaba? 🦷", time:nowMinus(35)} ] },
+
+    { id:"c2", username:"gulcan.demir", ad:"Gülcan", soyad:"", telefon:"", islem:"Ortodonti (Şeffaf Plak)", kaynak:"Hikaye Yanıtı",
+      durum:"bilgiBekleniyor", takip:isoDay(0), not:"Şeffaf plakla ilgileniyor.",
+      messages:[
+        {from:"in", text:"Şeffaf plak tedavisi ne kadar sürüyor?", time:nowMinus(320)},
+        {from:"out", text:"Merhaba Gülcan Hanım 🙂 Ortalama 8–14 ay sürüyor. Size net bilgi ve muayene planı için ad-soyad ve telefon numaranızı paylaşır mısınız?", time:nowMinus(300)}
+      ] },
+
+    { id:"c3", username:"mehmet_kaya34", ad:"Mehmet", soyad:"Kaya", telefon:"0532 118 44 77", islem:"Diş Beyazlatma", kaynak:"Instagram DM",
+      durum:"cevapVermedi", takip:isoDay(-2), not:"Fiyat verildi, dönüş sağlanamadı. Tekrar aranacak.",
+      messages:[
+        {from:"in", text:"Diş beyazlatma yaptırmak istiyorum", time:nowMinus(60*24*5)},
+        {from:"out", text:"Tabii! Ofis tipi beyazlatma seansımız mevcut. Sizi arayıp detay verelim, telefon numaranızı alabilir miyim?", time:nowMinus(60*24*5-25)},
+        {from:"in", text:"0532 118 44 77", time:nowMinus(60*24*5-40)},
+        {from:"out", text:"Teşekkürler Mehmet Bey, en kısa sürede sizi arayacağız 🙏", time:nowMinus(60*24*4)}
+      ] },
+
+    { id:"c4", username:"ayse.ylmz", ad:"Ayşe", soyad:"Yılmaz", telefon:"0505 233 90 12", islem:"İmplant", kaynak:"Instagram DM",
+      durum:"cevapVerdi", takip:isoDay(1), not:"İmplant için ciddi ilgili, fiyat uygun bulundu.",
+      messages:[
+        {from:"in", text:"İmplant için randevu almak istiyorum, bilgi alabilir miyim?", time:nowMinus(60*24*2)},
+        {from:"out", text:"Merhaba Ayşe Hanım! Memnuniyetle. Ad-soyad ve telefonunuzu alabilir miyim?", time:nowMinus(60*24*2-15)},
+        {from:"in", text:"Ayşe Yılmaz — 0505 233 90 12", time:nowMinus(60*24*2-22)},
+        {from:"out", text:"Harika 🙌 Yarın sizi arayıp uygun muayene gününü belirleyelim.", time:nowMinus(60*24*1-30)},
+        {from:"in", text:"Çok teşekkürler, bekliyorum 😊", time:nowMinus(60*24*1-20)}
+      ] },
+
+    { id:"c5", username:"zeynep.d", ad:"Zeynep", soyad:"Demir", telefon:"0542 771 20 88", islem:"Zirkonyum Kaplama", kaynak:"Instagram DM",
+      durum:"randevu", takip:"", not:"Cuma 14:00 randevu oluşturuldu.",
+      messages:[
+        {from:"in", text:"Zirkonyum kaplama için randevu alabilir miyim?", time:nowMinus(60*24*6)},
+        {from:"out", text:"Tabii! Cuma 14:00 sizin için uygun mu?", time:nowMinus(60*24*6-18)},
+        {from:"in", text:"Evet uygun, teşekkür ederim 🙏", time:nowMinus(60*24*6-25)}
+      ] },
+
+    { id:"c6", username:"burak.sahin", ad:"", soyad:"", telefon:"", islem:"Kanal Tedavisi", kaynak:"Instagram DM",
+      durum:"yeni", takip:isoDay(0), not:"",
+      messages:[ {from:"in", text:"Diş ağrım var, kanal tedavisi gerekiyor mu bakabilir misiniz?", time:nowMinus(95)} ] },
+
+    { id:"c7", username:"selin.ates", ad:"Selin", soyad:"Ateş", telefon:"0533 640 15 26", islem:"Gülüş Tasarımı", kaynak:"Hikaye Yanıtı",
+      durum:"cevapVerdi", takip:isoDay(3), not:"Gülüş tasarımı için fotoğraf gönderdi.",
+      messages:[
+        {from:"in", text:"Gülüş tasarımı yaptırmak istiyorum ✨", time:nowMinus(60*24*3)},
+        {from:"out", text:"Merhaba Selin Hanım! Dişlerinizin mevcut fotoğrafını paylaşabilir misiniz?", time:nowMinus(60*24*3-20)},
+        {from:"in", text:"[fotoğraf]", time:nowMinus(60*24*3-30)},
+        {from:"out", text:"Teşekkürler! Ön değerlendirme için uygun görünüyor. Telefonunuzu alabilir miyim?", time:nowMinus(60*24*3-35)},
+        {from:"in", text:"0533 640 15 26", time:nowMinus(60*24*3-40)}
+      ] },
+
+    { id:"c8", username:"ahmet.dogan", ad:"Ahmet", soyad:"Doğan", telefon:"0544 502 61 39", islem:"Çekim / Cerrahi", kaynak:"Instagram DM",
+      durum:"cevapVermedi", takip:isoDay(-4), not:"20 yaş dişi ağrısı, dönüş yok.",
+      messages:[
+        {from:"in", text:"20 yaş dişimi çektirmem gerekiyor, fiyat bilgisi alabilir miyim?", time:nowMinus(60*24*7)},
+        {from:"out", text:"Merhaba Ahmet Bey, röntgen sonrası net fiyat veriyoruz. Sizi arayalım mı?", time:nowMinus(60*24*7-20)},
+        {from:"in", text:"0544 502 61 39 tamamdır", time:nowMinus(60*24*7-30)}
+      ] }
+  ];
+  leads.forEach(function(l){ l.accountId = "a1"; });
+
+  // Ortodonti şubesi (a2) sohbetleri
+  leads.push(
+    { id:"c9", accountId:"a2", username:"deniz.k", ad:"", soyad:"", telefon:"", islem:"Ortodonti (Tel)", kaynak:"Instagram DM",
+      durum:"yeni", takip:isoDay(0), not:"",
+      messages:[ {from:"in", text:"Merhaba, tel tedavisi için yaş sınırı var mı?", time:nowMinus(50)} ] },
+    { id:"c10", accountId:"a2", username:"fatma.sen", ad:"Fatma", soyad:"Şen", telefon:"0536 214 77 90", islem:"Ortodonti (Şeffaf Plak)", kaynak:"Instagram DM",
+      durum:"cevapVerdi", takip:isoDay(2), not:"Kızı için şeffaf plak istiyor.",
+      messages:[
+        {from:"in", text:"14 yaşındaki kızım için şeffaf plak düşünüyoruz", time:nowMinus(60*24*2)},
+        {from:"out", text:"Merhaba Fatma Hanım! Muayene için ad-soyad ve telefonunuzu alabilir miyim?", time:nowMinus(60*24*2-20)},
+        {from:"in", text:"Fatma Şen 0536 214 77 90", time:nowMinus(60*24*2-30)}
+      ] },
+    { id:"c11", accountId:"a2", username:"can.oz", ad:"Can", soyad:"Öz", telefon:"0530 908 41 22", islem:"Ortodonti (Tel)", kaynak:"Hikaye Yanıtı",
+      durum:"cevapVermedi", takip:isoDay(-3), not:"Fiyat verildi, dönüş yok.",
+      messages:[
+        {from:"in", text:"Diş teli fiyatı nedir?", time:nowMinus(60*24*4)},
+        {from:"out", text:"Muayene sonrası netleşiyor. Sizi arayalım mı? Numaranızı paylaşır mısınız?", time:nowMinus(60*24*4-20)},
+        {from:"in", text:"0530 908 41 22", time:nowMinus(60*24*4-30)}
+      ] }
+  );
+
+  leads.forEach(function(l){ var m=l.messages[l.messages.length-1]; l.lastText=m?m.text:""; l.lastTime=m?m.time:null; });
+
+  // Aktarma tarihleri (iletişim alınan = bilgi aktarılan). Gün farkları: bugün / bu hafta / bu ay
+  var _akt = { c4: 0, c10: 1, c7: 5, c5: 12 };
+  leads.forEach(function(l){
+    if (_akt[l.id] != null) l.aktarma = new Date(Date.now() - _akt[l.id]*86400000).toISOString();
+  });
+
+  // Her yeni DM/lead için benzersiz Kayıt No + WhatsApp durumu + fiyat sorusu tespiti
+  var _lidN = 1001;
+  function newLid(){ return "LD-" + (_lidN++); }
+  var _unread = { c1:1, c6:1, c8:1, c9:1 }; // demo: bazıları okunmamış (yeni)
+  var _tags = { c4:["VIP"], c7:["Şehir dışı"], c3:["Fiyat hassas"], c5:["Tekrar hasta"], c10:["Sigortalı"] };
+  var _tem = { c4:"t1", c5:"t1", c7:"t2", c10:"t2", c3:"t3" };
+  leads.forEach(function(l){
+    l.lid = newLid();
+    if (l.waSent == null) l.waSent = false;
+    l.read = !_unread[l.id];
+    l.olusturma = l.olusturma || (l.messages && l.messages[0] ? l.messages[0].time : new Date().toISOString());
+    l.fiyatSordu = (l.messages||[]).some(function(m){ return m.from==="in" && /fiyat|ne kadar|ücret|kaç para/i.test(m.text); });
+    l.tags = _tags[l.id] || [];
+    l.temsilci = _tem[l.id] || null;
+    if (l.id === "c5") l.randevuTarih = new Date(todayMid().getTime() + 2*DAY + 14*3600000).toISOString();
+    l.files = l.files || [];
+  });
+
+  // ---------- Durum ----------
+  var state = { account: "all", selectedId: "c1", filter: "all", q: "", tagFilter: null };
+  var FILTERS = [["all","Tümü"],["reply","↩︎ Yanıt Bekleyen"],["sicak","✅ İletişim Alınan"],["takip","⏳ İletişim Alınamayan"],["fiyat","💬 Fiyat Soran"],["randevu","📅 Randevu"],["wp","📲 WP Gönderildi"]];
+  function filterLabel(k){ var f=FILTERS.filter(function(x){return x[0]===k;})[0]; return f?f[1]:"Tümü"; }
+
+  function acctById(id){ return accounts.filter(function(a){return a.id===id;})[0]; }
+  // Seçili hesaba göre daraltılmış sohbetler
+  function scopedLeads() {
+    if (state.account==="all") return leads;
+    return leads.filter(function(l){ return l.accountId===state.account; });
+  }
+  function acctUnread(id) {
+    return leads.filter(function(l){
+      if (l.accountId!==id) return false;
+      var f = followup(l); return (f.key==="overdue"||f.key==="today") && STATUS[l.durum].pool!=="kayip";
+    }).length;
+  }
+
+  function poolCounts() {
+    var c = {all:0, takip:0, sicak:0, randevu:0, fiyat:0, wp:0, reply:0};
+    scopedLeads().forEach(function(l){
+      if (l.waSent) { c.wp++; return; }
+      c.all++; // Tümü: WhatsApp'a gönderilenler hariç
+      var p = STATUS[l.durum].pool;
+      if (p==="takip") c.takip++;
+      if (p==="sicak") c.sicak++;
+      if (l.durum==="randevu") c.randevu++;
+      if (l.fiyatSordu) c.fiyat++;
+      if (replyState(l).turn === "me") c.reply++;
+    });
+    return c;
+  }
+  function overdueList() {
+    return scopedLeads().filter(function(l){
+      var f = followup(l); return (f.key==="overdue"||f.key==="today") && STATUS[l.durum].pool!=="kayip";
+    }).sort(function(a,b){ return (a.takip||"").localeCompare(b.takip||""); });
+  }
+  function filtered() {
+    var term = state.q.trim().toLowerCase();
+    return scopedLeads().filter(function(l){
+      if (state.tagFilter && (l.tags||[]).indexOf(state.tagFilter) < 0) return false;
+      if (state.filter === "wp") { if (!l.waSent) return false; }
+      else {
+        if (l.waSent) return false; // WhatsApp'a gönderilenler yalnızca "WP Gönderildi"de
+        var p = STATUS[l.durum].pool;
+        if (state.filter==="reply" && replyState(l).turn!=="me") return false;
+        if (state.filter==="sicak" && p!=="sicak") return false;
+        if (state.filter==="takip" && p!=="takip") return false;
+        if (state.filter==="randevu" && l.durum!=="randevu") return false;
+        if (state.filter==="fiyat" && !l.fiyatSordu) return false;
+      }
+      if (!term) return true;
+      var tem = temById(l.temsilci); var temAd = tem ? tem.ad : "";
+      var hay = [l.ad,l.soyad,l.telefon,l.username,l.islem,l.not,l.lastText,l.lid,temAd,(l.tags||[]).join(" ")].filter(Boolean).join(" ").toLowerCase();
+      return hay.indexOf(term) >= 0;
+    }).sort(function(a,b){
+      // SLA: yanıt bekleyenler (top sende) üstte; içlerinde en uzun bekleyen en üstte
+      var pa = replyState(a).turn==="me" ? 0 : 1, pb = replyState(b).turn==="me" ? 0 : 1;
+      if (pa !== pb) return pa - pb;
+      if (pa === 0) return (a.lastTime||"").localeCompare(b.lastTime||""); // en eski (en çok bekleyen) önce
+      return (b.lastTime||"").localeCompare(a.lastTime||""); // bekleyenlerde en yeni önce
+    });
+  }
+  function byId(id){ return leads.filter(function(l){return l.id===id;})[0]; }
+
+  // ---------- İkonlar ----------
+  var IC = {
+    check:'<path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>',
+    star:'<path d="M12 2l3 7 7 .5-5.5 4.5L18 21l-6-4-6 4 1.5-7L2 9.5 9 9z" stroke-linejoin="round"/>',
+    x:'<path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/>',
+    pen:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" stroke-linecap="round" stroke-linejoin="round"/>',
+    trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke-linecap="round" stroke-linejoin="round"/>',
+    archive:'<path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4" stroke-linecap="round" stroke-linejoin="round"/>'
+  };
+  function svg(inner, cls){ return '<svg class="'+(cls||"")+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+inner+'</svg>'; }
+  // Instagram rozeti (köşe)
+  var IGDOT = '<span class="ig-badge-dot"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1.4" fill="#fff" stroke="none"/></svg></span>';
+  // Varsayılan profil fotoğrafı silüeti (Instagram tarzı)
+  var PF = '<svg class="pf" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="9" r="3.7"/><path d="M5.6 19.6c0-3.7 3-5.7 6.4-5.7s6.4 2 6.4 5.7z"/></svg>';
+
+  function avatarHTML(l, cls, withDot, ig) {
+    var col = avColor(l.id);
+    var dot = "";
+    if (withDot) {
+      dot = needsAttention(l)
+        ? '<span class="status-dot dot-attn"></span>'
+        : '<span class="status-dot" style="background:'+STATUS[l.durum].dot+'"></span>';
+    }
+    return '<div class="'+(cls||"avatar")+'" style="background:linear-gradient(135deg,'+col[0]+','+col[1]+')">'+esc(initials(l))+dot+(ig?IGDOT:"")+'</div>';
+  }
+
+  // Hesap avatarı: profil fotoğrafı görünümü + Instagram rozeti
+  function acctAvatar(a, sm) {
+    return '<span class="acct-av'+(sm?" sm":"")+'">'+
+      '<span class="ravatar'+(sm?" sm":"")+'" style="background:linear-gradient(135deg,'+a.col[0]+','+a.col[1]+')">'+PF+'</span>'+
+      IGDOT+'</span>';
+  }
+
+  // WhatsApp: toplanan bilgileri sabit klinik numarasına gönder
+  var CLINIC_WA = "905055585959"; // 0505 558 59 59
+  var WA_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.14c-.24.68-1.42 1.31-1.95 1.35-.5.05-1.13.24-3.68-.77-3.1-1.22-5.08-4.4-5.24-4.6-.15-.2-1.25-1.66-1.25-3.17s.79-2.25 1.07-2.56c.28-.31.61-.38.81-.38h.58c.19 0 .44-.07.68.52l.98 2.38c.1.2.16.44.03.7-.13.26-.2.42-.39.65-.19.23-.4.5-.57.68-.19.19-.39.4-.17.78.22.38.98 1.62 2.11 2.62 1.45 1.29 2.67 1.69 3.05 1.88.38.19.6.16.82-.1.22-.26.94-1.1 1.19-1.48.25-.38.5-.31.84-.19.34.13 2.16 1.02 2.53 1.2.37.19.62.28.71.44.09.16.09.92-.15 1.6z"/></svg>';
+  function waMessage(l) {
+    // Not: WhatsApp'ta bazı cihazlar emoji glifini desteklemeyip kutu/soru işareti gösterebiliyor.
+    // Bu yüzden her cihazda çalışan basit simgeler (•, ━) + kalın (*..*) kullanıyoruz.
+    var line = "━━━━━━━━━━━━━━";
+    var out = [
+      "*LeadDm • Yeni Hasta Bilgisi*",
+      line,
+      "• *Ad Soyad:* " + fullName(l),
+      "• *Telefon:* " + (l.telefon || "—"),
+      "• *İşlem:* " + (l.islem || "—"),
+      "• *Instagram:* " + (l.username ? "@"+l.username : "—"),
+      "• *Kaynak:* " + (l.kaynak || "—"),
+      "• *Durum:* " + STATUS[l.durum].label,
+      "• *Fiyat sordu:* " + (l.fiyatSordu ? "Evet" : "Hayır")
+    ];
+    if (l.not) out.push("• *Not:* " + l.not);
+    out.push(line);
+    out.push("*Kayıt No:* " + (l.lid || "—"));
+    return out.join("\n");
+  }
+  function waHref(l) { return "https://wa.me/" + CLINIC_WA + "?text=" + encodeURIComponent(waMessage(l)); }
+
+  // Randevu tarih yardımcıları
+  function fmtDateTime(iso){ if(!iso) return "—"; var d=new Date(iso); return d.toLocaleDateString("tr-TR",{day:"2-digit",month:"long",weekday:"long"})+" · "+d.toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"}); }
+  function toLocalInput(iso){ if(!iso) return ""; var d=new Date(iso); return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes()); }
+  function waReminderHref(l){
+    var msg = "Merhaba"+(l.ad?" "+l.ad:"")+", LeadDm Diş Kliniği randevunuzu hatırlatırız:\n"+ (l.randevuTarih?fmtDateTime(l.randevuTarih):"(tarih belirlenmedi)") +"\nOnaylamak için EVET yazmanız yeterli. Görüşmek üzere!";
+    var num = (l.telefon||"").replace(/[^0-9]/g,"").replace(/^0/,"90");
+    return "https://wa.me/"+num+"?text="+encodeURIComponent(msg);
+  }
+
+  // ---------- Hazır yanıt şablonları ----------
+  var TEMPLATES = [
+    { t: "Selamlama", m: "Merhaba! LeadDm Diş Kliniği'ne yazdığınız için teşekkürler. Size nasıl yardımcı olabiliriz?" },
+    { t: "Bilgi iste", m: "Size en doğru bilgiyi verebilmemiz için ad-soyad ve telefon numaranızı paylaşır mısınız? Hemen sizi arayalım." },
+    { t: "İmplant fiyat", m: "İmplant tedavimiz kişiye özel planlanıyor; net fiyatı muayene sonrası veriyoruz. Ücretsiz muayene için sizi arayalım mı?" },
+    { t: "Randevu ver", m: "Randevunuzu oluşturabiliriz. Bu hafta size en uygun gün ve saat nedir?" },
+    { t: "Konum/adres", m: "Kliniğimizin adresi ve yol tarifi için: [konum linki]. Sizi bekleriz!" },
+    { t: "Takip (fiyat sonrası)", m: "Merhaba, ilettiğimiz bilgiyle ilgili aklınıza takılan bir şey oldu mu? Yardımcı olmaktan memnuniyet duyarız." }
+  ];
+
+  // ---------- Lead skoru (sıcaklık) ----------
+  function leadScore(l) {
+    var s = 0;
+    if (l.telefon) s += 30;
+    if (l.ad) s += 10;
+    if (l.islem) s += 10;
+    if (l.fiyatSordu) s += 20;
+    if (l.durum === "cevapVerdi") s += 25;
+    if (l.durum === "randevu") s += 40;
+    var n = (l.messages || []).length;
+    if (n >= 3) s += 10; else if (n >= 2) s += 5;
+    if (l.durum === "cevapVermedi") s -= 10;
+    if (l.durum === "kayip") return Math.min(s, 8);
+    return Math.max(0, Math.min(100, s));
+  }
+  function scoreTone(s) { return s >= 70 ? "hot" : (s >= 40 ? "warm" : "cold"); }
+  function scoreLabel(s) { return s >= 70 ? "Sıcak" : (s >= 40 ? "Ilık" : "Soğuk"); }
+
+  // ---------- Otomatik takip planı (1 / 3 / 7 gün) ----------
+  function nurtureSteps(l) {
+    var base = todayMid().getTime();
+    var b = l.olusturma ? new Date(l.olusturma) : new Date();
+    var b0 = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
+    l.nurture = l.nurture || {};
+    return [1,3,7].map(function(d){
+      var dueMs = b0 + d*DAY;
+      var diff = Math.round((base - dueMs)/DAY);
+      var done = !!l.nurture[d];
+      var state = done ? "done" : (diff > 0 ? "missed" : (diff === 0 ? "today" : "upcoming"));
+      return { gun: d, dueMs: dueMs, state: state };
+    });
+  }
+
+  // ---------- AI yanıt önerisi (demo — gerçek sürümde Claude API) ----------
+  function aiSuggest(l) {
+    var msgs = l.messages || [], lastIn = "";
+    for (var i = msgs.length-1; i >= 0; i--) { if (msgs[i].from === "in") { lastIn = msgs[i].text.toLowerCase(); break; } }
+    if (!l.telefon) return "Merhaba! Size en doğru bilgiyi verebilmemiz için ad-soyad ve telefon numaranızı paylaşır mısınız? Hemen sizi arayıp detayları konuşalım.";
+    if (/fiyat|ne kadar|ücret|kaç para/.test(lastIn)) return "Fiyatımız kişiye özel, muayene sonrası netleşiyor. Dilerseniz ücretsiz muayene için sizi bugün arayabiliriz — hangi saat uygun olur?";
+    if (/randevu|gün|saat|müsait/.test(lastIn)) return "Tabii, randevunuzu oluşturalım. Bu hafta içinde size en uygun gün ve saat nedir?";
+    if (/ağrı|acı|şiş|apse/.test(lastIn)) return "Geçmiş olsun! Ağrı şikâyetinizi öncelikli değerlendirmek isteriz. Bugün uygun bir slotumuz var; telefonla hemen ayarlayalım mı?";
+    return "Teşekkürler! En kısa sürede dönüş yapacağız. Uygunsanız telefonla detayları paylaşalım — sizi ne zaman arayabiliriz?";
+  }
+
+  // Havuz Özeti ikonları
+  var IC_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var IC_CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4.5" width="18" height="17" rx="3"/><path d="M3 9h18M8 2.5v4M16 2.5v4" stroke-linecap="round"/></svg>';
+  var IC_CHART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  // Aktarılan data tarih aralıkları (aktarma = iletişim alınıp bilgi kaydedilen an)
+  function isToday(iso) { if (!iso) return false; var d = new Date(iso), t = todayMid(); return d >= t && d < new Date(t.getTime()+DAY); }
+  function inDays(iso, n) { if (!iso) return false; return new Date(iso) >= new Date(todayMid().getTime() - (n-1)*DAY); }
+
+  // ---------- Render: stats + filters + bell ----------
+  function renderTop() {
+    var c = poolCounts();
+    var oran = c.all ? Math.round((c.sicak / c.all) * 100) : 0;
+    var scope = scopedLeads();
+    var dBugun = scope.filter(function(l){ return isToday(l.aktarma); }).length;
+    var dHafta = scope.filter(function(l){ return inDays(l.aktarma, 7); }).length;
+    var dAy = scope.filter(function(l){ return inDays(l.aktarma, 30); }).length;
+
+    document.getElementById("summary").innerHTML =
+      '<span class="sum-title">AKTARILAN<br>DATA</span>'+
+      '<div class="dgroup">'+
+        '<div class="dcard today" title="Bugün aktarılan hasta bilgisi"><span class="dic">'+IC_UP+'</span><span class="dmeta"><span class="dn" data-to="'+dBugun+'">'+dBugun+'</span><span class="dl">Bugün</span></span><span class="pulse-live"></span></div>'+
+        '<div class="dcard week" title="Bu hafta aktarılan hasta bilgisi"><span class="dic">'+IC_CAL+'</span><span class="dmeta"><span class="dn" data-to="'+dHafta+'">'+dHafta+'</span><span class="dl">Bu Hafta</span></span></div>'+
+        '<div class="dcard month" title="Bu ay aktarılan hasta bilgisi"><span class="dic">'+IC_CHART+'</span><span class="dmeta"><span class="dn" data-to="'+dAy+'">'+dAy+'</span><span class="dl">Bu Ay</span></span></div>'+
+      '</div>'+
+      '<span class="sum-div"></span>'+
+      '<button class="sum-card ok" data-filter="sicak" title="Sıcak havuzu göster"><span class="sc-bar"></span><span class="sc-n" data-to="'+c.sicak+'">'+c.sicak+'</span><span class="sc-l">İletişim<br>Alındı</span></button>'+
+      '<button class="sum-card no" data-filter="takip" title="Takip havuzunu göster"><span class="sc-bar"></span>'+(c.takip>0?'<span class="sc-dot"></span>':'')+'<span class="sc-n" data-to="'+c.takip+'">'+c.takip+'</span><span class="sc-l">İletişim<br>Alınamadı</span></button>'+
+      '<button class="sum-card rv" data-board="1" title="Detaylı listeyi aç"><span class="sc-bar"></span><span class="sc-n" data-to="'+oran+'" data-pre="%">%'+oran+'</span><span class="sc-l">Dönüşüm<br>'+c.randevu+' randevu</span></button>'+
+      '<div class="sum-spacer"></div>'+
+      '<button class="sum-detail tools-btn" id="toolsBtn">☰ Araçlar ▾</button>';
+
+    var od = overdueList().length;
+    var badge = document.getElementById("bellBadge");
+    badge.textContent = od;
+    badge.style.display = od ? "grid" : "none";
+
+    document.getElementById("filters").innerHTML =
+      '<button class="filter-toggle" id="filterBtn" aria-label="Filtre">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18l-7 8v6l-4-2v-4z" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
+        '<span class="ft-lab">'+filterLabel(state.filter)+'</span>'+
+        '<span class="ft-cnt">'+(c[state.filter]||0)+'</span>'+
+        '<svg class="ft-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
+      '</button>';
+
+    if (booting()) {
+      document.querySelectorAll("#summary .sc-n, #summary .dn").forEach(function(n){
+        countUp(n, parseInt(n.getAttribute("data-to"), 10) || 0, n.getAttribute("data-pre") || "", 780);
+      });
+    }
+  }
+
+  // ---------- Render: conversation list ----------
+  function renderList() {
+    var list = filtered();
+    var el = document.getElementById("convoList");
+    var tagBar = state.tagFilter ? '<div class="tagfilter-bar">Etiket: <b>'+esc(state.tagFilter)+'</b><button data-cleartag aria-label="Temizle">✕</button></div>' : '';
+    if (!list.length) { el.innerHTML = tagBar + '<div style="padding:40px 20px;text-align:center;color:var(--ink3);font-size:13px">Sonuç bulunamadı.</div>'; return; }
+    el.innerHTML = tagBar + list.map(function(l){
+      var st = STATUS[l.durum];
+      var rs = replyState(l);
+      // "top kimde" etiketi (öncelikli)
+      var turnTag = rs.unread ? '<span class="tag turn-new">● Yeni mesaj</span>'
+        : (rs.turn==="me" ? '<span class="tag turn-me">↩︎ Yanıt bekliyor</span>'
+                          : '<span class="tag turn-them">✓ Yanıtladınız</span>');
+      var tags = turnTag + '<span class="tag st-'+l.durum+'">'+st.label+'</span>';
+      if (l.waSent) tags += '<span class="tag wa-sent">📲 WP ✓</span>';
+      if (l.fiyatSordu) tags += '<span class="tag fiyat">💬 Fiyat</span>';
+      if (!l.telefon) tags += '<span class="tag warn">Tel yok</span>';
+      tags += (l.tags||[]).map(function(tg){ return '<span class="tag lead-tag" data-tag="'+esc(tg)+'">'+esc(tg)+'</span>'; }).join("");
+      var _tem = temById(l.temsilci); if (_tem) tags += '<span class="tag tem-chip" style="--tc:'+_tem.col[0]+'">'+esc(_tem.ad)+'</span>';
+      if (state.account==="all") { var ac = acctById(l.accountId); if (ac) tags += '<span class="acct-chip">@'+esc(ac.handle)+'</span>'; }
+      var _lastOut = l.messages.length ? l.messages[l.messages.length-1].from==="out" : (l.lastDir==="out");
+      var prev = l.lastText ? (_lastOut?"Siz: ":"")+esc(l.lastText) : "mesaj yok";
+      var cls = "convo" + (l.id===state.selectedId?" sel":"") + (rs.turn==="me"?" needs-reply":" waiting") + (rs.unread?" unread":"");
+      var waitCls = "";
+      if (rs.turn==="me" && l.lastTime) { var hrs=(Date.now()-new Date(l.lastTime).getTime())/3600000; waitCls = hrs>=24?" wait-long":" wait"; }
+      return '<button class="'+cls+'" data-id="'+l.id+'">'+
+        avatarHTML(l,"avatar",true)+
+        '<div class="convo-main">'+
+          '<div class="convo-top"><span class="convo-name">'+esc(fullName(l))+'</span>'+(rs.unread?'<span class="unread-dot"></span>':'')+'<span class="convo-time'+waitCls+'">'+relTime(l.lastTime)+'</span></div>'+
+          '<div class="convo-preview'+(l.lastText?"":" none")+'">'+prev+'</div>'+
+          '<div class="convo-tags">'+tags+'</div>'+
+        '</div>'+
+      '</button>';
+    }).join("");
+
+    if (booting()) {
+      var items = el.querySelectorAll(".convo");
+      for (var i = 0; i < items.length; i++) items[i].style.animationDelay = (0.14 + i * 0.045) + "s";
+    }
+  }
+
+  // ---------- Render: chat thread ----------
+  function renderChat(enter) {
+    var ac = enter ? " anim-in" : "";
+    var l = byId(state.selectedId);
+    var pane = document.getElementById("chatPane");
+    if (!l) {
+      pane.innerHTML = '<div class="chat-empty"><div><div class="ic">'+svg('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-linecap="round" stroke-linejoin="round"/>')+'</div><div style="font-weight:600;color:var(--ink2)">Soldan bir sohbet seç</div><div style="font-size:12.5px">DM mesajlarını burada gör ve yönet</div></div></div>';
+      return;
+    }
+    var st = STATUS[l.durum];
+    var msgs = l.messages.map(function(m){
+      return '<div class="msg-row '+(m.from==="out"?"out":"in")+'"><div class="bubble">'+esc(m.text)+'<span class="t">'+fmtTime(m.time)+'</span></div></div>';
+    }).join("");
+    var wa = '<a class="qbtn wa" data-wa="'+l.id+'" href="'+waHref(l)+'" target="_blank" rel="noreferrer">'+WA_SVG+' WhatsApp\'a Gönder</a>';
+    pane.innerHTML =
+      '<div class="chat-head'+ac+'">'+
+        '<button class="chat-back" data-mnav="list" aria-label="Listeye dön"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
+        '<button class="pane-toggle" data-toggle="list" title="Sohbet listesini gizle/göster" aria-label="Liste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="9" y1="4" x2="9" y2="20"/></svg></button>'+
+        avatarHTML(l,"avatar",false,true)+
+        '<div class="meta"><div class="n">'+esc(fullName(l))+'</div>'+(l.username?'<div class="h"><a href="https://instagram.com/'+esc(l.username)+'" target="_blank" rel="noreferrer">@'+esc(l.username)+'</a></div>':'')+'</div>'+
+        '<div style="margin-left:auto;display:flex;align-items:center;gap:8px"><span class="tag st-'+l.durum+'" style="padding:4px 10px">'+st.label+'</span>'+
+          '<button class="contact-btn" data-mnav="contact" aria-label="Kişi bilgileri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
+          '<button class="pane-toggle" data-toggle="contact" title="Kişi detaylarını gizle/göster" aria-label="Detay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="15" y1="4" x2="15" y2="20"/></svg></button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="thread'+ac+'" id="thread">'+
+        '<div class="day-sep"><span>DM Konuşması</span></div>'+ msgs +
+      '</div>'+
+      '<div class="quickbar"><span class="lbl">HIZLI:</span>'+
+        (l.durum!=="cevapVerdi"?'<button class="qbtn ok" data-act="iletisim">✓ İletişim Alındı</button>':'')+
+        '<button class="qbtn brand" data-act="randevu">📅 Randevu</button>'+
+        '<button class="qbtn warn" data-act="cevapVermedi">Cevap Vermedi</button>'+ wa +
+      '</div>'+
+      '<div class="compose-tools">'+
+        '<button class="ctool" id="tplBtn" type="button">⚡ Hazır Yanıt</button>'+
+        '<button class="ctool ai" id="aiBtn" type="button">✨ AI Önerisi</button>'+
+      '</div>'+
+      '<div class="composer"><textarea id="composerText" rows="1" aria-label="Instagram yanıtı" placeholder="Instagram yanıtı yaz…  (Enter ile gönder)"></textarea><button class="send" id="sendBtn">Gönder</button></div>';
+
+    var thread = document.getElementById("thread");
+    thread.scrollTop = thread.scrollHeight;
+
+    var ta = document.getElementById("composerText");
+    ta.addEventListener("keydown", function(e){ if (e.key==="Enter" && !e.shiftKey){ e.preventDefault(); doSend(); } });
+    ta.addEventListener("input", function(){ ta.style.height="auto"; ta.style.height=Math.min(ta.scrollHeight,120)+"px"; });
+    document.getElementById("sendBtn").addEventListener("click", doSend);
+    function setComposer(text){ var t=document.getElementById("composerText"); t.value=text; t.focus(); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight,120)+"px"; }
+    document.getElementById("aiBtn").addEventListener("click", function(){ setComposer(aiSuggest(l)); toast("AI önerisi hazır ✦ düzenleyip gönderebilirsiniz"); });
+    document.getElementById("tplBtn").addEventListener("click", function(e){ e.stopPropagation(); openTemplateMenu(e.currentTarget, setComposer); });
+  }
+
+  function doSend() {
+    var ta = document.getElementById("composerText");
+    var t = ta.value.trim();
+    if (!t) return;
+    var l = byId(state.selectedId); if (!l) return;
+    ta.value=""; ta.style.height="auto";
+    l.messages.push({from:"out", text:t, time:new Date().toISOString(), pending: LIVE ? true : false}); l.lastText=t; l.lastTime=new Date().toISOString(); l.lastDir="out";
+    renderChat(); renderList(); renderTop();
+    var rows = document.querySelectorAll("#thread .msg-row");
+    if (rows.length) rows[rows.length-1].classList.add("msg-new");
+    if (LIVE) {
+      // Mesajı REST ile veritabanına yaz (kalıcı) → teslimi sunucu (deliver) yapar
+      fetch(LIVE_CFG.url + "/rest/v1/ig_messages", { method: "POST", headers: sbH(), body: JSON.stringify({ ig_user_id: l.id, direction: "out", text: t }) })
+        .then(function(r){
+          if (!r.ok) { r.text().then(function(b){ toast("Kaydedilemedi " + r.status + ": " + (b||"").slice(0,80)); }); return; }
+          sbPatch("ig_conversations?ig_user_id=eq." + encodeURIComponent(l.id), { last_message: t, last_time: new Date().toISOString(), last_dir: "out" });
+          fetch(LIVE_CFG.url + "/functions/v1/deliver", { method: "POST" }).catch(function(){}); // anında teslim denemesi (olmazsa cron gönderir)
+          toast("Gönderiliyor…");
+          setTimeout(function(){ liveMessages(l.id); }, 1500);
+        })
+        .catch(function(){ toast("Bağlantı hatası"); });
+    } else {
+      toast("Yanıt gönderildi (demo)");
+    }
+  }
+
+  // ---------- Render: contact / CRM panel ----------
+  function renderContact(enter) {
+    var ac = enter ? " anim-in" : "";
+    var l = byId(state.selectedId);
+    var pane = document.getElementById("contactPane");
+    if (!l) { pane.innerHTML = '<div class="contact-empty">Sohbet seçilince kişi bilgileri ve havuz durumu burada görünür.</div>'; return; }
+    var f = followup(l);
+    var hot = (l.durum!=="cevapVerdi" && l.durum!=="randevu")
+      ? '<button class="cta-hot" data-act="iletisim">✓ İletişim Alındı → Sıcak Havuza Taşı</button>' : '';
+    var waBtn = '<a class="cta-wa'+(l.waSent?" sent":"")+'" data-wa="'+l.id+'" href="'+waHref(l)+'" target="_blank" rel="noreferrer">'+WA_SVG+' '+(l.waSent?"Tekrar WhatsApp'a Gönder":"Bilgileri WhatsApp'a Gönder")+'</a>';
+    var sc = leadScore(l), scTone = scoreTone(sc);
+    var scoreBlock = '<div class="score-box '+scTone+'"><div class="score-top"><span class="score-lbl">Lead Sıcaklığı</span><span class="score-val">'+sc+'<small>/100</small></span></div><div class="score-bar"><span style="width:'+sc+'%"></span></div><div class="score-tag">'+scoreLabel(sc)+'</div></div>';
+    var steps = nurtureSteps(l);
+    var nurtureHtml = '<div class="section"><div class="h">Otomatik Takip Planı</div><div class="nurture">' + steps.map(function(s){ var ic=s.state==="done"?"✓":(s.state==="missed"?"!":(s.state==="today"?"●":"○")); return '<button class="nstep '+s.state+'" data-nurture="'+s.gun+'"><span class="nic">'+ic+'</span><span class="ntxt">'+s.gun+'. gün takip</span><span class="ndate">'+fmtDate(new Date(s.dueMs).toISOString().slice(0,10))+'</span></button>'; }).join("") + '</div><div class="nurture-hint">Cevap gelmezse bu günlerde hatırlat • tıklayınca yapıldı işaretlenir</div></div>';
+    var profileHtml = '<div class="section"><div class="h">Profil & Geçmiş</div><div class="fields"><div class="field"><label>Doğum günü</label><input type="date" data-fld="dogum" value="'+esc(l.dogum||"")+'"></div><div class="field"><label>Geçmiş işlemler / notlar</label><textarea data-fld="gecmis" rows="2" placeholder="Önceki tedaviler…">'+esc(l.gecmis||"")+'</textarea></div></div></div>';
+    var filesHtml = '<div class="section"><div class="h">Dosyalar / Fotoğraflar</div><div class="files">' + (l.files||[]).map(function(f,i){ return '<div class="file-thumb">'+(f.img?'<img src="'+f.url+'" alt="ek">':'<span class="file-ic">DOSYA</span>')+'<button class="file-x" data-filedel="'+i+'" title="Kaldır">×</button></div>'; }).join("") + '<label class="file-add">📎 Dosya / Foto ekle<input type="file" id="fileInput" accept="image/*" multiple hidden></label></div></div>';
+    var temOpts = '<option value="">— atanmadı —</option>' + TEMSILCILER.map(function(t){ return '<option value="'+t.id+'"'+(l.temsilci===t.id?" selected":"")+'>'+esc(t.ad)+'</option>'; }).join("");
+    var tagChips = (l.tags||[]).map(function(tg){ return '<span class="ctag">'+esc(tg)+'<button data-tagdel="'+esc(tg)+'" aria-label="kaldır">×</button></span>'; }).join("");
+    var tagSug = TAG_SUGGEST.filter(function(s){ return (l.tags||[]).indexOf(s)<0; }).map(function(s){ return '<button class="tagsug" data-tagadd="'+esc(s)+'">+ '+esc(s)+'</button>'; }).join("");
+    var teamTagHtml = '<div class="section"><div class="h">Etiketler & Ekip</div>'+
+      '<div class="field"><label>Temsilci (atama)</label><select data-fld="temsilci">'+temOpts+'</select></div>'+
+      '<div class="ctags">'+ (tagChips || '<span class="ctags-empty">Henüz etiket yok</span>') +'</div>'+
+      '<div class="tagsugs">'+tagSug+'</div></div>';
+    var randevuHtml = '<div class="section"><div class="h">Randevu</div>'+
+      '<div class="field"><label>Randevu tarihi & saati</label><input type="datetime-local" id="randevuInput" value="'+toLocalInput(l.randevuTarih)+'"></div>'+
+      (l.randevuTarih ? '<div class="randevu-info">📅 '+esc(fmtDateTime(l.randevuTarih))+'</div>' : '')+
+      (l.telefon ? '<a class="cta-wa alt" href="'+waReminderHref(l)+'" target="_blank" rel="noreferrer">'+WA_SVG+' Hastaya randevu hatırlatması gönder</a>' : '<div class="randevu-hint">Hatırlatma göndermek için telefon gerekli</div>')+
+      '</div>';
+    var dueNote = "";
+    if (l.takip) {
+      var cls = f.key==="overdue"?"overdue":(f.key==="today"?"today":"future");
+      dueNote = '<div class="due-note '+cls+'">'+fmtDate(l.takip)+' · '+f.label+'</div>';
+    }
+    var statusBtns = STATUS_ORDER.map(function(k){
+      return '<button class="sbtn'+(l.durum===k?" on":"")+'" data-status="'+k+'"><span class="sd" style="background:'+STATUS[k].dot+'"></span>'+STATUS[k].label+'</button>';
+    }).join("");
+    var islemler = ["","İmplant","Diş Beyazlatma","Ortodonti (Şeffaf Plak)","Zirkonyum Kaplama","Kanal Tedavisi","Gülüş Tasarımı","Çekim / Cerrahi","Diş Eti Tedavisi","Genel Kontrol"];
+    var islemOpts = islemler.map(function(i){ return '<option value="'+esc(i)+'"'+(l.islem===i?" selected":"")+'>'+(i||"Seçiniz…")+'</option>'; }).join("");
+
+    pane.innerHTML =
+      '<div class="contact-scroll'+ac+'">'+
+        '<button class="contact-close" data-mnav="closecontact"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg> Sohbete dön</button>'+
+        '<div class="c-head">'+avatarHTML(l,"avatar",false,true)+'<div class="n">'+esc(fullName(l))+'</div><div class="src">'+esc(l.kaynak)+'</div>'+
+          '<div class="c-id">🆔 Kayıt No: <b>'+esc(l.lid||"—")+'</b></div>'+
+          (l.waSent?'<div class="c-wasent">📲 WhatsApp\'a gönderildi ✓</div>':'')+
+        '</div>'+
+        hot+ waBtn+ scoreBlock+
+        '<div class="section"><div class="h">Kişi Bilgileri</div><div class="fields">'+
+          '<div class="frow"><div class="field"><label>Ad</label><input aria-label="Ad" data-fld="ad" value="'+esc(l.ad)+'" placeholder="Ad"></div><div class="field"><label>Soyad</label><input aria-label="Soyad" data-fld="soyad" value="'+esc(l.soyad)+'" placeholder="Soyad"></div></div>'+
+          '<div class="field"><label>Telefon</label><input aria-label="Telefon" data-fld="telefon" class="'+(l.telefon?"":"missing")+'" value="'+esc(l.telefon)+'" placeholder="Numara alınmadı" inputmode="tel"></div>'+
+          '<div class="field"><label>Instagram</label><input aria-label="Instagram kullanıcı adı" data-fld="username" value="'+esc(l.username)+'" placeholder="kullanıcı adı"></div>'+
+          '<div class="field"><label>İlgilendiği İşlem</label><select aria-label="İlgilendiği işlem" data-fld="islem">'+islemOpts+'</select></div>'+
+        '</div></div>'+
+        teamTagHtml +
+        '<div class="section"><div class="h">Durum (Havuz)</div><div class="status-grid">'+statusBtns+'</div></div>'+
+        randevuHtml +
+        '<div class="section"><div class="h">Hatırlatma (Sonraki Takip)</div>'+
+          '<input type="date" aria-label="Sonraki takip tarihi" class="date-input" data-fld="takip" value="'+esc(l.takip)+'">'+
+          '<div class="date-quick"><button class="dq" data-days="0">Bugün</button><button class="dq" data-days="1">Yarın</button><button class="dq" data-days="3">3 gün</button><button class="dq" data-days="7">1 hafta</button></div>'+
+          dueNote+
+        '</div>'+
+        '<div class="section"><div class="h">Not</div><div class="field"><textarea aria-label="İç not" data-fld="not" rows="3" placeholder="İç not…">'+esc(l.not)+'</textarea></div></div>'+
+        nurtureHtml + profileHtml + filesHtml +
+        '<button class="del" data-act="delete">Sohbeti Sil</button>'+
+      '</div>';
+
+    // Alan bağlama (text inputları yeniden render etmeden güncelle → odak kaybı yok)
+    pane.querySelectorAll("[data-fld]").forEach(function(inp){
+      var fld = inp.getAttribute("data-fld");
+      var ev = (inp.tagName==="SELECT"||inp.type==="date") ? "change" : "input";
+      inp.addEventListener(ev, function(){
+        l[fld] = inp.value;
+        if (fld==="ad"||fld==="soyad"||fld==="username") renderList();
+        if (fld==="telefon") { inp.classList.toggle("missing", !inp.value); renderList(); }
+        if (fld==="takip") { renderContact(); renderList(); renderTop(); }
+        if (fld==="islem") renderList();
+        if (fld==="temsilci") renderList();
+        persistLead(l);
+      });
+    });
+    pane.querySelectorAll("[data-tagadd]").forEach(function(b){ b.addEventListener("click", function(){ var t=b.getAttribute("data-tagadd"); l.tags=l.tags||[]; if(l.tags.indexOf(t)<0) l.tags.push(t); persistLead(l); renderContact(); renderList(); }); });
+    pane.querySelectorAll("[data-tagdel]").forEach(function(b){ b.addEventListener("click", function(){ var t=b.getAttribute("data-tagdel"); l.tags=(l.tags||[]).filter(function(x){return x!==t;}); persistLead(l); renderContact(); renderList(); }); });
+    var ri = pane.querySelector("#randevuInput");
+    if (ri) ri.addEventListener("change", function(){ l.randevuTarih = ri.value ? new Date(ri.value).toISOString() : ""; persistLead(l); renderContact(); renderList(); renderTop(); toast("Randevu güncellendi"); });
+    pane.querySelectorAll(".sbtn").forEach(function(b){
+      b.addEventListener("click", function(){ setStatus(l, b.getAttribute("data-status")); });
+    });
+    pane.querySelectorAll(".dq").forEach(function(b){
+      b.addEventListener("click", function(){ l.takip = isoDay(parseInt(b.getAttribute("data-days"),10)); persistLead(l); renderContact(); renderList(); renderTop(); toast("Hatırlatma ayarlandı"); });
+    });
+    pane.querySelectorAll("[data-nurture]").forEach(function(b){
+      b.addEventListener("click", function(){ var g=b.getAttribute("data-nurture"); l.nurture=l.nurture||{}; l.nurture[g]=!l.nurture[g]; renderContact(); });
+    });
+    var fi = pane.querySelector("#fileInput");
+    if (fi) fi.addEventListener("change", function(){
+      var files = Array.prototype.slice.call(fi.files || []); var pending = files.length;
+      if (!pending) return; l.files = l.files || [];
+      files.forEach(function(f){ var rd = new FileReader(); rd.onload = function(){ l.files.push({ name:f.name, url:rd.result, img:/^image\//.test(f.type) }); if(--pending<=0){ renderContact(); toast("Dosya eklendi"); } }; rd.readAsDataURL(f); });
+    });
+    pane.querySelectorAll("[data-filedel]").forEach(function(b){
+      b.addEventListener("click", function(){ var i=+b.getAttribute("data-filedel"); if(l.files){ l.files.splice(i,1); renderContact(); } });
+    });
+  }
+
+  function setStatus(l, durum) {
+    var wasPool = STATUS[l.durum].pool, nowPool = STATUS[durum].pool;
+    l.durum = durum;
+    if (nowPool === "sicak" && !l.aktarma) l.aktarma = new Date().toISOString();
+    persistLead(l);
+    renderContact(); renderList(); renderChat(); renderTop();
+    if (durum==="cevapVerdi" && wasPool!=="sicak") toast("Sıcak havuza taşındı 🔥");
+    else if (durum==="randevu") toast("Randevu olarak işaretlendi 📅");
+    else toast("Durum güncellendi");
+  }
+
+  function isMobile(){ return window.matchMedia("(max-width: 760px)").matches; }
+  function selectLead(id) {
+    state.selectedId = id; closeCtx(); closePop();
+    var sl = byId(id); if (sl) sl.read = true; // açınca okundu say
+    if (LIVE) liveMessages(id);
+
+    if (isMobile()) { document.body.classList.add("show-chat"); document.body.classList.remove("show-contact"); }
+    renderList(); renderChat(true); renderContact(true);
+  }
+
+  // ---------- Toast ----------
+  function toast(msg) {
+    var c = document.getElementById("toasts");
+    var t = document.createElement("div");
+    t.className = "toast";
+    t.innerHTML = svg('<path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>',"ti")+esc(msg);
+    c.appendChild(t);
+    setTimeout(function(){ t.style.transition="opacity .3s, transform .3s"; t.style.opacity="0"; t.style.transform="translateY(8px)"; setTimeout(function(){ c.removeChild(t); },300); }, 2200);
+  }
+
+  // ---------- Context menu ----------
+  var ctxEl = null;
+  function closeCtx(){ if (ctxEl){ ctxEl.remove(); ctxEl=null; } }
+  function openCtx(x, y, l) {
+    closeCtx();
+    var m = document.createElement("div");
+    m.className = "ctx";
+    m.innerHTML =
+      '<div class="ctx-head">'+esc(fullName(l))+' · işlem</div>'+
+      '<button class="good" data-a="iletisim"><span class="mi">'+svg(IC.check)+'</span>İletişim Alındı<span class="desc">sıcak havuz</span></button>'+
+      '<button class="brand" data-a="randevu"><span class="mi">'+svg(IC.star)+'</span>Randevu Aldı</button>'+
+      '<div class="sep"></div>'+
+      '<button data-a="cevapVermedi"><span class="mi">'+svg(IC.x)+'</span>Cevap Vermedi<span class="desc">kırmızıda kalsın</span></button>'+
+      '<button data-a="snooze1"><span class="mi">'+svg(IC.clock)+'</span>Yarına Ertele</button>'+
+      '<button data-a="snooze3"><span class="mi">'+svg(IC.clock)+'</span>3 Gün Sonra</button>'+
+      '<div class="sep"></div>'+
+      '<button data-a="kayip"><span class="mi">'+svg(IC.archive)+'</span>Kaybedildi</button>'+
+      '<button class="danger" data-a="delete"><span class="mi">'+svg(IC.trash)+'</span>Sil</button>';
+    document.body.appendChild(m);
+    var w=224, h=m.offsetHeight;
+    m.style.left = Math.min(x, window.innerWidth-w-8)+"px";
+    m.style.top = Math.min(y, window.innerHeight-h-8)+"px";
+    ctxEl = m;
+    m.querySelectorAll("button").forEach(function(b){
+      b.addEventListener("click", function(e){ e.stopPropagation(); ctxAction(b.getAttribute("data-a"), l); closeCtx(); });
+    });
+  }
+  function ctxAction(a, l) {
+    if (a==="iletisim") setStatus(l,"cevapVerdi");
+    else if (a==="randevu") setStatus(l,"randevu");
+    else if (a==="cevapVermedi") setStatus(l,"cevapVermedi");
+    else if (a==="kayip") setStatus(l,"kayip");
+    else if (a==="snooze1"){ l.takip=isoDay(1); persistLead(l); refreshAll(); toast("Yarına ertelendi"); }
+    else if (a==="snooze3"){ l.takip=isoDay(3); persistLead(l); refreshAll(); toast("3 gün sonraya ertelendi"); }
+    else if (a==="delete"){ deleteLead(l); }
+  }
+  function deleteLead(l) {
+    if (LIVE) { sbPatch("ig_conversations?ig_user_id=eq."+encodeURIComponent(l.id), { durum: "kayip", wa_sent: true }).catch(function(){}); }
+    var idx = leads.indexOf(l);
+    leads.splice(idx,1);
+    if (state.selectedId===l.id) state.selectedId = leads.length ? leads[0].id : null;
+    refreshAll();
+    toast(LIVE ? "Sohbet arşivlendi" : "Sohbet silindi");
+  }
+  function refreshAll(){ renderTop(); renderList(); renderChat(); renderContact(); }
+
+  // ---------- Reminders popover ----------
+  var popEl = null;
+  function closePop(){ if (popEl){ popEl.remove(); popEl=null; } }
+  function openPop() {
+    if (popEl){ closePop(); return; }
+    var od = overdueList();
+    var p = document.createElement("div");
+    p.className = "pop";
+    var items = od.length ? od.map(function(l){
+      var f = followup(l);
+      return '<button class="pop-item" data-id="'+l.id+'"><span class="rdot" style="background:'+(f.key==="overdue"?"var(--rose)":"var(--amber)")+'"></span>'+
+        '<span class="pi-main"><span class="pi-name">'+esc(fullName(l))+'</span><span class="pi-sub"> · '+esc(l.islem||"işlem belirtilmedi")+'</span></span>'+
+        '<span class="pi-when" style="color:'+(f.key==="overdue"?"var(--rose)":"var(--amber)")+'">'+esc(f.label)+'</span></button>';
+    }).join("") : '<div class="pop-empty">🎉 Bugün için bekleyen takip yok — hepsi güncel!</div>';
+    p.innerHTML = '<div class="pop-head">'+svg('<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke-linecap="round" stroke-linejoin="round"/>')+'<span class="t">Bugün Hatırlatılacaklar</span>'+(od.length?'<span class="cnt">'+od.length+'</span>':'')+'</div><div class="pop-list">'+items+'</div>';
+    document.body.appendChild(p);
+    popEl = p;
+    p.querySelectorAll(".pop-item").forEach(function(b){
+      b.addEventListener("click", function(e){ e.stopPropagation(); selectLead(b.getAttribute("data-id")); });
+    });
+  }
+
+  // ---------- Hesap rayı ----------
+  var NEW_COLS = [["#3BB2A0","#1E7E72"],["#F0994B","#C66A1F"],["#5AA6F0","#2B6FC4"],["#E0637A","#B23B54"],["#57B98A","#2E8E62"]];
+  function acctInitials(a){
+    var s = a.name.replace(/·.*/,"").replace(/^@/,"").trim();
+    var w = s.split(/[^A-Za-zÇĞİÖŞÜçğıiöşü]+/).filter(Boolean);
+    return ((w[0]?w[0][0]:"")+(w[1]?w[1][0]:"")).toUpperCase() || a.handle.slice(0,2).toUpperCase();
+  }
+  function allUnread(){
+    return leads.filter(function(l){ var f=followup(l); return (f.key==="overdue"||f.key==="today") && STATUS[l.durum].pool!=="kayip"; }).length;
+  }
+  function renderRail() {
+    var el = document.getElementById("rail");
+    var html = '';
+    var tu = allUnread();
+    html += '<button class="rail-item all'+(state.account==="all"?" active":"")+'" data-acc="all" aria-label="Tüm hesaplar">'+
+      svg('<path d="M4 5h6v6H4zM14 5h6v6h-6zM4 15h6v6H4zM14 15h6v6h-6z" stroke-linejoin="round"/>')+
+      '<span class="tip">Tüm Hesaplar</span>'+(tu?'<span class="rail-badge">'+tu+'</span>':'')+'</button>';
+    html += '<div class="rail-sep"></div>';
+    accounts.forEach(function(a){
+      var un = acctUnread(a.id);
+      html += '<button class="rail-item'+(state.account===a.id?" active":"")+'" data-acc="'+a.id+'" aria-label="@'+esc(a.handle)+'">'+
+        acctAvatar(a)+
+        '<span class="tip">@'+esc(a.handle)+'</span>'+(un?'<span class="rail-badge">'+un+'</span>':'')+'</button>';
+    });
+    html += '<div class="rail-sep"></div>';
+    html += '<button class="rail-item add" data-acc="add" aria-label="Hesap bağla">'+
+      svg('<path d="M12 5v14M5 12h14" stroke-linecap="round"/>')+'<span class="tip">Hesap Bağla</span></button>';
+    el.innerHTML = html;
+
+    if (booting()) {
+      var its = el.querySelectorAll(".rail-item");
+      for (var i = 0; i < its.length; i++) its[i].style.animationDelay = (i * 0.06) + "s";
+    }
+  }
+  function updateAcctLabel() {
+    var lbl = document.getElementById("acctLabel");
+    if (state.account==="all") lbl.textContent = accounts.length+" hesap bağlı · tüm DM'ler";
+    else lbl.textContent = "@"+acctById(state.account).handle;
+  }
+  function switchAccount(id) {
+    if (id==="add") { openConnect(); return; }
+    state.account = id; state.filter = "all"; state.q = "";
+    var sc = scopedLeads();
+    if (!sc.some(function(l){ return l.id===state.selectedId; })) state.selectedId = sc.length ? sc[0].id : null;
+    var s = document.getElementById("search"); if (s) s.value = "";
+    closeBoard(); closePop(); closeCtx();
+    document.body.classList.remove("show-chat", "show-contact");
+    renderRail(); renderTop(); updateAcctLabel();
+    renderSkeleton();
+    var cp = document.getElementById("chatPane"); if (cp) cp.style.opacity = ".35";
+    setTimeout(function(){
+      if (cp) cp.style.opacity = "";
+      renderList(); renderChat(true); renderContact(true);
+    }, REDUCED ? 0 : 380);
+  }
+
+  // ---------- Hesap bağlama ekranı ----------
+  var connEl = null;
+  function closeConnect(){ if (connEl){ connEl.remove(); connEl=null; } }
+  function openConnect() {
+    closeConnect();
+    var connected = accounts.map(function(a){
+      return '<div class="conn-row">'+acctAvatar(a, true)+
+        '<span class="cm"><span class="cn">'+esc(a.name)+'</span><span class="ch">@'+esc(a.handle)+'</span></span>'+
+        '<span class="conn-tag">● Bağlı</span></div>';
+    }).join("");
+    var ov = document.createElement("div");
+    ov.className = "overlay";
+    ov.innerHTML =
+      '<div class="board connect" role="dialog" aria-label="Hesap bağla">'+
+        '<div class="board-head"><div><div class="bt">Instagram Hesabı Bağla</div><div class="bsub">Birden fazla klinik/şube hesabını tek panelden yönet</div></div>'+
+          '<button class="board-close" id="connClose" aria-label="Kapat">'+svg(IC.x)+'</button></div>'+
+        '<div class="conn-body">'+
+          '<div class="conn-section"><div class="cs-h">BAĞLI HESAPLAR ('+accounts.length+')</div>'+connected+'</div>'+
+          '<div class="conn-add">'+
+            '<div class="ig-badge">'+svg('<rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/>')+' Instagram ile Bağlan</div>'+
+            '<label class="cadd-lbl">Instagram kullanıcı adı</label>'+
+            '<div class="cadd-row"><span class="at">@</span><input id="connHandle" placeholder="klinik_hesabiniz" autocomplete="off" aria-label="Instagram kullanıcı adı"><button class="cadd-btn" id="connDo">Bağlan</button></div>'+
+            '<div class="cadd-note">'+svg('<circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1" stroke-linecap="round"/>')+' Gerçek sürümde bu adım seni Instagram\'ın güvenli giriş ekranına yönlendirir (Meta resmi API). Bu demoda hesap anında eklenir.</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    document.body.appendChild(ov);
+    connEl = ov;
+    document.getElementById("connClose").addEventListener("click", closeConnect);
+    ov.addEventListener("click", function(e){ if (e.target===ov) closeConnect(); });
+    var inp = document.getElementById("connHandle");
+    function doConnect(){
+      var h = inp.value.trim().replace(/^@/,"").replace(/\s+/g,"");
+      if (!h){ inp.focus(); return; }
+      if (accounts.some(function(a){ return a.handle.toLowerCase()===h.toLowerCase(); })){ toast("Bu hesap zaten bağlı"); return; }
+      var id = "a"+(accounts.length+1)+Math.round(Math.random()*999);
+      accounts.push({ id:id, handle:h, name:"@"+h, col:NEW_COLS[accounts.length % NEW_COLS.length] });
+      closeConnect();
+      switchAccount(id);
+      toast("@"+h+" bağlandı 🎉");
+    }
+    document.getElementById("connDo").addEventListener("click", doConnect);
+    inp.addEventListener("keydown", function(e){ if (e.key==="Enter"){ e.preventDefault(); doConnect(); } });
+    inp.focus();
+  }
+
+  // ---------- Analitik ----------
+  var anEl = null;
+  function closeAnalytics(){ if (anEl){ anEl.remove(); anEl=null; } }
+  function bars(items, max, colorFn){
+    return '<div class="an-bars">' + items.map(function(it){
+      var pct = Math.round((it.n/max)*100);
+      return '<div class="an-row"><span class="an-lab">'+esc(it.label)+'</span>'+
+        '<span class="an-track"><span class="an-fill" style="width:'+Math.max(pct,3)+'%;background:'+(colorFn?colorFn(it):"var(--brand)")+'"></span></span>'+
+        '<span class="an-n">'+it.n+'</span></div>';
+    }).join("") + '</div>';
+  }
+  function openAnalytics(){
+    closeAnalytics();
+    var scope = scopedLeads(), total = scope.length || 1;
+    var durum = STATUS_ORDER.map(function(k){ return { label:STATUS[k].label, n:scope.filter(function(l){return l.durum===k;}).length, dot:STATUS[k].dot }; }).filter(function(x){return x.n>0;});
+    var maxDur = Math.max.apply(null,[1].concat(durum.map(function(x){return x.n;})));
+    var kMap={}; scope.forEach(function(l){ kMap[l.kaynak]=(kMap[l.kaynak]||0)+1; });
+    var kaynak = Object.keys(kMap).map(function(k){return {label:k,n:kMap[k]};}).sort(function(a,b){return b.n-a.n;});
+    var maxK = Math.max.apply(null,[1].concat(kaynak.map(function(x){return x.n;})));
+    var iMap={}; scope.forEach(function(l){ if(l.islem) iMap[l.islem]=(iMap[l.islem]||0)+1; });
+    var islem = Object.keys(iMap).map(function(k){return {label:k,n:iMap[k]};}).sort(function(a,b){return b.n-a.n;}).slice(0,6);
+    var maxI = Math.max.apply(null,[1].concat(islem.map(function(x){return x.n;})));
+    var days=[]; for(var i=6;i>=0;i--){ var d=new Date(todayMid().getTime()-i*DAY); days.push({t0:new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(), n:0, label:d.toLocaleDateString('tr-TR',{weekday:'short'})}); }
+    scope.forEach(function(l){ if(!l.olusturma)return; var t=new Date(l.olusturma); var t0=new Date(t.getFullYear(),t.getMonth(),t.getDate()).getTime(); days.forEach(function(x){ if(x.t0===t0) x.n++; }); });
+    var maxDay=Math.max.apply(null,[1].concat(days.map(function(x){return x.n;})));
+    var sicak=scope.filter(function(l){return STATUS[l.durum].pool==="sicak";}).length;
+    var randevu=scope.filter(function(l){return l.durum==="randevu";}).length;
+    var oran=Math.round(randevu/total*100);
+    var bekleyen=scope.filter(function(l){return !l.waSent && replyState(l).turn==="me";}).length;
+    var acc = state.account==="all" ? "Tüm hesaplar" : "@"+acctById(state.account).handle;
+
+    var ov=document.createElement("div"); ov.className="overlay";
+    ov.innerHTML =
+      '<div class="board analytics" role="dialog" aria-label="Analitik">'+
+        '<div class="board-head"><div><div class="bt">Analitik</div><div class="bsub">'+esc(acc)+' · '+scope.length+' kayıt</div></div>'+
+          '<button class="board-close" id="anClose" aria-label="Kapat">'+svg(IC.x)+'</button></div>'+
+        '<div class="an-tiles">'+
+          '<div class="an-tile"><div class="at-n">'+scope.length+'</div><div class="at-l">Toplam Lead</div></div>'+
+          '<div class="an-tile ok"><div class="at-n">'+sicak+'</div><div class="at-l">İletişim Alınan</div></div>'+
+          '<div class="an-tile no"><div class="at-n">'+bekleyen+'</div><div class="at-l">Yanıt Bekleyen</div></div>'+
+          '<div class="an-tile rv"><div class="at-n">%'+oran+'</div><div class="at-l">Dönüşüm ('+randevu+' randevu)</div></div>'+
+        '</div>'+
+        '<div class="an-grid">'+
+          '<div class="an-card"><div class="an-h">Son 7 gün · gelen DM</div>'+
+            '<div class="an-trend">'+ days.map(function(d){ var h=Math.round((d.n/maxDay)*100); return '<div class="an-col"><span class="an-coln">'+d.n+'</span><span class="an-bar" style="height:'+Math.max(h,6)+'%"></span><span class="an-coll">'+esc(d.label)+'</span></div>'; }).join("") +'</div></div>'+
+          '<div class="an-card"><div class="an-h">Durum dağılımı</div>'+ bars(durum, maxDur, function(it){ return it.dot; }) +'</div>'+
+          '<div class="an-card"><div class="an-h">Kaynak dağılımı</div>'+ bars(kaynak, maxK, function(){return "var(--brand)";}) +'</div>'+
+          '<div class="an-card"><div class="an-h">En çok sorulan işlemler</div>'+ (islem.length? bars(islem, maxI, function(){return "#7A67E6";}) : '<div class="an-empty">İşlem verisi yok</div>') +'</div>'+
+        '</div>'+
+      '</div>';
+    document.body.appendChild(ov); anEl=ov;
+    document.getElementById("anClose").addEventListener("click", closeAnalytics);
+    ov.addEventListener("click", function(e){ if(e.target===ov) closeAnalytics(); });
+    ov.querySelectorAll(".an-bar, .an-fill").forEach(function(el){ var w=el.style.width||el.style.height; el.style.transition="none"; var isH=!!el.style.height; if(isH){el.style.height="0";} else {el.style.width="0";} requestAnimationFrame(function(){ el.style.transition=""; if(isH) el.style.height=w; else el.style.width=w; }); });
+  }
+
+  // ---------- Kanban ----------
+  var kbEl = null;
+  var KB_COLS = ["yeni","bilgiBekleniyor","cevapVermedi","cevapVerdi","randevu","kayip"];
+  function closeKanban(){ if (kbEl){ kbEl.remove(); kbEl=null; } }
+  function kbCard(l){
+    var sc=leadScore(l), tone=scoreTone(sc);
+    var tem=temById(l.temsilci);
+    return '<div class="kb-card" draggable="true" data-id="'+l.id+'">'+
+      '<div class="kb-name">'+esc(fullName(l))+'<span class="kb-dot '+tone+'"></span></div>'+
+      '<div class="kb-sub">'+esc(l.islem||"işlem belirtilmedi")+'</div>'+
+      '<div class="kb-tags">'+(l.telefon?'':'<span class="tag warn">Tel yok</span>')+(l.fiyatSordu?'<span class="tag fiyat">Fiyat</span>':'')+(tem?'<span class="tag tem-chip" style="--tc:'+tem.col[0]+'">'+esc(tem.ad)+'</span>':'')+'</div>'+
+    '</div>';
+  }
+  function openKanban(){
+    closeKanban();
+    var scope = scopedLeads().filter(function(l){ return !l.waSent; });
+    var ov=document.createElement("div"); ov.className="overlay kanban-ov";
+    var cols = KB_COLS.map(function(k){
+      var items = scope.filter(function(l){ return l.durum===k; });
+      return '<div class="kb-col" data-durum="'+k+'"><div class="kb-head"><span class="kb-hdot" style="background:'+STATUS[k].dot+'"></span>'+STATUS[k].label+' <span class="kb-cnt">'+items.length+'</span></div>'+
+        '<div class="kb-list">'+ (items.map(kbCard).join("") || '<div class="kb-empty">—</div>') +'</div></div>';
+    }).join("");
+    ov.innerHTML = '<div class="board kanban" role="dialog" aria-label="Kanban"><div class="board-head"><div><div class="bt">Kanban Pipeline</div><div class="bsub">Kartı sürükleyip aşamayı değiştir · '+scope.length+' aktif lead</div></div><button class="board-close" id="kbClose" aria-label="Kapat">'+svg(IC.x)+'</button></div><div class="kb-board">'+cols+'</div></div>';
+    document.body.appendChild(ov); kbEl=ov;
+    document.getElementById("kbClose").addEventListener("click", closeKanban);
+    ov.addEventListener("click", function(e){ if(e.target===ov) closeKanban(); });
+    ov.querySelectorAll(".kb-card").forEach(function(c){
+      c.addEventListener("dragstart", function(e){ e.dataTransfer.setData("text/plain", c.getAttribute("data-id")); e.dataTransfer.effectAllowed="move"; setTimeout(function(){c.classList.add("dragging");},0); });
+      c.addEventListener("dragend", function(){ c.classList.remove("dragging"); });
+      c.addEventListener("click", function(){ selectLead(c.getAttribute("data-id")); closeKanban(); });
+    });
+    ov.querySelectorAll(".kb-col").forEach(function(col){
+      col.addEventListener("dragover", function(e){ e.preventDefault(); col.classList.add("over"); });
+      col.addEventListener("dragleave", function(){ col.classList.remove("over"); });
+      col.addEventListener("drop", function(e){ e.preventDefault(); col.classList.remove("over"); var id=e.dataTransfer.getData("text/plain"); var durum=col.getAttribute("data-durum"); var l=byId(id); if(l && l.durum!==durum){ l.durum=durum; if(STATUS[durum].pool==="sicak" && !l.aktarma) l.aktarma=new Date().toISOString(); openKanban(); renderList(); renderTop(); renderChat(); renderContact(); toast(fullName(l)+" → "+STATUS[durum].label); } });
+    });
+  }
+
+  // ---------- Randevu Takvimi (ajanda) ----------
+  var tkEl = null;
+  function closeTakvim(){ if (tkEl){ tkEl.remove(); tkEl=null; } }
+  function dayLabel(d){ var diff=Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-todayMid())/DAY); if(diff===0) return "Bugün"; if(diff===1) return "Yarın"; if(diff===-1) return "Dün"; return d.toLocaleDateString("tr-TR",{weekday:"long",day:"2-digit",month:"long"}); }
+  function openTakvim(){
+    closeTakvim();
+    var scope = scopedLeads().filter(function(l){ return l.randevuTarih; }).sort(function(a,b){ return a.randevuTarih.localeCompare(b.randevuTarih); });
+    var groups = {}, order = [];
+    scope.forEach(function(l){ var d=new Date(l.randevuTarih); var key=d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); if(!groups[key]){ groups[key]=[]; order.push({key:key,d:d}); } groups[key].push(l); });
+    var body = order.length ? order.map(function(g){
+      return '<div class="tk-group"><div class="tk-day">'+esc(dayLabel(g.d))+'</div>'+ groups[g.key].map(function(l){
+        var t=new Date(l.randevuTarih);
+        return '<div class="tk-item"><span class="tk-time">'+t.toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})+'</span>'+
+          '<button class="tk-main" data-open="'+l.id+'"><span class="tk-name">'+esc(fullName(l))+'</span><span class="tk-islem">'+esc(l.islem||"—")+'</span></button>'+
+          (l.telefon ? '<a class="tk-wa" href="'+waReminderHref(l)+'" target="_blank" rel="noreferrer" title="WhatsApp hatırlatma">'+WA_SVG+'</a>' : '')+
+        '</div>';
+      }).join("") +'</div>';
+    }).join("") : '<div class="tk-empty">Planlanmış randevu yok. Bir kişinin panelinden "Randevu tarihi" ekleyince burada görünür.</div>';
+    var ov=document.createElement("div"); ov.className="overlay";
+    ov.innerHTML='<div class="board takvim" role="dialog" aria-label="Randevu takvimi"><div class="board-head"><div><div class="bt">Randevu Takvimi</div><div class="bsub">Yaklaşan randevular · '+scope.length+' randevu</div></div><button class="board-close" id="tkClose" aria-label="Kapat">'+svg(IC.x)+'</button></div><div class="tk-body">'+body+'</div></div>';
+    document.body.appendChild(ov); tkEl=ov;
+    document.getElementById("tkClose").addEventListener("click", closeTakvim);
+    ov.addEventListener("click", function(e){ if(e.target===ov) closeTakvim(); });
+    ov.querySelectorAll("[data-open]").forEach(function(b){ b.addEventListener("click", function(){ selectLead(b.getAttribute("data-open")); closeTakvim(); }); });
+  }
+
+  // ---------- Genel açılır menü (filtre & araçlar) ----------
+  var dropEl = null;
+  function closeDrop(){ if (dropEl){ dropEl.remove(); dropEl=null; } }
+  function openDrop(btn, items){
+    closeDrop();
+    var m = document.createElement("div"); m.className = "drop-menu";
+    m.innerHTML = items.map(function(it,i){ return '<button class="dm-item'+(it.on?" on":"")+'" data-i="'+i+'"><span class="dm-lab">'+it.label+'</span>'+(it.cnt!=null?'<span class="dm-cnt">'+it.cnt+'</span>':'')+'</button>'; }).join("");
+    document.body.appendChild(m);
+    var r = btn.getBoundingClientRect();
+    var w = Math.max(226, r.width); m.style.minWidth = w + "px";
+    var left = r.left; if (left + w + 8 > window.innerWidth) left = window.innerWidth - w - 8;
+    m.style.left = Math.max(8,left) + "px"; m.style.top = (r.bottom + 6) + "px";
+    dropEl = m;
+    m.addEventListener("click", function(e){ e.stopPropagation(); });
+    m.querySelectorAll(".dm-item").forEach(function(b,i){ b.addEventListener("click", function(){ closeDrop(); items[i].fn(); }); });
+  }
+
+  // ---------- Hazır yanıt menüsü ----------
+  var tplEl = null;
+  function closeTpl(){ if (tplEl){ tplEl.remove(); tplEl=null; } }
+  function openTemplateMenu(btn, apply){
+    closeTpl();
+    var m = document.createElement("div");
+    m.className = "tpl-menu";
+    m.innerHTML = '<div class="tpl-head">⚡ Hazır Yanıtlar</div>' + TEMPLATES.map(function(x,i){
+      return '<button class="tpl-item" data-i="'+i+'"><span class="tpl-t">'+esc(x.t)+'</span><span class="tpl-m">'+esc(x.m)+'</span></button>';
+    }).join("");
+    document.body.appendChild(m);
+    var r = btn.getBoundingClientRect(), w = 340, h = m.offsetHeight;
+    m.style.left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8)) + "px";
+    m.style.top = Math.max(8, r.top - h - 8) + "px";
+    tplEl = m;
+    m.addEventListener("click", function(e){ e.stopPropagation(); });
+    m.querySelectorAll(".tpl-item").forEach(function(b){
+      b.addEventListener("click", function(){ apply(TEMPLATES[+b.getAttribute("data-i")].m); closeTpl(); });
+    });
+  }
+
+  // ---------- Havuz Özeti (board) ----------
+  var boardEl = null;
+  function closeBoard(){ if (boardEl){ boardEl.remove(); boardEl=null; } }
+  function boardRow(l) {
+    var f = followup(l);
+    var phone = l.telefon
+      ? '<span class="bph">'+esc(l.telefon)+'</span>'
+      : '<span class="bph no">Tel yok</span>';
+    return '<button class="brow" data-id="'+l.id+'">'+avatarHTML(l,"avatar",false)+
+      '<span class="bm"><span class="bn">'+esc(fullName(l))+'</span><span class="bi">'+esc(l.islem||"işlem belirtilmedi")+' · '+STATUS[l.durum].label+'</span></span>'+
+      phone+'</button>';
+  }
+  function openBoard() {
+    closeBoard();
+    var scope = scopedLeads();
+    var alinan = scope.filter(function(l){ return STATUS[l.durum].pool==="sicak"; })
+      .sort(function(a,b){ return (b.lastTime||"").localeCompare(a.lastTime||""); });
+    var alinamayan = scope.filter(function(l){ return STATUS[l.durum].pool==="takip"; })
+      .sort(function(a,b){ return (a.takip||"9999").localeCompare(b.takip||"9999"); });
+    var randevu = scope.filter(function(l){ return l.durum==="randevu"; }).length;
+    var toplam = scope.length;
+    var oran = toplam ? Math.round((alinan.length/toplam)*100) : 0;
+    var acc = state.account==="all" ? "Tüm hesaplar" : "@"+acctById(state.account).handle;
+
+    var ov = document.createElement("div");
+    ov.className = "overlay";
+    ov.innerHTML =
+      '<div class="board" role="dialog" aria-label="Havuz özeti">'+
+        '<div class="board-head"><div><div class="bt">Havuz Özeti</div><div class="bsub">'+esc(acc)+' · DM ile gelen '+toplam+' kişinin iletişim durumu</div></div>'+
+          '<button class="board-export" data-export="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg> Excel\'e Aktar</button>'+
+          '<button class="board-close" id="boardClose" aria-label="Kapat">'+svg(IC.x)+'</button></div>'+
+        '<div class="board-tiles">'+
+          '<div class="btile ok"><div class="big" data-to="'+alinan.length+'">0</div><div class="bl">İletişim Alındı</div><div class="bd">bilgi/telefon verenler · sıcak havuz</div></div>'+
+          '<div class="btile no"><div class="big" data-to="'+alinamayan.length+'">0</div><div class="bl">İletişim Alınamadı</div><div class="bd">cevap yok / bilgi bekliyor · takip gerek</div></div>'+
+          '<div class="btile rv"><div class="big" data-to="'+oran+'" data-pre="%">%0</div><div class="bl">Dönüşüm</div><div class="bd">'+randevu+' randevu / '+toplam+' kişi</div></div>'+
+        '</div>'+
+        '<div class="board-cols">'+
+          '<div class="bcol ok"><div class="bcol-head">✓ İletişim Alınanlar <span class="cc">'+alinan.length+'</span></div>'+
+            '<div class="bcol-list">'+(alinan.length?alinan.map(boardRow).join(""):'<div class="bcol-empty">Henüz iletişim alınan kişi yok.</div>')+'</div></div>'+
+          '<div class="bcol no"><div class="bcol-head">⏳ İletişim Alınamayanlar <span class="cc">'+alinamayan.length+'</span></div>'+
+            '<div class="bcol-list">'+(alinamayan.length?alinamayan.map(boardRow).join(""):'<div class="bcol-empty">🎉 Herkesle iletişim kuruldu!</div>')+'</div></div>'+
+        '</div>'+
+      '</div>';
+    document.body.appendChild(ov);
+    boardEl = ov;
+    ov.querySelectorAll(".btile .big").forEach(function(b){
+      countUp(b, parseInt(b.getAttribute("data-to"), 10) || 0, b.getAttribute("data-pre") || "", 780);
+    });
+    document.getElementById("boardClose").addEventListener("click", closeBoard);
+    var be = ov.querySelector(".board-export"); if (be) be.addEventListener("click", function(){ exportExcel(scope, exportLabel()); });
+    ov.addEventListener("click", function(e){ if (e.target===ov) closeBoard(); });
+    ov.querySelectorAll(".brow").forEach(function(b){
+      b.addEventListener("click", function(){ selectLead(b.getAttribute("data-id")); closeBoard(); });
+    });
+  }
+
+  // ---------- Olay bağlama ----------
+  document.getElementById("summary").addEventListener("click", function(e){
+    if (e.target.closest("#toolsBtn")) {
+      openDrop(e.target.closest("#toolsBtn"), [
+        { label:"📊 Analitik", fn:openAnalytics },
+        { label:"🗂 Kanban", fn:openKanban },
+        { label:"📅 Randevu Takvimi", fn:openTakvim },
+        { label:"📋 Detaylı liste", fn:openBoard },
+        { label:"⬇ Excel'e aktar", fn:function(){ exportExcel(scopedLeads(), exportLabel()); } },
+        { label:"🔒 Çıkış Yap", fn:function(){ if (typeof sbLogout === "function" && LIVE) sbLogout(); } }
+      ]);
+      return;
+    }
+    var b = e.target.closest("[data-board]"); if (b) { openBoard(); return; }
+    var f = e.target.closest("[data-filter]");
+    if (f) { state.filter = f.getAttribute("data-filter"); renderTop(); renderList(); }
+  });
+  document.getElementById("rail").addEventListener("click", function(e){
+    var b = e.target.closest("[data-acc]"); if (b) switchAccount(b.getAttribute("data-acc"));
+  });
+  document.getElementById("convoList").addEventListener("click", function(e){
+    if (e.target.closest("[data-cleartag]")) { state.tagFilter = null; renderList(); return; }
+    var tg = e.target.closest("[data-tag]");
+    if (tg) { e.stopPropagation(); state.tagFilter = tg.getAttribute("data-tag"); renderList(); return; }
+    var btn = e.target.closest(".convo"); if (btn) selectLead(btn.getAttribute("data-id"));
+  });
+  document.getElementById("convoList").addEventListener("contextmenu", function(e){
+    var btn = e.target.closest(".convo"); if (btn){ e.preventDefault(); openCtx(e.clientX, e.clientY, byId(btn.getAttribute("data-id"))); }
+  });
+  document.getElementById("filters").addEventListener("click", function(e){
+    var b = e.target.closest(".filter-toggle"); if (!b) return;
+    var c = poolCounts();
+    openDrop(b, FILTERS.map(function(f){ return { label:f[1], cnt:(c[f[0]]||0), on:state.filter===f[0], fn:function(){ state.filter=f[0]; renderTop(); renderList(); } }; }));
+  });
+  document.getElementById("search").addEventListener("input", function(e){ state.q=e.target.value; renderList(); });
+  document.getElementById("bell").addEventListener("click", function(e){ e.stopPropagation(); openPop(); });
+
+  // İletişim/Randevu/CevapVermedi butonları (quickbar + hot cta + delete) — event delegation
+  document.body.addEventListener("click", function(e){
+    var waEl = e.target.closest("[data-wa]");
+    if (waEl) {
+      var wid = waEl.getAttribute("data-wa");
+      // Bağlantı açılsın diye engelemiyoruz; kısa gecikmeyle işaretleyip yeniliyoruz
+      setTimeout(function(){
+        var wl = byId(wid);
+        if (wl && !wl.waSent) { wl.waSent = true; wl.waSentTime = new Date().toISOString(); persistLead(wl); }
+        refreshAll();
+        toast("WhatsApp'a gönderildi ✓ · Tümü'nden çıkarıldı");
+      }, 60);
+      return;
+    }
+    var tgl = e.target.closest("[data-toggle]");
+    if (tgl) { document.body.classList.toggle(tgl.getAttribute("data-toggle")==="list" ? "list-collapsed" : "contact-collapsed"); return; }
+    var nav = e.target.closest("[data-mnav]");
+    if (nav) {
+      var m = nav.getAttribute("data-mnav");
+      if (m === "list") document.body.classList.remove("show-chat", "show-contact");
+      else if (m === "contact") document.body.classList.add("show-contact");
+      else if (m === "closecontact") document.body.classList.remove("show-contact");
+      return;
+    }
+    var a = e.target.closest("[data-act]");
+    if (a) {
+      var act = a.getAttribute("data-act");
+      var l = byId(state.selectedId); if (!l) return;
+      if (act==="iletisim") setStatus(l,"cevapVerdi");
+      else if (act==="randevu") setStatus(l,"randevu");
+      else if (act==="cevapVermedi") setStatus(l,"cevapVermedi");
+      else if (act==="delete") deleteLead(l);
+      return;
+    }
+    if (!e.target.closest(".ctx")) closeCtx();
+    if (!e.target.closest(".pop") && !e.target.closest("#bell")) closePop();
+    if (!e.target.closest(".tpl-menu") && !e.target.closest("#tplBtn")) closeTpl();
+    if (!e.target.closest(".drop-menu") && !e.target.closest(".filter-toggle") && !e.target.closest("#toolsBtn")) closeDrop();
+  });
+  window.addEventListener("keydown", function(e){ if (e.key==="Escape"){ closeCtx(); closePop(); closeBoard(); closeConnect(); closeTpl(); closeAnalytics(); closeKanban(); closeTakvim(); closeDrop(); } });
+  window.addEventListener("resize", function(){ closeCtx(); closePop(); });
+
+  // ---------- Tema (gece / gündüz) ----------
+  var THEME_KEY = "dentakip_theme";
+  var SUN = '<path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke-linecap="round"/><circle cx="12" cy="12" r="4.5"/>';
+  var MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" stroke-linecap="round" stroke-linejoin="round"/>';
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    var b = document.getElementById("themeBtn");
+    if (b) { b.innerHTML = svg(t === "dark" ? SUN : MOON); b.title = t === "dark" ? "Gündüz moduna geç" : "Gece moduna geç"; }
+  }
+  function toggleTheme() {
+    var cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    var next = cur === "dark" ? "light" : "dark";
+    applyTheme(next);
+    try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+  }
+  document.getElementById("themeBtn").addEventListener("click", toggleTheme);
+  var stored = null; try { stored = localStorage.getItem(THEME_KEY); } catch (e) {}
+  applyTheme(stored || ((window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light"));
+
+  // ================= CANLI MOD (Supabase) =================
+  var LIVE_CFG = (typeof window !== "undefined" && window.LEADDM) ? window.LEADDM : null;
+  var LIVE = !!LIVE_CFG;
+  // ---- Kimlik doğrulama (Supabase Auth) ----
+  var SESSION = null;
+  try { SESSION = JSON.parse(localStorage.getItem("leaddm_session") || "null"); } catch (e) { SESSION = null; }
+  function sbToken(){ return (SESSION && SESSION.access_token) ? SESSION.access_token : LIVE_CFG.anon; }
+  function sbH(){ return { apikey: LIVE_CFG.anon, Authorization: "Bearer " + sbToken(), "Content-Type": "application/json" }; }
+  function sbSaveSession(d){
+    SESSION = { access_token: d.access_token, refresh_token: d.refresh_token,
+      expires_at: Date.now() + ((d.expires_in || 3600) * 1000), email: (d.user && d.user.email) || (SESSION && SESSION.email) || "" };
+    try { localStorage.setItem("leaddm_session", JSON.stringify(SESSION)); } catch (e) {}
+  }
+  function sbLogin(email, pass){
+    // Kullanıcı adı (ör. "admin") → arka planda gerçek hesaba eşlenir
+    var em = (email && email.indexOf("@") >= 0) ? email : "aderregina@gmail.com";
+    return fetch(LIVE_CFG.url + "/auth/v1/token?grant_type=password", {
+      method: "POST", headers: { apikey: LIVE_CFG.anon, "Content-Type": "application/json" },
+      body: JSON.stringify({ email: em, password: pass })
+    }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d: d }; }); });
+  }
+  function sbRefresh(){
+    if (!SESSION || !SESSION.refresh_token) return Promise.resolve(false);
+    return fetch(LIVE_CFG.url + "/auth/v1/token?grant_type=refresh_token", {
+      method: "POST", headers: { apikey: LIVE_CFG.anon, "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh_token: SESSION.refresh_token })
+    }).then(function(r){ if (!r.ok) return false; return r.json().then(function(d){ if (d && d.access_token) { sbSaveSession(d); return true; } return false; }); }).catch(function(){ return false; });
+  }
+  function sbLogout(){ SESSION = null; try { localStorage.removeItem("leaddm_session"); } catch (e) {} if (window._leaddmPoll) { clearInterval(window._leaddmPoll); window._leaddmPoll = null; } location.reload(); }
+  function hideLogin(){ var o = document.getElementById("loginOverlay"); if (o && o.parentNode) o.parentNode.removeChild(o); }
+  function showLogin(){
+    if (document.getElementById("loginOverlay")) return;
+    if (!document.getElementById("loginStyle")) {
+      var st = document.createElement("style"); st.id = "loginStyle";
+      st.textContent = "#loginOverlay{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 0%,#141210,#08080a 70%);overflow:hidden;font-family:inherit}"
+        + "#loginOverlay .lg-glow{position:absolute;width:150vmax;height:150vmax;left:50%;top:50%;margin:-75vmax 0 0 -75vmax;background:radial-gradient(circle,rgba(212,175,55,.16),rgba(212,175,55,0) 55%);animation:lgFloat 16s ease-in-out infinite alternate;pointer-events:none}"
+        + "#loginOverlay .lg-spin{position:absolute;inset:-30%;background:conic-gradient(from 0deg,transparent,rgba(212,175,55,.07),transparent 28%);animation:lgSpin 26s linear infinite;pointer-events:none}"
+        + "@keyframes lgSpin{to{transform:rotate(360deg)}}"
+        + "@keyframes lgFloat{0%{transform:translate(-12%,-8%)}100%{transform:translate(12%,8%)}}"
+        + ".login-card{position:relative;z-index:2;width:362px;max-width:90vw;background:linear-gradient(160deg,#151517,#0b0b0d);border:1px solid rgba(212,175,55,.35);border-radius:22px;padding:38px 32px 26px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.05);animation:lgCardIn .8s cubic-bezier(.16,1,.3,1)}"
+        + ".login-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:72%;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.9),transparent)}"
+        + "@keyframes lgCardIn{from{opacity:0;transform:translateY(26px) scale(.95)}to{opacity:1;transform:none}}"
+        + ".login-logo{width:66px;height:66px;margin:0 auto 16px;border-radius:19px;background:linear-gradient(145deg,#f5d67b,#d4af37 50%,#8a6d1f);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(212,175,55,.4);animation:lgPulse 3.2s ease-in-out infinite}"
+        + "@keyframes lgPulse{0%,100%{box-shadow:0 10px 26px rgba(212,175,55,.3)}50%{box-shadow:0 12px 44px rgba(212,175,55,.6)}}"
+        + ".login-logo svg{width:37px;height:37px;fill:none;stroke:#0c0c0e;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}"
+        + ".login-card h1{margin:0;font-size:31px;font-weight:800;letter-spacing:-.5px;background:linear-gradient(90deg,#f5d67b,#d4af37,#fff2c4,#d4af37,#f5d67b);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:lgShine 4.5s linear infinite}"
+        + "@keyframes lgShine{to{background-position:200% center}}"
+        + ".login-card .sub{margin:7px 0 26px;font-size:12.5px;color:#8a8a92;letter-spacing:.4px}"
+        + ".login-card input{width:100%;box-sizing:border-box;padding:14px 16px;margin:7px 0;background:#070708;border:1.5px solid #27272c;border-radius:12px;font-size:15px;color:#f0e9d2;outline:none;transition:border-color .25s,box-shadow .25s}"
+        + ".login-card input::placeholder{color:#54545b}"
+        + ".login-card input:focus{border-color:#d4af37;box-shadow:0 0 0 3px rgba(212,175,55,.16)}"
+        + ".login-card button{position:relative;overflow:hidden;width:100%;padding:14px;margin-top:16px;border:0;border-radius:12px;cursor:pointer;font-size:16px;font-weight:800;color:#100d05;background:linear-gradient(135deg,#f5d67b,#d4af37 55%,#b8860b);box-shadow:0 8px 22px rgba(212,175,55,.32);transition:transform .15s,box-shadow .25s}"
+        + ".login-card button:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 13px 32px rgba(212,175,55,.5)}"
+        + ".login-card button:active{transform:translateY(0)}"
+        + ".login-card button:disabled{opacity:.6;cursor:default}"
+        + ".login-card button::after{content:'';position:absolute;top:0;left:-120%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:lgSweep 3.6s ease-in-out infinite}"
+        + "@keyframes lgSweep{0%{left:-120%}55%,100%{left:170%}}"
+        + ".login-err{color:#ff7373;font-size:12.5px;min-height:16px;margin-top:11px}"
+        + ".login-foot{margin-top:20px;font-size:11px;color:#6a6a72;letter-spacing:.5px}"
+        + ".login-foot b{color:#d4af37;font-weight:700}"
+        + "@media (prefers-reduced-motion:reduce){#loginOverlay .lg-spin,#loginOverlay .lg-glow,.login-logo,.login-card h1,.login-card button::after{animation:none}}";
+      document.head.appendChild(st);
+    }
+    var ov = document.createElement("div"); ov.id = "loginOverlay";
+    ov.innerHTML = '<div class="lg-spin"></div><div class="lg-glow"></div>'
+      + '<form class="login-card" id="loginForm">'
+      + '<div class="login-logo"><svg viewBox="0 0 24 24">'
+      + '<rect x="3" y="3" width="18" height="18" rx="5.4"/>'
+      + '<circle cx="16.9" cy="7.1" r="1.25" fill="#0c0c0e" stroke="none"/>'
+      + '<path d="M16.6 9.6 L7.9 12.9 L11.3 13.7 L12.6 16.9 Z" fill="#0c0c0e" stroke-width="1.1"/>'
+      + '<path d="M16.6 9.6 L11.3 13.7"/>'
+      + '</svg></div>'
+      + '<h1>LeadDm</h1><div class="sub">Instagram DM Yönetim Paneli</div>'
+      + '<input id="loginEmail" type="text" placeholder="Kullanıcı adı" autocomplete="username" required>'
+      + '<input id="loginPass" type="password" placeholder="Şifre" autocomplete="current-password" required>'
+      + '<button type="submit" id="loginBtn">Giriş Yap</button>'
+      + '<div class="login-err" id="loginErr"></div>'
+      + '<div class="login-foot">Geliştirici · <b>yucelsinmedia</b></div>'
+      + '</form>';
+    document.body.appendChild(ov);
+    document.getElementById("loginForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      var em = document.getElementById("loginEmail").value.trim();
+      var pw = document.getElementById("loginPass").value;
+      var btn = document.getElementById("loginBtn"), err = document.getElementById("loginErr");
+      err.textContent = ""; btn.disabled = true; btn.textContent = "Giriş yapılıyor…";
+      sbLogin(em, pw).then(function(res){
+        if (res.ok && res.d && res.d.access_token) { sbSaveSession(res.d); hideLogin(); liveBoot(); }
+        else { err.textContent = (res.d && (res.d.error_description || res.d.msg || res.d.error)) || "E-posta veya şifre hatalı"; btn.disabled = false; btn.textContent = "Giriş Yap"; }
+      }).catch(function(){ err.textContent = "Bağlantı hatası"; btn.disabled = false; btn.textContent = "Giriş Yap"; });
+    });
+    var ie = document.getElementById("loginEmail"); if (ie) ie.focus();
+  }
+  function liveBoot(){
+    hideLogin();
+    try { if (window.Notification && Notification.permission === "default") Notification.requestPermission(); } catch (e) {}
+    liveLoad();
+    if (!window._leaddmPoll) {
+      window._leaddmPoll = setInterval(function(){
+        if (SESSION && SESSION.expires_at && (SESSION.expires_at - Date.now() < 120000)) sbRefresh();
+        liveLoad(); if (state.selectedId) liveMessages(state.selectedId);
+      }, 8000);
+    }
+  }
+  function sbAuthBoot(){
+    if (SESSION && SESSION.expires_at && (SESSION.expires_at - Date.now() > 60000)) { liveBoot(); }
+    else if (SESSION && SESSION.refresh_token) { sbRefresh().then(function(ok){ if (ok) liveBoot(); else showLogin(); }); }
+    else { showLogin(); }
+  }
+  function sbGet(p){ return fetch(LIVE_CFG.url + "/rest/v1/" + p, { headers: sbH() }).then(function(r){ return r.json(); }); }
+  function sbPatch(p, body){ return fetch(LIVE_CFG.url + "/rest/v1/" + p, { method: "PATCH", headers: Object.assign(sbH(), { Prefer: "return=minimal" }), body: JSON.stringify(body) }); }
+  function liveRowToLead(r){
+    return { id: r.ig_user_id, igUserId: r.ig_user_id, accountId: r.account_id || null,
+      username: r.username || "", ad: r.ad || "", soyad: r.soyad || "", telefon: r.telefon || "",
+      islem: r.islem || "", kaynak: r.kaynak || "Instagram DM", durum: r.durum || "yeni",
+      takip: r.sonraki_takip || "", not: r["not"] || "", tags: Array.isArray(r.tags) ? r.tags : [],
+      temsilci: r.temsilci || null, randevuTarih: r.randevu_tarih || "", lid: r.lid || "",
+      fiyatSordu: !!r.fiyat_sordu, waSent: !!r.wa_sent, read: r.read === false ? false : true,
+      dogum: r.dogum || "", gecmis: r.gecmis || "", olusturma: r.created_at || null,
+      lastText: r.last_message || "", lastTime: r.last_time || null, lastDir: r.last_dir || null,
+      files: Array.isArray(r.files) ? r.files : [], nurture: {}, messages: [] };
+  }
+  function persistLead(l){
+    if(!LIVE || !l) return;
+    var row = { ad: l.ad || null, soyad: l.soyad || null, telefon: l.telefon || null, islem: l.islem || null,
+      durum: l.durum, sonraki_takip: l.takip || null, "not": l.not || null,
+      tags: l.tags || [], temsilci: l.temsilci || null, randevu_tarih: l.randevuTarih || null,
+      fiyat_sordu: !!l.fiyatSordu, wa_sent: !!l.waSent, dogum: l.dogum || null, gecmis: l.gecmis || null };
+    sbPatch("ig_conversations?ig_user_id=eq." + encodeURIComponent(l.id), row).catch(function(e){ console.error("persist", e); });
+  }
+  // ---- Yeni DM bildirimi (ses + masaüstü + sekme başlığı) ----
+  var _convSeen = null;
+  function _ts(t){ return t ? new Date(t).getTime() : 0; }
+  function beep(){
+    try {
+      var Ac = window.AudioContext || window.webkitAudioContext; if (!Ac) return;
+      var ctx = beep._c || (beep._c = new Ac());
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination); o.type = "sine"; o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0015, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.16, ctx.currentTime + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+      o.start(); o.stop(ctx.currentTime + 0.37);
+    } catch (e) {}
+  }
+  function notifyIncoming(rows){
+    var map = {}; rows.forEach(function(r){ map[r.ig_user_id] = _ts(r.last_time); });
+    if (_convSeen === null) { _convSeen = map; return; } // ilk yükleme: sadece taban al, bildirme
+    var yeni = [];
+    rows.forEach(function(r){ if (r.last_dir === "in" && _ts(r.last_time) > (_convSeen[r.ig_user_id] || 0)) yeni.push(r); });
+    _convSeen = map;
+    if (!yeni.length) return;
+    beep();
+    var r0 = yeni[0], who = r0.username ? ("@" + r0.username) : "Yeni kişi";
+    var body = yeni.length > 1 ? (yeni.length + " yeni DM geldi") : (r0.last_message || "Yeni mesaj");
+    try { if (window.Notification && Notification.permission === "granted") new Notification("LeadDm • " + who, { body: body }); } catch (e) {}
+    document.title = "🔴 (" + yeni.length + ") Yeni DM • LeadDm";
+    setTimeout(function(){ document.title = "LeadDm"; }, 6000);
+    toast(who + " yeni mesaj gönderdi ✉");
+  }
+  function liveLoad(){
+    if(!LIVE) return;
+    sbGet("ig_conversations?select=*&order=last_time.desc.nullslast").then(function(rows){
+      if(!Array.isArray(rows)) return;
+      notifyIncoming(rows);
+      var keep = {}; leads.forEach(function(l){ keep[l.id] = l.messages; });
+      leads = rows.map(function(r){ var l = liveRowToLead(r); l.messages = keep[l.id] || []; return l; });
+      if((!state.selectedId || !byId(state.selectedId)) && leads.length){ state.selectedId = leads[0].id; liveMessages(state.selectedId); }
+      renderTop(); renderList(); renderChat(); renderContact();
+    }).catch(function(e){ console.error("liveLoad", e); });
+  }
+  function liveMessages(id){
+    if(!LIVE || !id) return;
+    sbGet("ig_messages?select=*&ig_user_id=eq." + encodeURIComponent(id) + "&order=created_at.asc").then(function(rows){
+      var l = byId(id); if(!l) return;
+      var dbMsgs = (rows || []).map(function(m){ return { from: m.direction === "out" ? "out" : "in", text: m.text, time: m.created_at }; });
+      // Veritabanında henüz olmayan (gönderim yolda/başarısız) yerel giden mesajları koru → kaybolmasın
+      var seen = {}; dbMsgs.forEach(function(m){ seen[m.from + "|" + m.text] = 1; });
+      var pend = (l.messages || []).filter(function(m){ return m.pending && !seen[m.from + "|" + m.text]; });
+      l.messages = dbMsgs.concat(pend);
+      if(state.selectedId === id) renderChat();
+      renderList();
+    }).catch(function(e){ console.error("liveMessages", e); });
+  }
+
+  // ---------- İlk çizim ----------
+  if (LIVE) {
+    // Canlı: demo verisini temizle, gerçek hesabı ray'a koy, Supabase'den yükle + her 8sn yenile
+    leads = []; state.selectedId = null;
+    if (LIVE_CFG.account) accounts = [LIVE_CFG.account];
+    document.getElementById("acctLabel").textContent = LIVE_CFG.account ? ("@" + LIVE_CFG.account.handle) : "Canlı";
+    renderRail(); renderTop(); renderList(); renderChat(); renderContact();
+    sbAuthBoot();
+  } else {
+    var _sel0 = byId(state.selectedId); if (_sel0) _sel0.read = true; // açık olan okundu
+    if (!REDUCED) document.body.classList.add("booting");
+    renderRail(); updateAcctLabel(); renderTop(); renderList(); renderChat(true); renderContact(true);
+    setTimeout(function(){ document.body.classList.remove("booting"); }, 1350);
+  }
+})();
+</script>
+</body></html>
