@@ -2299,9 +2299,46 @@
         : 'Veri biriktikçe hangi yaklaşımın daha çok telefon getirdiğini burada göstereceğim.';
       var elP = document.getElementById("anPhone");
       if(elP) elP.innerHTML = '<div class="an-tiles" style="margin:0 0 10px"><div class="an-tile"><div class="at-n">'+total+'</div><div class="at-l">Konuşma</div></div><div class="an-tile ok"><div class="at-n">'+phone+'</div><div class="at-l">Telefon veren</div></div><div class="an-tile rv"><div class="at-n">%'+rate+'</div><div class="at-l">Dönüşüm</div></div></div><div class="an-note">'+insight+'</div>';
+
+      // ---- en yoğun saat / gün (gelen DM) ----
+      var hourC={}, dayC={}, DAYN=["Paz","Pzt","Sal","Çar","Per","Cum","Cmt"];
+      msgs.forEach(function(m){ if(m.direction!=="in"||!m.t) return; var dt=new Date(m.t); if(isNaN(dt.getTime())) return; hourC[dt.getHours()]=(hourC[dt.getHours()]||0)+1; dayC[dt.getDay()]=(dayC[dt.getDay()]||0)+1; });
+      var hoursArr=[]; for(var hh=0;hh<24;hh++){ if(hourC[hh]) hoursArr.push({label:(hh<10?"0"+hh:hh)+":00", n:hourC[hh], h:hh}); }
+      var topHours=hoursArr.slice().sort(function(a,b){return b.n-a.n;}).slice(0,5).sort(function(a,b){return a.h-b.h;});
+      var maxH=Math.max.apply(null,[1].concat(topHours.map(function(x){return x.n;})));
+      var elH=document.getElementById("anHours");
+      if(elH) elH.innerHTML = topHours.length ? bars(topHours.map(function(x){return {label:x.label,n:x.n};}), maxH, function(){return "#12A0AB";}) : '<div class="an-empty">Yeterli veri yok</div>';
+      var dOrder=[1,2,3,4,5,6,0], daysOrdered=dOrder.map(function(i){return {label:DAYN[i], n:dayC[i]||0};});
+      var maxD=Math.max.apply(null,[1].concat(daysOrdered.map(function(x){return x.n;})));
+      var elD=document.getElementById("anDays");
+      if(elD) elD.innerHTML = daysOrdered.some(function(x){return x.n>0;}) ? bars(daysOrdered, maxD, function(){return "#7A67E6";}) : '<div class="an-empty">Yeterli veri yok</div>';
+
+      // ---- ortalama yanıt süresi (gelen → hemen ardından bizim giden) ----
+      var byC2={}; msgs.forEach(function(m){ (byC2[m.ig_user_id]=byC2[m.ig_user_id]||[]).push(m); });
+      var diffs=[];
+      Object.keys(byC2).forEach(function(id){
+        var arr=byC2[id];
+        for(var i=0;i<arr.length-1;i++){
+          if(arr[i].direction==="in" && arr[i+1].direction==="out" && arr[i].t && arr[i+1].t){
+            var d0=new Date(arr[i].t), d1=new Date(arr[i+1].t);
+            if(isNaN(d0.getTime())||isNaN(d1.getTime())) continue;
+            var mins=(d1-d0)/60000;
+            if(mins>=0 && mins<=1440) diffs.push(mins);
+          }
+        }
+      });
+      var elR=document.getElementById("anResp");
+      if(elR){
+        if(diffs.length){
+          diffs.sort(function(a,b){return a-b;});
+          var med=diffs[Math.floor(diffs.length/2)], avg=diffs.reduce(function(a,b){return a+b;},0)/diffs.length;
+          var fm=function(x){ return x<60 ? (Math.round(x)+" dk") : ((Math.round(x/6)/10)+" saat"); };
+          elR.innerHTML='<div class="an-tiles" style="margin:0 0 8px"><div class="an-tile ok"><div class="at-n" style="font-size:19px">'+fm(med)+'</div><div class="at-l">Ortanca yanıt</div></div><div class="an-tile"><div class="at-n" style="font-size:19px">'+fm(avg)+'</div><div class="at-l">Ortalama</div></div></div><div class="an-note">'+diffs.length+' yanıt üzerinden. İlk <b>5 dakikada</b> dönmek dönüşümü katlar — yavaşsanız otomatik karşılama/anahtar-kelime yanıtı devreye alın.</div>';
+        } else elR.innerHTML='<div class="an-empty">Henüz yeterli yanıt verisi yok</div>';
+      }
     }
-    if(LIVE){ sbGet("ig_messages?select=ig_user_id,direction,text&limit=5000").then(function(rows){ fill(Array.isArray(rows)?rows:[]); }).catch(function(){ fill([]); }); }
-    else { var msgs=[]; leads.forEach(function(l){ (l.messages||[]).forEach(function(m){ msgs.push({ ig_user_id:l.id, direction:(m.from==="out"?"out":"in"), text:m.text }); }); }); fill(msgs); }
+    if(LIVE){ sbGet("ig_messages?select=ig_user_id,direction,text,created_at&order=created_at.asc&limit=5000").then(function(rows){ fill((Array.isArray(rows)?rows:[]).map(function(m){ return { ig_user_id:m.ig_user_id, direction:m.direction, text:m.text, t:m.created_at }; })); }).catch(function(){ fill([]); }); }
+    else { var msgs=[]; leads.forEach(function(l){ (l.messages||[]).forEach(function(m){ msgs.push({ ig_user_id:l.id, direction:(m.from==="out"?"out":"in"), text:m.text, t:m.time }); }); }); fill(msgs); }
   }
   function openAnalytics(){
     closeAnalytics();
@@ -2342,6 +2379,9 @@
           '<div class="an-card"><div class="an-h">En çok sorulan işlemler</div>'+ (islem.length? bars(islem, maxI, function(){return "#7A67E6";}) : '<div class="an-empty">İşlem verisi yok</div>') +'</div>'+
           '<div class="an-card"><div class="an-h">En çok sorulan konular (mesaj analizi)</div><div id="anTopics" class="an-load">Analiz ediliyor…</div></div>'+
           '<div class="an-card"><div class="an-h">📞 Telefon dönüşüm analizi</div><div id="anPhone" class="an-load">Analiz ediliyor…</div></div>'+
+          '<div class="an-card"><div class="an-h">🕐 En yoğun saatler (gelen DM)</div><div id="anHours" class="an-load">Analiz ediliyor…</div></div>'+
+          '<div class="an-card"><div class="an-h">📅 En yoğun günler</div><div id="anDays" class="an-load">Analiz ediliyor…</div></div>'+
+          '<div class="an-card"><div class="an-h">⚡ Ortalama yanıt süreniz</div><div id="anResp" class="an-load">Analiz ediliyor…</div></div>'+
         '</div>'+
       '</div>';
     document.body.appendChild(ov); anEl=ov;
