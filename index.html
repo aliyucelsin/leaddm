@@ -2434,7 +2434,7 @@
   function galList(){
     return fetch(LIVE_CFG.url+"/storage/v1/object/list/gallery",{ method:"POST", headers:sbH(), body:JSON.stringify({ prefix:"", limit:100, sortBy:{ column:"created_at", order:"desc" } }) }).then(function(r){ return r.json(); });
   }
-  function galDelete(name){ return fetch(LIVE_CFG.url+"/storage/v1/object/gallery/"+name,{ method:"DELETE", headers:sbH() }); }
+  function galDelete(name){ return fetch(LIVE_CFG.url+"/storage/v1/object/gallery/"+name,{ method:"DELETE", headers:{ apikey:LIVE_CFG.anon, Authorization:"Bearer "+sbToken() } }); }
   function galUpload(file){
     var ext = (file.name.split(".").pop()||"bin").toLowerCase();
     var name = "g"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
