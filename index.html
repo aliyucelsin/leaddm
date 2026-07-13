@@ -507,6 +507,21 @@
   [data-theme="dark"] .tag.kvkk-ok { background:#12321F; color:#7FE0AD; border-color:#1E4A3B; }
   [data-theme="dark"] .tag.kvkk-no { background:#3A2E12; color:#E8C874; border-color:#5A4718; }
 
+  /* mesai saatleri */
+  #ohMsg { width:100%; box-sizing:border-box; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font-size:14px; font-family:inherit; line-height:1.5; outline:none; resize:vertical; margin-bottom:12px; }
+  #ohMsg:focus { border-color:var(--brand); }
+  .hours-row { display:flex; gap:12px; margin-bottom:12px; }
+  .hours-f { flex:1; }
+  .hours-f label { display:block; font-size:12px; color:var(--ink2); margin-bottom:4px; font-weight:600; }
+  .hours-f input { width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font-size:15px; outline:none; }
+  .hours-f input:focus { border-color:var(--brand); }
+  .hours-lab { font-size:12px; color:var(--ink2); font-weight:600; margin-bottom:6px; }
+  .hours-days { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .daychip { cursor:pointer; }
+  .daychip input { position:absolute; opacity:0; width:0; height:0; }
+  .daychip span { display:inline-block; padding:8px 12px; border:1.5px solid var(--line); border-radius:9px; font-weight:700; font-size:12.5px; color:var(--ink2); }
+  .daychip input:checked + span { background:var(--brand); color:#fff; border-color:var(--brand); }
+
   /* lead skoru */
   .score-box { margin-bottom: 18px; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); }
   .score-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
@@ -2587,6 +2602,42 @@
     });
   }
 
+  // ---------- Mesai dışı mesajı ayarları ----------
+  var hoursEl = null;
+  function closeHours(){ if (hoursEl){ hoursEl.remove(); hoursEl=null; } }
+  function openHoursSettings(){
+    closeHours();
+    var DAYS=[["1","Pzt"],["2","Sal"],["3","Çar"],["4","Per"],["5","Cum"],["6","Cmt"],["0","Paz"]];
+    var ov=document.createElement("div"); ov.className="overlay";
+    ov.innerHTML='<div class="board" role="dialog" aria-label="Mesai dışı mesajı">'+
+      '<div class="board-head"><div><div class="bt">🕐 Mesai Dışı Mesajı</div><div class="bsub">Kapalıyken yeni DM\'e otomatik yanıt</div></div><button class="board-close" id="hoursClose" aria-label="Kapat">'+svg(IC.x)+'</button></div>'+
+      '<div class="wel-body">'+
+        '<label class="wel-toggle"><input type="checkbox" id="ohOn"><span class="wel-sw"></span><span class="wel-lab">Mesai dışı mesajı açık</span></label>'+
+        '<div class="wel-hint">Kliniğin <b>kapalı</b> olduğu saat/günlerde, sana <b>ilk kez</b> yazana aşağıdaki mesaj otomatik gider (açıkken karşılama mesajının yerine geçer). Saat İstanbul saatine göredir.</div>'+
+        '<div class="hours-row"><div class="hours-f"><label>Açılış saati</label><input type="number" id="wStart" min="0" max="23"></div><div class="hours-f"><label>Kapanış saati</label><input type="number" id="wEnd" min="0" max="23"></div></div>'+
+        '<div class="hours-lab">Çalışma günleri</div><div class="hours-days" id="wDays">'+DAYS.map(function(d){ return '<label class="daychip"><input type="checkbox" data-day="'+d[0]+'"><span>'+d[1]+'</span></label>'; }).join("")+'</div>'+
+        '<textarea id="ohMsg" rows="4" placeholder="Kapalıyken gidecek mesaj…"></textarea>'+
+        '<button id="hoursSave" class="tplm-addbtn">Kaydet</button>'+
+      '</div></div>';
+    document.body.appendChild(ov); hoursEl=ov;
+    document.getElementById("hoursClose").addEventListener("click", closeHours);
+    ov.addEventListener("click", function(e){ if(e.target===ov) closeHours(); });
+    sbGet("leaddm_settings?select=*&id=eq.1").then(function(rows){
+      var s=(rows&&rows[0])||{};
+      document.getElementById("ohOn").checked=!!s.oh_on;
+      document.getElementById("ohMsg").value=s.oh_msg||"";
+      document.getElementById("wStart").value=(s.work_start!=null?s.work_start:9);
+      document.getElementById("wEnd").value=(s.work_end!=null?s.work_end:19);
+      var days=String(s.work_days||"1,2,3,4,5,6").split(",");
+      ov.querySelectorAll("[data-day]").forEach(function(cb){ cb.checked = days.indexOf(cb.getAttribute("data-day"))>=0; });
+    }).catch(function(){});
+    document.getElementById("hoursSave").addEventListener("click", function(){
+      var days=[]; ov.querySelectorAll("[data-day]").forEach(function(cb){ if(cb.checked) days.push(cb.getAttribute("data-day")); });
+      var body={ oh_on:document.getElementById("ohOn").checked, oh_msg:document.getElementById("ohMsg").value.trim(), work_start:parseInt(document.getElementById("wStart").value,10)||9, work_end:parseInt(document.getElementById("wEnd").value,10)||19, work_days:days.join(","), updated_at:new Date().toISOString() };
+      sbPatch("leaddm_settings?id=eq.1",body).then(function(r){ if(r.ok){ toast("Kaydedildi ✓"); closeHours(); } else toast("Kaydedilemedi"); }).catch(function(){ toast("Bağlantı hatası"); });
+    });
+  }
+
   // ---------- Bugün Aranacaklar ----------
   var callEl = null;
   function closeCall(){ if (callEl){ callEl.remove(); callEl=null; } }
@@ -2683,6 +2734,7 @@
         { label:"📋 Detaylı liste", fn:openBoard },
         { label:"⬇ Excel'e aktar", fn:function(){ exportExcel(scopedLeads(), exportLabel()); } },
         { label:"🤖 Otomatik Karşılama", fn:function(){ if(LIVE) openWelcomeSettings(); else toast("Canlı modda kullanılır"); } },
+        { label:"🕐 Mesai Dışı Mesajı", fn:function(){ if(LIVE) openHoursSettings(); else toast("Canlı modda kullanılır"); } },
         { label:"🔑 Şifre Değiştir", fn:function(){ if(LIVE) openPassChange(); else toast("Canlı modda kullanılır"); } },
         { label:"🔒 Çıkış Yap", fn:function(){ if (typeof sbLogout === "function" && LIVE) sbLogout(); } }
       ]);
@@ -2753,7 +2805,7 @@
     if (!e.target.closest(".tpl-menu") && !e.target.closest("#tplBtn")) closeTpl();
     if (!e.target.closest(".drop-menu") && !e.target.closest(".filter-toggle") && !e.target.closest("#toolsBtn")) closeDrop();
   });
-  window.addEventListener("keydown", function(e){ if (e.key==="Escape"){ closeCtx(); closePop(); closeBoard(); closeConnect(); closeTpl(); closeAnalytics(); closeKanban(); closeTakvim(); closeDrop(); closeTplManager(); closeGallery(); closeWelcome(); closeCall(); closePass(); } });
+  window.addEventListener("keydown", function(e){ if (e.key==="Escape"){ closeCtx(); closePop(); closeBoard(); closeConnect(); closeTpl(); closeAnalytics(); closeKanban(); closeTakvim(); closeDrop(); closeTplManager(); closeGallery(); closeWelcome(); closeCall(); closePass(); closeHours(); } });
   window.addEventListener("resize", function(){ closeCtx(); closePop(); });
 
   // ---------- Tema (gece / gündüz) ----------
