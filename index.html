@@ -329,8 +329,9 @@
   .avatar {
     flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%;
     display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 15px;
-    position: relative; letter-spacing: .3px;
+    position: relative; letter-spacing: .3px; overflow: visible;
   }
+  .avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
   .status-dot {
     position: absolute; right: -1px; bottom: -1px; width: 14px; height: 14px;
     border-radius: 50%; border: 2.5px solid var(--paper);
@@ -413,6 +414,44 @@
   .tpl-item:hover { background: var(--panel); }
   .tpl-t { display: block; font-weight: 700; font-size: 13px; color: var(--brand-d); margin-bottom: 2px; }
   .tpl-m { display: block; font-size: 12.5px; color: var(--ink2); line-height: 1.4; }
+  .tpl-head { display:flex; align-items:center; justify-content:space-between; }
+  .tpl-manage { border:1px solid var(--brand-100); background:var(--brand-050); color:var(--brand-d); font-weight:800; font-size:11px; padding:3px 8px; border-radius:8px; cursor:pointer; letter-spacing:0; }
+  .ctool.gal { background: linear-gradient(135deg,#FEF3C7,#FDE68A); color:#92670A; border-color:#F5D98B; }
+  [data-theme="dark"] .ctool.gal { background:#3A2E12; color:#E8C874; border-color:#5A4718; }
+
+  /* hazır yanıt yönetimi */
+  .tplm-body { padding: 16px 20px 22px; overflow-y:auto; }
+  .tplm-form { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+  .tplm-form input, .tplm-form textarea { width:100%; box-sizing:border-box; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font-size:14px; font-family:inherit; outline:none; }
+  .tplm-form input:focus, .tplm-form textarea:focus { border-color:var(--brand); }
+  .tplm-addbtn { align-self:flex-start; padding:9px 16px; border:0; border-radius:10px; background:var(--brand); color:#fff; font-weight:700; font-size:14px; cursor:pointer; }
+  .tplm-row { display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; margin-bottom:8px; }
+  .tplm-txt { flex:1; min-width:0; }
+  .tplm-txt b { display:block; font-size:13px; color:var(--brand-d); }
+  .tplm-txt span { display:block; font-size:12px; color:var(--ink2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tplm-del { border:1px solid #F0C4C4; background:#FDECEC; color:#C0392B; font-weight:700; font-size:12px; padding:6px 12px; border-radius:8px; cursor:pointer; }
+  [data-theme="dark"] .tplm-del { background:#3A1E1E; border-color:#5A2A2A; color:#F08A8A; }
+
+  /* analitik ek */
+  .an-load { font-size:12.5px; color:var(--ink3); padding:10px 0; }
+  .an-note { font-size:12.5px; color:var(--ink2); line-height:1.5; }
+  .an-note b { color:var(--brand-d); }
+
+  /* galeri */
+  .gal-body { padding:16px 20px 22px; overflow-y:auto; }
+  .gal-up { display:flex; align-items:center; justify-content:center; padding:16px; border:2px dashed var(--brand-100); border-radius:12px; color:var(--brand-d); font-weight:700; font-size:14px; cursor:pointer; margin-bottom:16px; background:var(--brand-050); }
+  .gal-up:hover { background:var(--brand-100); }
+  .gal-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:12px; }
+  .gal-item { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--panel); }
+  .gal-item img { width:100%; height:110px; object-fit:cover; display:block; }
+  .gal-pdf { width:100%; height:110px; display:grid; place-items:center; font-weight:800; color:#C0392B; background:#FDECEC; font-size:18px; letter-spacing:1px; }
+  .gal-acts { display:flex; gap:6px; padding:8px; }
+  .gal-send { flex:1; border:0; border-radius:8px; background:var(--brand); color:#fff; font-weight:700; font-size:12.5px; padding:7px; cursor:pointer; }
+  .gal-del { border:1px solid var(--line); background:var(--paper); color:var(--ink3); border-radius:8px; padding:7px 10px; cursor:pointer; font-weight:700; }
+
+  /* sohbette görsel/dosya balonu */
+  .bubble-img { max-width:220px; width:100%; border-radius:10px; display:block; margin-bottom:4px; }
+  .bubble-file { color:inherit; text-decoration:underline; word-break:break-all; }
 
   /* lead skoru */
   .score-box { margin-bottom: 18px; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); }
@@ -1551,7 +1590,8 @@
         ? '<span class="status-dot dot-attn"></span>'
         : '<span class="status-dot" style="background:'+STATUS[l.durum].dot+'"></span>';
     }
-    return '<div class="'+(cls||"avatar")+'" style="background:linear-gradient(135deg,'+col[0]+','+col[1]+')">'+esc(initials(l))+dot+(ig?IGDOT:"")+'</div>';
+    var img = l.pic ? '<img src="'+esc(l.pic)+'" alt="" referrerpolicy="no-referrer" onerror="this.remove()">' : "";
+    return '<div class="'+(cls||"avatar")+'" style="background:linear-gradient(135deg,'+col[0]+','+col[1]+')">'+esc(initials(l))+img+dot+(ig?IGDOT:"")+'</div>';
   }
 
   // Hesap avatarı: profil fotoğrafı görünümü + Instagram rozeti
@@ -1753,7 +1793,11 @@
     }
     var st = STATUS[l.durum];
     var msgs = l.messages.map(function(m){
-      return '<div class="msg-row '+(m.from==="out"?"out":"in")+'"><div class="bubble">'+esc(m.text)+'<span class="t">'+fmtTime(m.time)+'</span></div></div>';
+      var inner;
+      if (m.att && m.attType==="image") inner = '<img class="bubble-img" src="'+esc(m.att)+'" alt="görsel" referrerpolicy="no-referrer">';
+      else if (m.att) inner = '<a class="bubble-file" href="'+esc(m.att)+'" target="_blank" rel="noreferrer">📎 '+(esc(m.text)||"Dosya")+'</a>';
+      else inner = esc(m.text);
+      return '<div class="msg-row '+(m.from==="out"?"out":"in")+'"><div class="bubble">'+inner+'<span class="t">'+fmtTime(m.time)+'</span></div></div>';
     }).join("");
     var wa = '<a class="qbtn wa" data-wa="'+l.id+'" href="'+waHref(l)+'" target="_blank" rel="noreferrer">'+WA_SVG+' WhatsApp\'a Gönder</a>';
     pane.innerHTML =
@@ -1778,6 +1822,7 @@
       '<div class="compose-tools">'+
         '<button class="ctool" id="tplBtn" type="button">⚡ Hazır Yanıt</button>'+
         '<button class="ctool ai" id="aiBtn" type="button">✨ AI Önerisi</button>'+
+        (LIVE?'<button class="ctool gal" id="galBtn" type="button">🖼 Galeri</button>':'')+
       '</div>'+
       '<div class="composer"><textarea id="composerText" rows="1" aria-label="Instagram yanıtı" placeholder="Instagram yanıtı yaz…  (Enter ile gönder)"></textarea><button class="send" id="sendBtn">Gönder</button></div>';
 
@@ -1791,6 +1836,7 @@
     function setComposer(text){ var t=document.getElementById("composerText"); t.value=text; t.focus(); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight,120)+"px"; }
     document.getElementById("aiBtn").addEventListener("click", function(){ setComposer(aiSuggest(l)); toast("AI önerisi hazır ✦ düzenleyip gönderebilirsiniz"); });
     document.getElementById("tplBtn").addEventListener("click", function(e){ e.stopPropagation(); openTemplateMenu(e.currentTarget, setComposer); });
+    var gb = document.getElementById("galBtn"); if (gb) gb.addEventListener("click", function(){ openGallery(l); });
   }
 
   function doSend() {
@@ -2135,6 +2181,49 @@
         '<span class="an-n">'+it.n+'</span></div>';
     }).join("") + '</div>';
   }
+  var TOPIC_KW = [
+    ["Fiyat / ücret", ["fiyat","ücret","ucret","ne kadar","kaç para","kac para"," tl","₺","taksit","ödeme","odeme"]],
+    ["Randevu", ["randevu","müsait","musait","hangi gün","kaçta","ne zaman gel"]],
+    ["Adres / konum", ["adres","konum","nerede","neredesiniz","yol tarifi"]],
+    ["İmplant", ["implant"]],
+    ["Gülüş tasarımı / estetik", ["gülüş","gulus","estetik","zirkonyum","lamina","kaplama","porselen"]],
+    ["Diş teli / ortodonti", ["diş teli","dis teli"," tel ","ortodonti","şeffaf plak","invisalign","plak"]],
+    ["Beyazlatma", ["beyazlat","bleaching"]],
+    ["Dolgu / kanal / çekim / ağrı", ["dolgu","kanal","çekim","cekim","ağrı","agri","apse","20 yaş"]],
+    ["Sigorta / anlaşma", ["sigorta","anlaşmalı","anlasmali","sgk","özel sağlık"]]
+  ];
+  var ASK_KW = ["numara","numaran","telefon","telefonu","arayalım","arayalim","arayabil","paylaşır","paylasir","ulaşalım","ulasalim","geri dön","sizi aray"];
+  function analyzeMessages(){
+    function fill(msgs){
+      var byConv = {};
+      msgs.forEach(function(m){ (byConv[m.ig_user_id]=byConv[m.ig_user_id]||[]).push(m); });
+      var topics = TOPIC_KW.map(function(t){ return { label:t[0], n:0 }; });
+      msgs.forEach(function(m){ if(m.direction!=="in"||!m.text) return; var low=String(m.text).toLowerCase(); TOPIC_KW.forEach(function(t,i){ for(var k=0;k<t[1].length;k++){ if(low.indexOf(t[1][k])>=0){ topics[i].n++; break; } } }); });
+      topics = topics.filter(function(x){ return x.n>0; }).sort(function(a,b){ return b.n-a.n; });
+      var maxT = Math.max.apply(null,[1].concat(topics.map(function(x){ return x.n; })));
+      var elT = document.getElementById("anTopics");
+      if(elT) elT.innerHTML = topics.length ? bars(topics, maxT, function(){ return "#0C8A94"; }) : '<div class="an-empty">Yeterli mesaj verisi yok</div>';
+      var total=0, phone=0, askedTotal=0, askedPhone=0, notAskedTotal=0, notAskedPhone=0;
+      Object.keys(byConv).forEach(function(id){
+        var arr=byConv[id]; if(!arr.some(function(m){ return m.direction==="in"; })) return;
+        total++;
+        var gave = arr.some(function(m){ return m.direction==="in" && detectPhone(m.text); });
+        var asked = arr.some(function(m){ return m.direction==="out" && m.text && ASK_KW.some(function(k){ return String(m.text).toLowerCase().indexOf(k)>=0; }); });
+        if(gave) phone++;
+        if(asked){ askedTotal++; if(gave) askedPhone++; } else { notAskedTotal++; if(gave) notAskedPhone++; }
+      });
+      var rate = total? Math.round(phone/total*100):0;
+      var rA = askedTotal? Math.round(askedPhone/askedTotal*100):0;
+      var rN = notAskedTotal? Math.round(notAskedPhone/notAskedTotal*100):0;
+      var insight = (askedTotal && notAskedTotal)
+        ? ('Numara <b>istediğiniz</b> konuşmalarda telefon oranı <b>%'+rA+'</b>, istemediklerinizde <b>%'+rN+'</b>. '+(rA>=rN?'→ Numara istemek işe yarıyor; her sıcak sohbette açıkça isteyin.':'→ Farklı bir açılış deneyin.'))
+        : 'Veri biriktikçe hangi yaklaşımın daha çok telefon getirdiğini burada göstereceğim.';
+      var elP = document.getElementById("anPhone");
+      if(elP) elP.innerHTML = '<div class="an-tiles" style="margin:0 0 10px"><div class="an-tile"><div class="at-n">'+total+'</div><div class="at-l">Konuşma</div></div><div class="an-tile ok"><div class="at-n">'+phone+'</div><div class="at-l">Telefon veren</div></div><div class="an-tile rv"><div class="at-n">%'+rate+'</div><div class="at-l">Dönüşüm</div></div></div><div class="an-note">'+insight+'</div>';
+    }
+    if(LIVE){ sbGet("ig_messages?select=ig_user_id,direction,text&limit=5000").then(function(rows){ fill(Array.isArray(rows)?rows:[]); }).catch(function(){ fill([]); }); }
+    else { var msgs=[]; leads.forEach(function(l){ (l.messages||[]).forEach(function(m){ msgs.push({ ig_user_id:l.id, direction:(m.from==="out"?"out":"in"), text:m.text }); }); }); fill(msgs); }
+  }
   function openAnalytics(){
     closeAnalytics();
     var scope = scopedLeads(), total = scope.length || 1;
@@ -2172,11 +2261,14 @@
           '<div class="an-card"><div class="an-h">Durum dağılımı</div>'+ bars(durum, maxDur, function(it){ return it.dot; }) +'</div>'+
           '<div class="an-card"><div class="an-h">Kaynak dağılımı</div>'+ bars(kaynak, maxK, function(){return "var(--brand)";}) +'</div>'+
           '<div class="an-card"><div class="an-h">En çok sorulan işlemler</div>'+ (islem.length? bars(islem, maxI, function(){return "#7A67E6";}) : '<div class="an-empty">İşlem verisi yok</div>') +'</div>'+
+          '<div class="an-card"><div class="an-h">En çok sorulan konular (mesaj analizi)</div><div id="anTopics" class="an-load">Analiz ediliyor…</div></div>'+
+          '<div class="an-card"><div class="an-h">📞 Telefon dönüşüm analizi</div><div id="anPhone" class="an-load">Analiz ediliyor…</div></div>'+
         '</div>'+
       '</div>';
     document.body.appendChild(ov); anEl=ov;
     document.getElementById("anClose").addEventListener("click", closeAnalytics);
     ov.addEventListener("click", function(e){ if(e.target===ov) closeAnalytics(); });
+    analyzeMessages();
     ov.querySelectorAll(".an-bar, .an-fill").forEach(function(el){ var w=el.style.width||el.style.height; el.style.transition="none"; var isH=!!el.style.height; if(isH){el.style.height="0";} else {el.style.width="0";} requestAnimationFrame(function(){ el.style.transition=""; if(isH) el.style.height=w; else el.style.width=w; }); });
   }
 
@@ -2261,14 +2353,38 @@
     m.querySelectorAll(".dm-item").forEach(function(b,i){ b.addEventListener("click", function(){ closeDrop(); items[i].fn(); }); });
   }
 
-  // ---------- Hazır yanıt menüsü ----------
-  var tplEl = null;
+  // ---------- Hazır yanıt menüsü + yönetimi (Supabase'de kalıcı) ----------
+  var tplEl = null, tplMgrEl = null, userTemplates = null;
   function closeTpl(){ if (tplEl){ tplEl.remove(); tplEl=null; } }
+  function tplList(){
+    if (userTemplates && userTemplates.length) return userTemplates.map(function(x){ return { id:x.id, t:x.title, m:x.body }; });
+    return TEMPLATES.map(function(x){ return { t:x.t, m:x.m }; });
+  }
+  function loadTemplates(){
+    if(!LIVE) return;
+    sbGet("leaddm_templates?select=*&order=sort.asc,created_at.asc").then(function(rows){
+      if(!Array.isArray(rows)) return;
+      if(rows.length===0){
+        var seed = TEMPLATES.map(function(x,i){ return { title:x.t, body:x.m, sort:i }; });
+        fetch(LIVE_CFG.url+"/rest/v1/leaddm_templates",{ method:"POST", headers:Object.assign(sbH(),{Prefer:"return=representation"}), body:JSON.stringify(seed) })
+          .then(function(r){ return r.json(); }).then(function(d){ userTemplates = Array.isArray(d)?d:[]; }).catch(function(){});
+      } else { userTemplates = rows; }
+    }).catch(function(e){ console.error("templates", e); });
+  }
+  function tplAdd(title, body){
+    return fetch(LIVE_CFG.url+"/rest/v1/leaddm_templates",{ method:"POST", headers:Object.assign(sbH(),{Prefer:"return=representation"}), body:JSON.stringify({ title:title, body:body, sort:(userTemplates?userTemplates.length:0) }) })
+      .then(function(r){ return r.json(); }).then(function(d){ if(Array.isArray(d)&&d[0]) userTemplates=(userTemplates||[]).concat(d); return d; });
+  }
+  function tplDel(id){
+    return fetch(LIVE_CFG.url+"/rest/v1/leaddm_templates?id=eq."+encodeURIComponent(id),{ method:"DELETE", headers:sbH() })
+      .then(function(){ userTemplates=(userTemplates||[]).filter(function(x){ return x.id!==id; }); });
+  }
   function openTemplateMenu(btn, apply){
     closeTpl();
+    var list = tplList();
     var m = document.createElement("div");
     m.className = "tpl-menu";
-    m.innerHTML = '<div class="tpl-head">⚡ Hazır Yanıtlar</div>' + TEMPLATES.map(function(x,i){
+    m.innerHTML = '<div class="tpl-head">⚡ Hazır Yanıtlar'+(LIVE?'<button class="tpl-manage" id="tplManageBtn">＋ Düzenle</button>':'')+'</div>' + list.map(function(x,i){
       return '<button class="tpl-item" data-i="'+i+'"><span class="tpl-t">'+esc(x.t)+'</span><span class="tpl-m">'+esc(x.m)+'</span></button>';
     }).join("");
     document.body.appendChild(m);
@@ -2278,7 +2394,101 @@
     tplEl = m;
     m.addEventListener("click", function(e){ e.stopPropagation(); });
     m.querySelectorAll(".tpl-item").forEach(function(b){
-      b.addEventListener("click", function(){ apply(TEMPLATES[+b.getAttribute("data-i")].m); closeTpl(); });
+      b.addEventListener("click", function(){ apply(list[+b.getAttribute("data-i")].m); closeTpl(); });
+    });
+    var mg = document.getElementById("tplManageBtn");
+    if (mg) mg.addEventListener("click", function(e){ e.stopPropagation(); closeTpl(); openTplManager(); });
+  }
+  function closeTplManager(){ if (tplMgrEl){ tplMgrEl.remove(); tplMgrEl=null; } }
+  function openTplManager(){
+    closeTplManager();
+    var ov = document.createElement("div"); ov.className="overlay";
+    ov.innerHTML = '<div class="board" role="dialog" aria-label="Hazır yanıtlar">'+
+      '<div class="board-head"><div><div class="bt">Hazır Yanıtlar</div><div class="bsub">Oluştur · düzenle · sil</div></div><button class="board-close" id="tplmClose" aria-label="Kapat">'+svg(IC.x)+'</button></div>'+
+      '<div class="tplm-body">'+
+        '<div class="tplm-form"><input id="tplmTitle" placeholder="Başlık (ör. İmplant fiyatı)"><textarea id="tplmBody" rows="3" placeholder="Yanıt metni…"></textarea><button id="tplmAdd" class="tplm-addbtn">＋ Ekle</button></div>'+
+        '<div class="tplm-list"></div>'+
+      '</div></div>';
+    document.body.appendChild(ov); tplMgrEl=ov;
+    function render(){
+      var list = userTemplates || [];
+      ov.querySelector(".tplm-list").innerHTML = list.length ? list.map(function(x){
+        return '<div class="tplm-row"><div class="tplm-txt"><b>'+esc(x.title)+'</b><span>'+esc(x.body)+'</span></div><button class="tplm-del" data-del="'+x.id+'">Sil</button></div>';
+      }).join("") : '<div class="an-empty">Henüz hazır yanıt yok. Yukarıdan ekleyin.</div>';
+      ov.querySelectorAll("[data-del]").forEach(function(b){ b.addEventListener("click", function(){ tplDel(b.getAttribute("data-del")).then(render).then(function(){ toast("Silindi"); }); }); });
+    }
+    render();
+    document.getElementById("tplmClose").addEventListener("click", closeTplManager);
+    ov.addEventListener("click", function(e){ if(e.target===ov) closeTplManager(); });
+    document.getElementById("tplmAdd").addEventListener("click", function(){
+      var t=document.getElementById("tplmTitle").value.trim(), b=document.getElementById("tplmBody").value.trim();
+      if(!t||!b){ toast("Başlık ve metin gerekli"); return; }
+      tplAdd(t,b).then(function(){ document.getElementById("tplmTitle").value=""; document.getElementById("tplmBody").value=""; render(); toast("Hazır yanıt eklendi ✓"); });
+    });
+  }
+
+  // ---------- Galeri (Supabase Storage'a JPG/PDF yükle + hastaya gönder) ----------
+  var galEl = null;
+  function closeGallery(){ if (galEl){ galEl.remove(); galEl=null; } }
+  function galPublicUrl(name){ return LIVE_CFG.url + "/storage/v1/object/public/gallery/" + name; }
+  function galList(){
+    return fetch(LIVE_CFG.url+"/storage/v1/object/list/gallery",{ method:"POST", headers:sbH(), body:JSON.stringify({ prefix:"", limit:100, sortBy:{ column:"created_at", order:"desc" } }) }).then(function(r){ return r.json(); });
+  }
+  function galDelete(name){ return fetch(LIVE_CFG.url+"/storage/v1/object/gallery/"+name,{ method:"DELETE", headers:sbH() }); }
+  function galUpload(file){
+    var ext = (file.name.split(".").pop()||"bin").toLowerCase();
+    var name = "g"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
+    return fetch(LIVE_CFG.url+"/storage/v1/object/gallery/"+name,{ method:"POST", headers:{ apikey:LIVE_CFG.anon, Authorization:"Bearer "+sbToken(), "Content-Type":file.type||"application/octet-stream", "x-upsert":"true" }, body:file })
+      .then(function(r){ if(!r.ok) return r.text().then(function(t){ throw new Error(t); }); return name; });
+  }
+  function galSend(l, name, isPdf){
+    var url = galPublicUrl(name);
+    var body = isPdf ? { ig_user_id:l.id, direction:"out", text:"Bilgilendirme dosyası: "+url }
+                     : { ig_user_id:l.id, direction:"out", attachment_url:url, attachment_type:"image" };
+    l.messages.push(isPdf ? { from:"out", text:"Bilgilendirme dosyası: "+url, time:new Date().toISOString(), pending:true }
+                          : { from:"out", text:"", att:url, attType:"image", time:new Date().toISOString(), pending:true });
+    l.lastText = isPdf?"[dosya]":"[görsel]"; l.lastTime=new Date().toISOString(); l.lastDir="out";
+    renderChat(); renderList();
+    fetch(LIVE_CFG.url+"/rest/v1/ig_messages",{ method:"POST", headers:sbH(), body:JSON.stringify(body) })
+      .then(function(r){
+        if(!r.ok){ r.text().then(function(t){ toast("Gönderilemedi: "+(t||"").slice(0,60)); }); return; }
+        sbPatch("ig_conversations?ig_user_id=eq."+encodeURIComponent(l.id),{ last_message:(isPdf?"[dosya]":"[görsel]"), last_time:new Date().toISOString(), last_dir:"out" });
+        fetch(LIVE_CFG.url+"/functions/v1/deliver",{ method:"POST" }).catch(function(){});
+        toast("Gönderiliyor… 📎"); setTimeout(function(){ liveMessages(l.id); }, 1500);
+      }).catch(function(){ toast("Bağlantı hatası"); });
+  }
+  function openGallery(l){
+    closeGallery();
+    if(!l){ toast("Önce bir sohbet seçin"); return; }
+    var ov=document.createElement("div"); ov.className="overlay";
+    ov.innerHTML='<div class="board" role="dialog" aria-label="Galeri">'+
+      '<div class="board-head"><div><div class="bt">Galeri</div><div class="bsub">'+esc(fullName(l))+' · seçtiğini gönder (JPG hasta DM\'ine, PDF link olarak)</div></div><button class="board-close" id="galClose" aria-label="Kapat">'+svg(IC.x)+'</button></div>'+
+      '<div class="gal-body"><label class="gal-up"><input type="file" id="galFile" accept="image/jpeg,image/jpg,image/png,application/pdf" multiple hidden><span>＋ Görsel / PDF yükle</span></label><div class="gal-grid" id="galGrid"><div class="an-load">Yükleniyor…</div></div></div>'+
+    '</div>';
+    document.body.appendChild(ov); galEl=ov;
+    document.getElementById("galClose").addEventListener("click", closeGallery);
+    ov.addEventListener("click", function(e){ if(e.target===ov) closeGallery(); });
+    function refresh(){
+      galList().then(function(items){
+        if(!Array.isArray(items)) items=[];
+        items = items.filter(function(it){ return it && it.name && it.id; });
+        var grid=document.getElementById("galGrid"); if(!grid) return;
+        grid.innerHTML = items.length ? items.map(function(it){
+          var url=galPublicUrl(it.name), pdf=/\.pdf$/i.test(it.name);
+          var thumb = pdf ? '<div class="gal-pdf">PDF</div>' : '<img src="'+esc(url)+'" alt="">';
+          return '<div class="gal-item">'+thumb+'<div class="gal-acts"><button class="gal-send" data-name="'+esc(it.name)+'" data-pdf="'+(pdf?1:0)+'">Gönder</button><button class="gal-del" data-name="'+esc(it.name)+'" title="Sil">✕</button></div></div>';
+        }).join("") : '<div class="an-empty">Henüz dosya yok. Yukarıdan JPG/PDF yükleyin.</div>';
+        grid.querySelectorAll(".gal-send").forEach(function(b){ b.addEventListener("click", function(){ galSend(l, b.getAttribute("data-name"), b.getAttribute("data-pdf")==="1"); closeGallery(); }); });
+        grid.querySelectorAll(".gal-del").forEach(function(b){ b.addEventListener("click", function(){ b.disabled=true; galDelete(b.getAttribute("data-name")).then(refresh); }); });
+      }).catch(function(){ var g=document.getElementById("galGrid"); if(g) g.innerHTML='<div class="an-empty">Galeri yüklenemedi</div>'; });
+    }
+    refresh();
+    document.getElementById("galFile").addEventListener("change", function(e){
+      var files=Array.prototype.slice.call(e.target.files||[]); if(!files.length) return;
+      var g=document.getElementById("galGrid"); if(g) g.innerHTML='<div class="an-load">Yükleniyor…</div>';
+      Promise.all(files.map(function(f){ return galUpload(f).catch(function(){ return null; }); })).then(function(res){
+        var ok=res.filter(Boolean).length; toast(ok+" dosya yüklendi"); refresh();
+      });
     });
   }
 
@@ -2414,7 +2624,7 @@
     if (!e.target.closest(".tpl-menu") && !e.target.closest("#tplBtn")) closeTpl();
     if (!e.target.closest(".drop-menu") && !e.target.closest(".filter-toggle") && !e.target.closest("#toolsBtn")) closeDrop();
   });
-  window.addEventListener("keydown", function(e){ if (e.key==="Escape"){ closeCtx(); closePop(); closeBoard(); closeConnect(); closeTpl(); closeAnalytics(); closeKanban(); closeTakvim(); closeDrop(); } });
+  window.addEventListener("keydown", function(e){ if (e.key==="Escape"){ closeCtx(); closePop(); closeBoard(); closeConnect(); closeTpl(); closeAnalytics(); closeKanban(); closeTakvim(); closeDrop(); closeTplManager(); closeGallery(); } });
   window.addEventListener("resize", function(){ closeCtx(); closePop(); });
 
   // ---------- Tema (gece / gündüz) ----------
@@ -2532,6 +2742,7 @@
   function liveBoot(){
     hideLogin();
     try { if (window.Notification && Notification.permission === "default") Notification.requestPermission(); } catch (e) {}
+    loadTemplates();
     liveLoad();
     if (!window._leaddmPoll) {
       window._leaddmPoll = setInterval(function(){
@@ -2555,7 +2766,7 @@
       temsilci: r.temsilci || null, randevuTarih: r.randevu_tarih || "", lid: r.lid || "",
       fiyatSordu: !!r.fiyat_sordu, waSent: !!r.wa_sent, read: r.read === false ? false : true,
       dogum: r.dogum || "", gecmis: r.gecmis || "", olusturma: r.created_at || null,
-      lastText: r.last_message || "", lastTime: r.last_time || null, lastDir: r.last_dir || null,
+      lastText: r.last_message || "", lastTime: r.last_time || null, lastDir: r.last_dir || null, pic: r.pic_url || "",
       files: Array.isArray(r.files) ? r.files : [], nurture: {}, messages: [] };
   }
   function persistLead(l){
@@ -2631,7 +2842,7 @@
     if(!LIVE || !id) return;
     sbGet("ig_messages?select=*&ig_user_id=eq." + encodeURIComponent(id) + "&order=created_at.asc").then(function(rows){
       var l = byId(id); if(!l) return;
-      var dbMsgs = (rows || []).map(function(m){ return { from: m.direction === "out" ? "out" : "in", text: m.text, time: m.created_at }; });
+      var dbMsgs = (rows || []).map(function(m){ return { from: m.direction === "out" ? "out" : "in", text: m.text, time: m.created_at, att: m.attachment_url || "", attType: m.attachment_type || "" }; });
       // Veritabanında henüz olmayan (gönderim yolda/başarısız) yerel giden mesajları koru → kaybolmasın
       var seen = {}; dbMsgs.forEach(function(m){ seen[m.from + "|" + m.text] = 1; });
       var pend = (l.messages || []).filter(function(m){ return m.pending && !seen[m.from + "|" + m.text]; });
