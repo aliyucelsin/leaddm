@@ -467,6 +467,31 @@
   #welMsg { width:100%; box-sizing:border-box; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font-size:14px; font-family:inherit; line-height:1.5; outline:none; resize:vertical; margin-bottom:12px; }
   #welMsg:focus { border-color:var(--brand); }
 
+  /* yanıt bekliyor kartı + acil yanıp sönme */
+  .sum-card.wait .sc-bar { background: var(--amber); }
+  .sum-card.wait .sc-n { color: #B4820A; }
+  .sum-card.wait .sc-dot { background: var(--amber); }
+  .sum-card.pulse-wait { border-color: var(--amber); }
+  .sum-card.pulse-wait .sc-dot { animation: dotPulse 1.2s ease-in-out infinite; }
+  .sum-card.call .sc-bar { background: var(--brand); }
+  .sum-card.call .sc-n { color: var(--brand-d); }
+  .convo.urgent-reply { animation: urgentBlink 1.7s ease-in-out infinite; }
+  .convo.urgent-reply::before { background: var(--rose) !important; }
+  @keyframes urgentBlink { 0%,100%{ background: transparent; } 50%{ background: rgba(224,71,90,.10); } }
+
+  /* bugün aranacaklar */
+  .call-body { padding: 12px 16px 20px; overflow-y:auto; }
+  .call-row { display:flex; align-items:center; gap:12px; padding:10px 12px; border:1px solid var(--line); border-radius:12px; margin-bottom:8px; }
+  .call-main { flex:1; min-width:0; }
+  .call-name { font-weight:700; font-size:14px; color:var(--ink); }
+  .call-sub { font-size:12px; color:var(--ink2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .call-phone { font-weight:700; font-size:13.5px; color:var(--brand-d); font-variant-numeric:tabular-nums; flex:0 0 auto; }
+  .call-acts { display:flex; gap:6px; flex:0 0 auto; }
+  .call-btn { border:1px solid var(--line); background:var(--paper); color:var(--ink2); border-radius:9px; padding:8px 11px; font-weight:700; font-size:12.5px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; white-space:nowrap; }
+  .call-btn.tel { background:var(--brand); color:#fff; border-color:var(--brand); }
+  .call-btn.wa { background:#25D366; color:#fff; border-color:#25D366; }
+  @media (max-width:680px){ .call-phone { display:none; } .call-sub { max-width:110px; } .call-btn { padding:8px 9px; } }
+
   /* lead skoru */
   .score-box { margin-bottom: 18px; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); }
   .score-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
@@ -1534,9 +1559,10 @@
   }
 
   function poolCounts() {
-    var c = {all:0, takip:0, sicak:0, randevu:0, fiyat:0, wp:0, reply:0};
+    var c = {all:0, takip:0, sicak:0, randevu:0, fiyat:0, wp:0, reply:0, call:0};
     scopedLeads().forEach(function(l){
       c.all++; // Tümü: HEPSİ (WhatsApp'a gönderilenler dahil)
+      if (l.telefon && l.durum!=="randevu" && l.durum!=="kayip") c.call++; // telefonu var, randevu/kayıp değil → aranacak
       if (l.waSent) { c.wp++; return; }
       var p = STATUS[l.durum].pool;
       if (p==="takip") c.takip++;
@@ -1731,6 +1757,8 @@
       '<span class="sum-div"></span>'+
       '<button class="sum-card ok" data-filter="sicak" title="Sıcak havuzu göster"><span class="sc-bar"></span><span class="sc-n" data-to="'+c.sicak+'">'+c.sicak+'</span><span class="sc-l">İletişim<br>Alındı</span></button>'+
       '<button class="sum-card no" data-filter="takip" title="Takip havuzunu göster"><span class="sc-bar"></span>'+(c.takip>0?'<span class="sc-dot"></span>':'')+'<span class="sc-n" data-to="'+c.takip+'">'+c.takip+'</span><span class="sc-l">İletişim<br>Alınamadı</span></button>'+
+      '<button class="sum-card wait'+(c.reply>0?' pulse-wait':'')+'" data-filter="reply" title="Yanıt bekleyenleri göster"><span class="sc-bar"></span>'+(c.reply>0?'<span class="sc-dot"></span>':'')+'<span class="sc-n" data-to="'+c.reply+'">'+c.reply+'</span><span class="sc-l">Yanıt<br>Bekliyor</span></button>'+
+      '<button class="sum-card call" data-callboard="1" title="Bugün aranacaklar (telefonu olan, randevusuz)"><span class="sc-bar"></span><span class="sc-n" data-to="'+c.call+'">'+c.call+'</span><span class="sc-l">Bugün<br>Aranacak</span></button>'+
       '<button class="sum-card rv" data-board="1" title="Detaylı listeyi aç"><span class="sc-bar"></span><span class="sc-n" data-to="'+oran+'" data-pre="%">%'+oran+'</span><span class="sc-l">Dönüşüm<br>'+c.randevu+' randevu</span></button>'+
       '<div class="sum-spacer"></div>'+
       '<button class="sum-detail tools-btn" id="toolsBtn">☰ Araçlar ▾</button>';
@@ -1777,7 +1805,8 @@
       if (state.account==="all") { var ac = acctById(l.accountId); if (ac) tags += '<span class="acct-chip">@'+esc(ac.handle)+'</span>'; }
       var _lastOut = l.messages.length ? l.messages[l.messages.length-1].from==="out" : (l.lastDir==="out");
       var prev = l.lastText ? (_lastOut?"Siz: ":"")+esc(l.lastText) : "mesaj yok";
-      var cls = "convo" + (l.id===state.selectedId?" sel":"") + (rs.turn==="me"?" needs-reply":" waiting") + (rs.unread?" unread":"");
+      var urgent = (rs.turn==="me" && !l.waSent && l.lastTime && (Date.now()-new Date(l.lastTime).getTime()) > 10*60000);
+      var cls = "convo" + (l.id===state.selectedId?" sel":"") + (rs.turn==="me"?" needs-reply":" waiting") + (rs.unread?" unread":"") + (urgent?" urgent-reply":"");
       var waitCls = "";
       if (rs.turn==="me" && l.lastTime) { var hrs=(Date.now()-new Date(l.lastTime).getTime())/3600000; waitCls = hrs>=24?" wait-long":" wait"; }
       return '<button class="'+cls+'" data-id="'+l.id+'">'+
@@ -2537,6 +2566,36 @@
     });
   }
 
+  // ---------- Bugün Aranacaklar ----------
+  var callEl = null;
+  function closeCall(){ if (callEl){ callEl.remove(); callEl=null; } }
+  function toCallList(){
+    return scopedLeads().filter(function(l){ return l.telefon && l.durum!=="randevu" && l.durum!=="kayip"; })
+      .sort(function(a,b){ return leadScore(b)-leadScore(a); });
+  }
+  function openToCall(){
+    closeCall();
+    var list = toCallList();
+    var body = list.length ? list.map(function(l){
+      var telClean=(l.telefon||"").replace(/[^0-9]/g,"");
+      var wa=telClean.replace(/^0/,"90");
+      var msg="Merhaba"+(l.ad?" "+l.ad:"")+", LeadDm Diş Kliniği. Instagram'dan bize yazmıştınız, size yardımcı olmak için ulaşıyoruz.";
+      return '<div class="call-row">'+avatarHTML(l,"avatar",false)+
+        '<div class="call-main"><div class="call-name">'+esc(fullName(l))+'</div><div class="call-sub">'+esc(l.islem||"işlem belirtilmedi")+' · '+STATUS[l.durum].label+'</div></div>'+
+        '<div class="call-phone">'+esc(l.telefon)+'</div>'+
+        '<div class="call-acts"><a class="call-btn tel" href="tel:'+esc(telClean)+'">📞 Ara</a>'+
+        '<a class="call-btn wa" href="https://wa.me/'+wa+'?text='+encodeURIComponent(msg)+'" target="_blank" rel="noreferrer">WhatsApp</a>'+
+        '<button class="call-btn open" data-open="'+l.id+'">Sohbet</button></div>'+
+      '</div>';
+    }).join("") : '<div class="tk-empty">Şu an aranacak kişi yok. Telefonunu verip henüz randevu almamış kişiler burada listelenir.</div>';
+    var ov=document.createElement("div"); ov.className="overlay";
+    ov.innerHTML='<div class="board" role="dialog" aria-label="Bugün aranacaklar"><div class="board-head"><div><div class="bt">📞 Bugün Aranacaklar</div><div class="bsub">Telefonu olan, randevusu olmayan · '+list.length+' kişi</div></div><button class="board-close" id="callClose" aria-label="Kapat">'+svg(IC.x)+'</button></div><div class="call-body">'+body+'</div></div>';
+    document.body.appendChild(ov); callEl=ov;
+    document.getElementById("callClose").addEventListener("click", closeCall);
+    ov.addEventListener("click", function(e){ if(e.target===ov) closeCall(); });
+    ov.querySelectorAll("[data-open]").forEach(function(b){ b.addEventListener("click", function(){ selectLead(b.getAttribute("data-open")); closeCall(); }); });
+  }
+
   // ---------- Havuz Özeti (board) ----------
   var boardEl = null;
   function closeBoard(){ if (boardEl){ boardEl.remove(); boardEl=null; } }
@@ -2607,6 +2666,7 @@
       ]);
       return;
     }
+    var cb = e.target.closest("[data-callboard]"); if (cb) { openToCall(); return; }
     var b = e.target.closest("[data-board]"); if (b) { openBoard(); return; }
     var f = e.target.closest("[data-filter]");
     if (f) { state.filter = f.getAttribute("data-filter"); renderTop(); renderList(); }
@@ -2670,7 +2730,7 @@
     if (!e.target.closest(".tpl-menu") && !e.target.closest("#tplBtn")) closeTpl();
     if (!e.target.closest(".drop-menu") && !e.target.closest(".filter-toggle") && !e.target.closest("#toolsBtn")) closeDrop();
   });
-  window.addEventListener("keydown", function(e){ if (e.key==="Escape"){ closeCtx(); closePop(); closeBoard(); closeConnect(); closeTpl(); closeAnalytics(); closeKanban(); closeTakvim(); closeDrop(); closeTplManager(); closeGallery(); closeWelcome(); } });
+  window.addEventListener("keydown", function(e){ if (e.key==="Escape"){ closeCtx(); closePop(); closeBoard(); closeConnect(); closeTpl(); closeAnalytics(); closeKanban(); closeTakvim(); closeDrop(); closeTplManager(); closeGallery(); closeWelcome(); closeCall(); } });
   window.addEventListener("resize", function(){ closeCtx(); closePop(); });
 
   // ---------- Tema (gece / gündüz) ----------
