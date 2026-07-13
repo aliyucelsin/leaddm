@@ -453,6 +453,20 @@
   .bubble-img { max-width:220px; width:100%; border-radius:10px; display:block; margin-bottom:4px; }
   .bubble-file { color:inherit; text-decoration:underline; word-break:break-all; }
 
+  /* otomatik karşılama ayarları */
+  .wel-body { padding:18px 20px 22px; overflow-y:auto; }
+  .wel-toggle { display:flex; align-items:center; gap:10px; cursor:pointer; margin-bottom:14px; }
+  .wel-toggle input { position:absolute; opacity:0; width:0; height:0; }
+  .wel-sw { width:44px; height:25px; border-radius:20px; background:var(--line); position:relative; transition:background .18s; flex:0 0 auto; }
+  .wel-sw::after { content:''; position:absolute; top:3px; left:3px; width:19px; height:19px; border-radius:50%; background:#fff; transition:left .18s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+  .wel-toggle input:checked + .wel-sw { background:var(--brand); }
+  .wel-toggle input:checked + .wel-sw::after { left:22px; }
+  .wel-lab { font-weight:700; font-size:14px; color:var(--ink); }
+  .wel-hint { font-size:12.5px; color:var(--ink2); line-height:1.55; margin-bottom:12px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:11px 13px; }
+  .wel-hint b { color:var(--brand-d); }
+  #welMsg { width:100%; box-sizing:border-box; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:var(--paper); color:var(--ink); font-size:14px; font-family:inherit; line-height:1.5; outline:none; resize:vertical; margin-bottom:12px; }
+  #welMsg:focus { border-color:var(--brand); }
+
   /* lead skoru */
   .score-box { margin-bottom: 18px; padding: 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); }
   .score-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
@@ -2492,6 +2506,37 @@
     });
   }
 
+  // ---------- Otomatik karşılama ayarları ----------
+  var welEl = null;
+  function closeWelcome(){ if (welEl){ welEl.remove(); welEl=null; } }
+  function openWelcomeSettings(){
+    closeWelcome();
+    var ov=document.createElement("div"); ov.className="overlay";
+    ov.innerHTML='<div class="board" role="dialog" aria-label="Otomatik karşılama">'+
+      '<div class="board-head"><div><div class="bt">🤖 Otomatik Karşılama</div><div class="bsub">Yeni DM\'e otomatik ilk yanıt</div></div><button class="board-close" id="welClose" aria-label="Kapat">'+svg(IC.x)+'</button></div>'+
+      '<div class="wel-body">'+
+        '<label class="wel-toggle"><input type="checkbox" id="welOn"><span class="wel-sw"></span><span class="wel-lab">Otomatik karşılama açık</span></label>'+
+        '<div class="wel-hint">Sana <b>ilk kez</b> yazan ve henüz yanıtlamadığın kişilere, aşağıdaki mesaj <b>otomatik</b> gider (her kişiye yalnızca bir kez). Instagram 24 saat kuralına tabidir. Mevcut eski konuşmalara gönderilmez.</div>'+
+        '<textarea id="welMsg" rows="5" placeholder="Karşılama mesajı…"></textarea>'+
+        '<button id="welSave" class="tplm-addbtn">Kaydet</button>'+
+      '</div></div>';
+    document.body.appendChild(ov); welEl=ov;
+    document.getElementById("welClose").addEventListener("click", closeWelcome);
+    ov.addEventListener("click", function(e){ if(e.target===ov) closeWelcome(); });
+    sbGet("leaddm_settings?select=*&id=eq.1").then(function(rows){
+      var s=(rows&&rows[0])||{ auto_welcome_on:true, auto_welcome_msg:"" };
+      var on=document.getElementById("welOn"), msg=document.getElementById("welMsg");
+      if(on) on.checked = !!s.auto_welcome_on;
+      if(msg) msg.value = s.auto_welcome_msg || "";
+    }).catch(function(){});
+    document.getElementById("welSave").addEventListener("click", function(){
+      var on=document.getElementById("welOn").checked, msg=document.getElementById("welMsg").value.trim();
+      sbPatch("leaddm_settings?id=eq.1",{ auto_welcome_on:on, auto_welcome_msg:msg, updated_at:new Date().toISOString() })
+        .then(function(r){ if(r.ok){ toast("Kaydedildi ✓"); closeWelcome(); } else { toast("Kaydedilemedi"); } })
+        .catch(function(){ toast("Bağlantı hatası"); });
+    });
+  }
+
   // ---------- Havuz Özeti (board) ----------
   var boardEl = null;
   function closeBoard(){ if (boardEl){ boardEl.remove(); boardEl=null; } }
@@ -2557,6 +2602,7 @@
         { label:"📅 Randevu Takvimi", fn:openTakvim },
         { label:"📋 Detaylı liste", fn:openBoard },
         { label:"⬇ Excel'e aktar", fn:function(){ exportExcel(scopedLeads(), exportLabel()); } },
+        { label:"🤖 Otomatik Karşılama", fn:function(){ if(LIVE) openWelcomeSettings(); else toast("Canlı modda kullanılır"); } },
         { label:"🔒 Çıkış Yap", fn:function(){ if (typeof sbLogout === "function" && LIVE) sbLogout(); } }
       ]);
       return;
@@ -2624,7 +2670,7 @@
     if (!e.target.closest(".tpl-menu") && !e.target.closest("#tplBtn")) closeTpl();
     if (!e.target.closest(".drop-menu") && !e.target.closest(".filter-toggle") && !e.target.closest("#toolsBtn")) closeDrop();
   });
-  window.addEventListener("keydown", function(e){ if (e.key==="Escape"){ closeCtx(); closePop(); closeBoard(); closeConnect(); closeTpl(); closeAnalytics(); closeKanban(); closeTakvim(); closeDrop(); closeTplManager(); closeGallery(); } });
+  window.addEventListener("keydown", function(e){ if (e.key==="Escape"){ closeCtx(); closePop(); closeBoard(); closeConnect(); closeTpl(); closeAnalytics(); closeKanban(); closeTakvim(); closeDrop(); closeTplManager(); closeGallery(); closeWelcome(); } });
   window.addEventListener("resize", function(){ closeCtx(); closePop(); });
 
   // ---------- Tema (gece / gündüz) ----------
