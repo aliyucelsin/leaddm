@@ -1630,11 +1630,8 @@
       var hay = [l.ad,l.soyad,l.telefon,l.username,l.islem,l.not,l.lastText,l.lid,temAd,(l.tags||[]).join(" ")].filter(Boolean).join(" ").toLowerCase();
       return hay.indexOf(term) >= 0;
     }).sort(function(a,b){
-      // SLA: yanıt bekleyenler (top sende) üstte; içlerinde en uzun bekleyen en üstte
-      var pa = replyState(a).turn==="me" ? 0 : 1, pb = replyState(b).turn==="me" ? 0 : 1;
-      if (pa !== pb) return pa - pb;
-      if (pa === 0) return (a.lastTime||"").localeCompare(b.lastTime||""); // en eski (en çok bekleyen) önce
-      return (b.lastTime||"").localeCompare(a.lastTime||""); // bekleyenlerde en yeni önce
+      // En yeni mesaj/etkinlik en üstte (Instagram/WhatsApp gibi)
+      return (b.lastTime||"").localeCompare(a.lastTime||"");
     });
   }
   function byId(id){ return leads.filter(function(l){return l.id===id;})[0]; }
