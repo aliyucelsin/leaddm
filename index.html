@@ -452,6 +452,9 @@
   /* sohbette görsel/dosya balonu */
   .bubble-img { max-width:220px; width:100%; border-radius:10px; display:block; margin-bottom:4px; }
   .bubble-file { color:inherit; text-decoration:underline; word-break:break-all; }
+  .cta-ig { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; box-sizing:border-box; padding:11px; margin-bottom:10px; border-radius:12px; text-decoration:none; font-weight:700; font-size:13px; color:#fff; background:linear-gradient(135deg,#833AB4,#E1306C 55%,#F77737); box-shadow:0 4px 14px rgba(225,48,108,.28); }
+  .cta-ig:hover { filter:brightness(1.06); }
+  .cta-ig svg { flex:0 0 auto; }
 
   /* otomatik karşılama ayarları */
   .wel-body { padding:18px 20px 22px; overflow-y:auto; }
@@ -1986,6 +1989,7 @@
           '<div class="c-id">🆔 Kayıt No: <b>'+esc(l.lid||"—")+'</b></div>'+
           (l.waSent?'<div class="c-wasent">📲 WhatsApp\'a gönderildi ✓</div>':'')+
         '</div>'+
+        (l.username ? '<a class="cta-ig" href="https://instagram.com/'+esc(l.username)+'" target="_blank" rel="noreferrer"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="#fff" stroke="none"/></svg> Instagram profiline git (@'+esc(l.username)+')</a>' : '')+
         hot+ waBtn+ scoreBlock+
         '<div class="section"><div class="h">Kişi Bilgileri</div><div class="fields">'+
           '<div class="frow"><div class="field"><label>Ad</label><input aria-label="Ad" data-fld="ad" value="'+esc(l.ad)+'" placeholder="Ad"></div><div class="field"><label>Soyad</label><input aria-label="Soyad" data-fld="soyad" value="'+esc(l.soyad)+'" placeholder="Soyad"></div></div>'+
