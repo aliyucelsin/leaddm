@@ -1776,16 +1776,17 @@
     var c = poolCounts();
     var oran = c.all ? Math.round((c.sicak / c.all) * 100) : 0;
     var scope = scopedLeads();
-    var dBugun = scope.filter(function(l){ return isToday(l.aktarma); }).length;
-    var dHafta = scope.filter(function(l){ return inDays(l.aktarma, 7); }).length;
-    var dAy = scope.filter(function(l){ return inDays(l.aktarma, 30); }).length;
+    var _ds = window._dmStats || null;
+    var dBugun = _ds ? _ds.today : scope.filter(function(l){ return isToday(l.aktarma); }).length;
+    var dHafta = _ds ? _ds.week  : scope.filter(function(l){ return inDays(l.aktarma, 7); }).length;
+    var dAy    = _ds ? _ds.month : scope.filter(function(l){ return inDays(l.aktarma, 30); }).length;
 
     document.getElementById("summary").innerHTML =
-      '<span class="sum-title">AKTARILAN<br>DATA</span>'+
+      '<span class="sum-title">GELEN<br>DM</span>'+
       '<div class="dgroup">'+
-        '<div class="dcard today" title="Bugün aktarılan hasta bilgisi"><span class="dic">'+IC_UP+'</span><span class="dmeta"><span class="dn" data-to="'+dBugun+'">'+dBugun+'</span><span class="dl">Bugün</span></span><span class="pulse-live"></span></div>'+
-        '<div class="dcard week" title="Bu hafta aktarılan hasta bilgisi"><span class="dic">'+IC_CAL+'</span><span class="dmeta"><span class="dn" data-to="'+dHafta+'">'+dHafta+'</span><span class="dl">Bu Hafta</span></span></div>'+
-        '<div class="dcard month" title="Bu ay aktarılan hasta bilgisi"><span class="dic">'+IC_CHART+'</span><span class="dmeta"><span class="dn" data-to="'+dAy+'">'+dAy+'</span><span class="dl">Bu Ay</span></span></div>'+
+        '<div class="dcard today" title="Bugün gelen DM sayısı"><span class="dic">'+IC_UP+'</span><span class="dmeta"><span class="dn" data-to="'+dBugun+'">'+dBugun+'</span><span class="dl">Bugün</span></span><span class="pulse-live"></span></div>'+
+        '<div class="dcard week" title="Bu hafta gelen DM sayısı"><span class="dic">'+IC_CAL+'</span><span class="dmeta"><span class="dn" data-to="'+dHafta+'">'+dHafta+'</span><span class="dl">Bu Hafta</span></span></div>'+
+        '<div class="dcard month" title="Bu ay gelen DM sayısı"><span class="dic">'+IC_CHART+'</span><span class="dmeta"><span class="dn" data-to="'+dAy+'">'+dAy+'</span><span class="dl">Bu Ay</span></span></div>'+
       '</div>'+
       '<span class="sum-div"></span>'+
       '<button class="sum-card ok" data-filter="sicak" title="Sıcak havuzu göster"><span class="sc-bar"></span><span class="sc-n" data-to="'+c.sicak+'">'+c.sicak+'</span><span class="sc-l">İletişim<br>Alındı</span></button>'+
@@ -3122,8 +3123,22 @@
       if(state.selectedId===l.id){ renderContact(); toast("Telefon algılandı → İletişim Alındı ✓"); }
     }
   }
+  // Gelen DM sayaci (bugun/hafta/ay) — ig_messages'ten count
+  function dmCount(sinceISO){
+    return fetch(LIVE_CFG.url+"/rest/v1/ig_messages?select=id&direction=eq.in&created_at=gte."+encodeURIComponent(sinceISO), { headers: Object.assign(sbH(), { Prefer:"count=exact", Range:"0-0" }) })
+      .then(function(r){ var cr=r.headers.get("content-range")||""; var t=cr.split("/")[1]; return parseInt(t,10)||0; });
+  }
+  function loadDmStats(){
+    if(!LIVE) return;
+    var now=new Date();
+    var t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()).toISOString();
+    var w0=new Date(now.getTime()-7*86400000).toISOString();
+    var m0=new Date(now.getTime()-30*86400000).toISOString();
+    Promise.all([dmCount(t0),dmCount(w0),dmCount(m0)]).then(function(r){ window._dmStats={today:r[0],week:r[1],month:r[2]}; renderTop(); }).catch(function(){});
+  }
   function liveLoad(){
     if(!LIVE) return;
+    loadDmStats();
     sbGet("ig_conversations?select=*&order=last_time.desc.nullslast").then(function(rows){
       if(!Array.isArray(rows)) return;
       notifyIncoming(rows);
