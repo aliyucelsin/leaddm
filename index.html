@@ -1575,6 +1575,11 @@
 
   // ---------- Durum ----------
   var state = { account: "all", selectedId: "c1", filter: "all", q: "", tagFilter: null };
+  // Okunmamış takibi (tarayıcıda saklanır): sohbeti en son ne zaman açtın
+  var SEEN = {}; try { SEEN = JSON.parse(localStorage.getItem("leaddm_seen") || "{}") || {}; } catch (e) { SEEN = {}; }
+  function isUnread(l){ if(!l || l.lastDir!=="in" || !l.lastTime) return false; var s=SEEN[l.id]; return !s || new Date(l.lastTime).getTime() > new Date(s).getTime(); }
+  function markSeen(id){ var l=byId(id); SEEN[id] = (l && l.lastTime) ? l.lastTime : new Date().toISOString(); try { localStorage.setItem("leaddm_seen", JSON.stringify(SEEN)); } catch (e) {} }
+  function unreadCount(){ return (typeof leads!=="undefined"?leads:[]).filter(isUnread).length; }
   var FILTERS = [["all","Tümü"],["reply","↩︎ Yanıt Bekleyen"],["sicak","✅ İletişim Alınan"],["takip","⏳ İletişim Alınamayan"],["fiyat","💬 Fiyat Soran"],["randevu","📅 Randevu"],["wp","📲 WP Gönderildi"]];
   function filterLabel(k){ var f=FILTERS.filter(function(x){return x[0]===k;})[0]; return f?f[1]:"Tümü"; }
 
@@ -1819,12 +1824,14 @@
     var list = filtered();
     var el = document.getElementById("convoList");
     var tagBar = state.tagFilter ? '<div class="tagfilter-bar">Etiket: <b>'+esc(state.tagFilter)+'</b><button data-cleartag aria-label="Temizle">✕</button></div>' : '';
+    try { var _uc = (leads||[]).filter(isUnread).length; if (typeof document!=="undefined") document.title = _uc>0 ? ("("+_uc+") LeadDm") : "LeadDm"; } catch(e){}
     if (!list.length) { el.innerHTML = tagBar + '<div style="padding:40px 20px;text-align:center;color:var(--ink3);font-size:13px">Sonuç bulunamadı.</div>'; return; }
     el.innerHTML = tagBar + list.map(function(l){
       var st = STATUS[l.durum];
       var rs = replyState(l);
+      var unr = isUnread(l);
       // "top kimde" etiketi (öncelikli)
-      var turnTag = rs.unread ? '<span class="tag turn-new">● Yeni mesaj</span>'
+      var turnTag = unr ? '<span class="tag turn-new">● Yeni mesaj</span>'
         : (rs.turn==="me" ? '<span class="tag turn-me">↩︎ Yanıt bekliyor</span>'
                           : '<span class="tag turn-them">✓ Yanıtladınız</span>');
       var tags = turnTag + '<span class="tag st-'+l.durum+'">'+st.label+'</span>';
@@ -1839,13 +1846,13 @@
       var _lastOut = l.messages.length ? l.messages[l.messages.length-1].from==="out" : (l.lastDir==="out");
       var prev = l.lastText ? (_lastOut?"Siz: ":"")+esc(l.lastText) : "mesaj yok";
       var urgent = (rs.turn==="me" && !l.waSent && l.lastTime && (Date.now()-new Date(l.lastTime).getTime()) > 10*60000);
-      var cls = "convo" + (l.id===state.selectedId?" sel":"") + (rs.turn==="me"?" needs-reply":" waiting") + (rs.unread?" unread":"") + (urgent?" urgent-reply":"");
+      var cls = "convo" + (l.id===state.selectedId?" sel":"") + (rs.turn==="me"?" needs-reply":" waiting") + (unr?" unread":"") + (urgent?" urgent-reply":"");
       var waitCls = "";
       if (rs.turn==="me" && l.lastTime) { var hrs=(Date.now()-new Date(l.lastTime).getTime())/3600000; waitCls = hrs>=24?" wait-long":" wait"; }
       return '<button class="'+cls+'" data-id="'+l.id+'">'+
         avatarHTML(l,"avatar",true)+
         '<div class="convo-main">'+
-          '<div class="convo-top"><span class="convo-name">'+esc(fullName(l))+'</span>'+(rs.unread?'<span class="unread-dot"></span>':'')+'<span class="convo-time'+waitCls+'">'+relTime(l.lastTime)+'</span></div>'+
+          '<div class="convo-top"><span class="convo-name">'+esc(fullName(l))+'</span>'+(unr?'<span class="unread-dot"></span>':'')+'<span class="convo-time'+waitCls+'">'+relTime(l.lastTime)+'</span></div>'+
           '<div class="convo-preview'+(l.lastText?"":" none")+'">'+prev+'</div>'+
           '<div class="convo-tags">'+tags+'</div>'+
         '</div>'+
@@ -2065,6 +2072,7 @@
   function selectLead(id) {
     state.selectedId = id; closeCtx(); closePop();
     var sl = byId(id); if (sl) sl.read = true; // açınca okundu say
+    markSeen(id); // okunmamış işaretini temizle (kalıcı)
     if (LIVE) liveMessages(id);
 
     if (isMobile()) { document.body.classList.add("show-chat"); document.body.classList.remove("show-contact"); }
@@ -3155,7 +3163,7 @@
       var pend = (l.messages || []).filter(function(m){ return m.pending && !seen[m.from + "|" + m.text]; });
       l.messages = dbMsgs.concat(pend);
       autoPromotePhone(l);
-      if(state.selectedId === id) renderChat();
+      if(state.selectedId === id) { markSeen(id); renderChat(); } // açık sohbet: gelen mesaj okundu sayılır
       renderList();
     }).catch(function(e){ console.error("liveMessages", e); });
   }
