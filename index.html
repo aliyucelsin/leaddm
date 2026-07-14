@@ -1547,7 +1547,7 @@
       ] }
   );
 
-  leads.forEach(function(l){ var m=l.messages[l.messages.length-1]; l.lastText=m?m.text:""; l.lastTime=m?m.time:null; });
+  leads.forEach(function(l){ var m=l.messages[l.messages.length-1]; l.lastText=m?m.text:""; l.lastTime=m?m.time:null; l.lastDir=m?m.from:null; });
 
   // Aktarma tarihleri (iletişim alınan = bilgi aktarılan). Gün farkları: bugün / bu hafta / bu ay
   var _akt = { c4: 0, c10: 1, c7: 5, c5: 12 };
@@ -1572,6 +1572,10 @@
     if (l.id === "c5") l.randevuTarih = new Date(todayMid().getTime() + 2*DAY + 14*3600000).toISOString();
     l.files = l.files || [];
   });
+
+  // Demo modu için: canlıda leads/accounts temizlense de örnek veri kaybolmasın
+  var DEMO_LEADS = leads.slice();
+  var DEMO_ACCOUNTS = accounts.slice();
 
   // ---------- Durum ----------
   var state = { account: "all", selectedId: "c1", filter: "all", q: "", tagFilter: null };
@@ -2818,11 +2822,11 @@
         { label:"📅 Randevu Takvimi", fn:openTakvim },
         { label:"📋 Detaylı liste", fn:openBoard },
         { label:"⬇ Excel'e aktar", fn:function(){ exportExcel(scopedLeads(), exportLabel()); } },
-        { label:"🤖 Otomatik Karşılama", fn:function(){ if(LIVE) openWelcomeSettings(); else toast("Canlı modda kullanılır"); } },
-        { label:"💬 Anahtar Kelime Yanıtı", fn:function(){ if(LIVE) openAutoReplyManager(); else toast("Canlı modda kullanılır"); } },
-        { label:"🕐 Mesai Dışı Mesajı", fn:function(){ if(LIVE) openHoursSettings(); else toast("Canlı modda kullanılır"); } },
-        { label:"🔑 Şifre Değiştir", fn:function(){ if(LIVE) openPassChange(); else toast("Canlı modda kullanılır"); } },
-        { label:"🔒 Çıkış Yap", fn:function(){ if (typeof sbLogout === "function" && LIVE) sbLogout(); } }
+        { label:"🤖 Otomatik Karşılama", fn:function(){ if(DEMO) demoTool("welcome"); else if(LIVE) openWelcomeSettings(); else toast("Canlı modda kullanılır"); } },
+        { label:"💬 Anahtar Kelime Yanıtı", fn:function(){ if(DEMO) demoTool("autoreply"); else if(LIVE) openAutoReplyManager(); else toast("Canlı modda kullanılır"); } },
+        { label:"🕐 Mesai Dışı Mesajı", fn:function(){ if(DEMO) demoTool("hours"); else if(LIVE) openHoursSettings(); else toast("Canlı modda kullanılır"); } },
+        { label:"🔑 Şifre Değiştir", fn:function(){ if(DEMO) demoTool("pass"); else if(LIVE) openPassChange(); else toast("Canlı modda kullanılır"); } },
+        { label:(DEMO?"🚪 Girişe Dön":"🔒 Çıkış Yap"), fn:function(){ if (DEMO) exitDemo(); else if (typeof sbLogout === "function" && LIVE) sbLogout(); } }
       ]);
       return;
     }
@@ -2916,6 +2920,7 @@
   // ================= CANLI MOD (Supabase) =================
   var LIVE_CFG = (typeof window !== "undefined" && window.LEADDM) ? window.LEADDM : null;
   var LIVE = !!LIVE_CFG;
+  var DEMO = false;
   // ---- Kimlik doğrulama (Supabase Auth) ----
   var SESSION = null;
   try { SESSION = JSON.parse(localStorage.getItem("leaddm_session") || "null"); } catch (e) { SESSION = null; }
@@ -3004,6 +3009,9 @@
         + ".login-card button::after{content:'';position:absolute;top:0;left:-120%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:lgSweep 3.6s ease-in-out infinite}"
         + "@keyframes lgSweep{0%{left:-120%}55%,100%{left:170%}}"
         + ".login-err{color:#ff7373;font-size:12.5px;min-height:16px;margin-top:11px}"
+        + ".login-card button.demo-enter{margin-top:12px;padding:12px;background:transparent;color:#d4af37;border:1.5px solid #3a3320;box-shadow:none;font-size:14px;font-weight:700}"
+        + ".login-card button.demo-enter::after{display:none}"
+        + ".login-card button.demo-enter:hover:not(:disabled){transform:none;background:rgba(212,175,55,.08);border-color:#d4af37;box-shadow:none}"
         + ".login-foot{margin-top:20px;font-size:11px;color:#6a6a72;letter-spacing:.5px}"
         + ".login-foot b{color:#d4af37;font-weight:700}"
         + "@media (prefers-reduced-motion:reduce){#loginOverlay .lg-spin,#loginOverlay .lg-glow,.login-logo,.login-card h1,.login-card button::after{animation:none}}";
@@ -3023,6 +3031,7 @@
       + '<input id="loginPass" type="password" placeholder="Şifre" autocomplete="current-password" required>'
       + '<button type="submit" id="loginBtn">Giriş Yap</button>'
       + '<div class="login-err" id="loginErr"></div>'
+      + '<button type="button" id="demoBtn" class="demo-enter">🎬 Demoyu İncele</button>'
       + '<div class="login-foot">Geliştirici · <b>yucelsinmedia</b></div>'
       + '</form>';
     document.body.appendChild(ov);
@@ -3037,6 +3046,7 @@
         else { err.textContent = (res.d && (res.d.error_description || res.d.msg || res.d.error)) || "E-posta veya şifre hatalı"; btn.disabled = false; btn.textContent = "Giriş Yap"; }
       }).catch(function(){ err.textContent = "Bağlantı hatası"; btn.disabled = false; btn.textContent = "Giriş Yap"; });
     });
+    var db = document.getElementById("demoBtn"); if (db) db.addEventListener("click", function(){ enterDemo(); });
     var ie = document.getElementById("loginEmail"); if (ie) ie.focus();
   }
   function liveBoot(){
@@ -3051,6 +3061,94 @@
       }, 8000);
     }
   }
+  // ================= DEMO MODU =================
+  function enterDemo(){
+    DEMO = true; LIVE = false;
+    if (window._leaddmPoll) { clearInterval(window._leaddmPoll); window._leaddmPoll = null; }
+    leads = DEMO_LEADS.slice(); accounts = DEMO_ACCOUNTS.slice();
+    state.account = "all"; state.filter = "all"; state.q = ""; state.tagFilter = null;
+    state.selectedId = leads[0] ? leads[0].id : null;
+    var s0 = byId(state.selectedId); if (s0) s0.read = true;
+    hideLogin(); showDemoBanner();
+    renderRail(); updateAcctLabel(); renderTop(); renderList(); renderChat(); renderContact();
+    setTimeout(function(){ demoTour(); }, 350);
+  }
+  function exitDemo(){
+    DEMO = false;
+    var b = document.getElementById("demoBanner"); if (b && b.parentNode) b.parentNode.removeChild(b);
+    if (LIVE_CFG) { location.reload(); } else { showLogin(); }
+  }
+  function demoModal(title, bodyHTML){
+    var old = document.getElementById("demoModal"); if (old && old.parentNode) old.parentNode.removeChild(old);
+    var ov = document.createElement("div"); ov.id = "demoModal";
+    ov.style.cssText = "position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.6);backdrop-filter:blur(3px)";
+    ov.innerHTML = '<div style="width:100%;max-width:440px;max-height:86vh;overflow:auto;background:#15151F;border:1px solid #2A2836;border-radius:16px;box-shadow:0 24px 60px -20px rgba(0,0,0,.8)">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid #2A2836">'
+      + '<b style="font-size:16px;color:#f0e9d2">'+title+'</b>'
+      + '<button id="demoModalX" style="border:0;background:#23222e;color:#c9c3b4;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:15px">✕</button></div>'
+      + '<div style="padding:16px 18px;color:#c9c3b4;font-size:13.5px;line-height:1.65">'+bodyHTML+'</div>'
+      + '<div style="padding:0 18px 16px"><div style="font-size:11.5px;color:#8a8577;background:rgba(216,169,78,.09);border:1px solid rgba(216,169,78,.25);border-radius:9px;padding:9px 11px">ℹ️ Bu bir <b style="color:#d8a94e">demo önizlemesidir</b> — değişiklikler kaydedilmez. Canlı hesapta bu bölüm tam düzenlenebilir.</div></div>'
+      + '</div>';
+    document.body.appendChild(ov);
+    function close(){ if (ov.parentNode) ov.parentNode.removeChild(ov); document.removeEventListener("keydown", esc); }
+    function esc(e){ if (e.key === "Escape") close(); }
+    ov.addEventListener("click", function(e){ if (e.target === ov) close(); });
+    document.getElementById("demoModalX").addEventListener("click", close);
+    document.addEventListener("keydown", esc);
+  }
+  function demoTool(kind){
+    if (kind === "welcome") demoModal("🤖 Otomatik Karşılama",
+      '<p>Instagram\'a <b>ilk kez</b> yazan herkese otomatik gönderilen karşılama mesajı.</p>'
+      + '<div style="margin:12px 0;padding:11px 13px;background:#1B1B27;border:1px solid #2A2836;border-radius:11px;color:#f0e9d2">Merhaba! 🦷 Kliniğimize hoş geldiniz. Size nasıl yardımcı olabiliriz? Aklınızdaki tedaviyi yazmanız yeterli. 😊</div>'
+      + '<p style="color:#8a8577;font-size:12.5px">Açık/kapalı yapılabilir, metni istediğiniz gibi düzenlenir.</p>');
+    else if (kind === "autoreply") demoModal("💬 Anahtar Kelime Yanıtı",
+      '<p>Belirli kelimeler geçtiğinde otomatik, profesyonel yanıt gönderilir ve numara istenir.</p>'
+      + '<div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">'
+      + demoRule("ağrı, acil", "Diş ağrısını ciddiye alıyoruz… Numaranızı bırakın, uzman hekimimiz en kısa sürede arasın.")
+      + demoRule("implant", "İmplant, eksik dişin en kalıcı çözümüdür… Numaranızı bırakın, hekimimiz planı anlatsın.")
+      + demoRule("fiyat, ne kadar", "Ücret kişiye özel planlanır; ilk muayene ücretsiz. Numaranızı bırakın, hekimimiz net bilgi versin.")
+      + '</div><p style="color:#8a8577;font-size:12.5px;margin-top:12px">Canlı hesapta 24 hazır kural mevcut; yenisini ekleyebilir, silebilirsiniz.</p>');
+    else if (kind === "hours") demoModal("🕐 Mesai Dışı Mesajı",
+      '<p>Çalışma saatleri dışında gelen mesajlara otomatik dönüş yapılır — hasta boşta kalmaz.</p>'
+      + '<div style="margin:12px 0;padding:10px 12px;background:#1B1B27;border:1px solid #2A2836;border-radius:11px;color:#f0e9d2;font-size:12.5px">🗓 Pzt–Cmt · 09:00–19:00</div>'
+      + '<div style="padding:11px 13px;background:#1B1B27;border:1px solid #2A2836;border-radius:11px;color:#f0e9d2">Şu an mesai dışındayız 🌙 Mesajınızı aldık; en kısa sürede size dönüş sağlayacağız. Dilerseniz numaranızı bırakın. 😊</div>');
+    else if (kind === "pass") demoModal("🔑 Şifre Değiştir",
+      '<p>Panel giriş şifrenizi buradan güncellersiniz.</p>'
+      + '<p style="color:#8a8577;font-size:12.5px;margin-top:8px">Panel herkese açık bir web adresinde çalıştığı için şifrenizi güçlü tutmanız önemlidir. Demo modunda şifre değişikliği devre dışıdır.</p>');
+  }
+  function demoRule(kw, rp){
+    return '<div style="background:#1B1B27;border:1px solid #2A2836;border-radius:10px;padding:10px 12px">'
+      + '<div style="font-size:11px;color:#d8a94e;font-weight:700;letter-spacing:.03em;margin-bottom:4px">'+kw+'</div>'
+      + '<div style="color:#c9c3b4;font-size:12.5px;line-height:1.5">'+rp+'</div></div>';
+  }
+  function showDemoBanner(){
+    if (document.getElementById("demoBanner")) return;
+    var b = document.createElement("div"); b.id = "demoBanner";
+    b.style.cssText = "position:fixed;left:50%;transform:translateX(-50%);top:9px;z-index:99998;display:flex;align-items:center;gap:11px;padding:7px 9px 7px 14px;border-radius:999px;background:rgba(21,21,31,.92);border:1px solid rgba(216,169,78,.45);box-shadow:0 8px 24px -8px rgba(0,0,0,.7);backdrop-filter:blur(6px);font-size:12.5px;color:#f0e9d2;max-width:calc(100vw - 24px)";
+    b.innerHTML = '<span style="white-space:nowrap">🎬 <b style="color:#d8a94e">DEMO</b> · örnek hesap</span>'
+      + '<button id="demoTourBtn" style="border:0;background:#23222e;color:#e8dcc0;padding:5px 10px;border-radius:999px;cursor:pointer;font-size:11.5px;white-space:nowrap">Tur</button>'
+      + '<button id="demoExitBtn" style="border:0;background:linear-gradient(135deg,#f5d67b,#d4af37 60%,#b8860b);color:#100d05;font-weight:700;padding:5px 12px;border-radius:999px;cursor:pointer;font-size:11.5px;white-space:nowrap">Girişe dön</button>';
+    document.body.appendChild(b);
+    document.getElementById("demoExitBtn").addEventListener("click", exitDemo);
+    document.getElementById("demoTourBtn").addEventListener("click", demoTour);
+  }
+  function demoTour(){
+    demoModal("🎬 LeadDm Demo Turu",
+      '<p style="margin-bottom:12px">Bu demo hesabı örnek verilerle dolu — canlı hesabınızdan tamamen bağımsız. Şunları deneyin:</p>'
+      + '<div style="display:flex;flex-direction:column;gap:10px">'
+      + demoStep("💬","Sohbet listesi","Farklı durumlardaki hastalar burada. Bir sohbete tıklayın — sağda mesajlar ve hasta kartı açılır.")
+      + demoStep("🎨","Durum renkleri","Yeni · Bilgi bekleniyor · İletişim alındı · Randevu · Dönüş yok — her biri renkli etiketle işaretli.")
+      + demoStep("📊","Üst kartlar & Araçlar (☰)","Gelen DM sayaçlarına ve ☰ menüsündeki Analitik, Kanban, Takvim, otomasyon ayarlarına göz atın.")
+      + demoStep("✍️","Mesaj gönderme","Bir sohbette mesaj yazıp gönderin — demoda anında görünür (canlıda Instagram\'a gider).")
+      + demoStep("🚪","Girişe dön","Üstteki \'Girişe dön\' ile çıkıp gerçek hesabınıza giriş yapabilirsiniz.")
+      + '</div>');
+  }
+  function demoStep(em, t, d){
+    return '<div style="display:flex;gap:11px;align-items:flex-start">'
+      + '<div style="font-size:17px;flex:0 0 auto;width:26px;text-align:center">'+em+'</div>'
+      + '<div><b style="color:#f0e9d2;font-size:13.5px">'+t+'</b><div style="color:#8a8577;font-size:12.5px;line-height:1.5;margin-top:2px">'+d+'</div></div></div>';
+  }
+
   function sbAuthBoot(){
     if (SESSION && SESSION.expires_at && (SESSION.expires_at - Date.now() > 60000)) { liveBoot(); }
     else if (SESSION && SESSION.refresh_token) { sbRefresh().then(function(ok){ if (ok) liveBoot(); else showLogin(); }); }
