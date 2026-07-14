@@ -1931,7 +1931,7 @@
         .then(function(r){
           if (!r.ok) { r.text().then(function(b){ toast("Kaydedilemedi " + r.status + ": " + (b||"").slice(0,80)); }); return; }
           sbPatch("ig_conversations?ig_user_id=eq." + encodeURIComponent(l.id), { last_message: t, last_time: new Date().toISOString(), last_dir: "out" });
-          fetch(LIVE_CFG.url + "/functions/v1/deliver", { method: "POST" }).catch(function(){}); // anında teslim denemesi (olmazsa cron gönderir)
+          // teslim: DB tetikleyicisi (trg_deliver) otomatik yapar — panelden ayrıca çağırmıyoruz (çift gönderim önlemi)
           toast("Gönderiliyor…");
           setTimeout(function(){ liveMessages(l.id); }, 1500);
         })
@@ -2574,7 +2574,6 @@
       .then(function(r){
         if(!r.ok){ r.text().then(function(t){ toast("Gönderilemedi: "+(t||"").slice(0,60)); }); return; }
         sbPatch("ig_conversations?ig_user_id=eq."+encodeURIComponent(l.id),{ last_message:(isPdf?"[dosya]":"[görsel]"), last_time:new Date().toISOString(), last_dir:"out" });
-        fetch(LIVE_CFG.url+"/functions/v1/deliver",{ method:"POST" }).catch(function(){});
         toast("Gönderiliyor… 📎"); setTimeout(function(){ liveMessages(l.id); }, 1500);
       }).catch(function(){ toast("Bağlantı hatası"); });
   }
