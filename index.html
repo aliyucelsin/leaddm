@@ -2903,21 +2903,26 @@
     });
   }
 
+  // Araçlar menüsü öğeleri (hem üst bar butonu hem mobil alt nav kullanır)
+  function getToolsItems(){
+    return [
+      { label:"📊 Analitik", fn:openAnalytics },
+      { label:"🗂 Kanban", fn:openKanban },
+      { label:"📅 Randevu Takvimi", fn:openTakvim },
+      { label:"📋 Detaylı liste", fn:openBoard },
+      { label:"⬇ Excel'e aktar", fn:function(){ exportExcel(scopedLeads(), exportLabel()); } },
+      { label:"🤖 Otomatik Karşılama", fn:function(){ if(DEMO) demoTool("welcome"); else if(LIVE) openWelcomeSettings(); else toast("Canlı modda kullanılır"); } },
+      { label:"💬 Anahtar Kelime Yanıtı", fn:function(){ if(DEMO) demoTool("autoreply"); else if(LIVE) openAutoReplyManager(); else toast("Canlı modda kullanılır"); } },
+      { label:"🕐 Mesai Dışı Mesajı", fn:function(){ if(DEMO) demoTool("hours"); else if(LIVE) openHoursSettings(); else toast("Canlı modda kullanılır"); } },
+      { label:"🔑 Şifre Değiştir", fn:function(){ if(DEMO) demoTool("pass"); else if(LIVE) openPassChange(); else toast("Canlı modda kullanılır"); } },
+      { label:(DEMO?"🚪 Girişe Dön":"🔒 Çıkış Yap"), fn:function(){ if (DEMO) exitDemo(); else if (typeof sbLogout === "function" && LIVE) sbLogout(); } }
+    ];
+  }
+
   // ---------- Olay bağlama ----------
   document.getElementById("summary").addEventListener("click", function(e){
     if (e.target.closest("#toolsBtn")) {
-      openDrop(e.target.closest("#toolsBtn"), [
-        { label:"📊 Analitik", fn:openAnalytics },
-        { label:"🗂 Kanban", fn:openKanban },
-        { label:"📅 Randevu Takvimi", fn:openTakvim },
-        { label:"📋 Detaylı liste", fn:openBoard },
-        { label:"⬇ Excel'e aktar", fn:function(){ exportExcel(scopedLeads(), exportLabel()); } },
-        { label:"🤖 Otomatik Karşılama", fn:function(){ if(DEMO) demoTool("welcome"); else if(LIVE) openWelcomeSettings(); else toast("Canlı modda kullanılır"); } },
-        { label:"💬 Anahtar Kelime Yanıtı", fn:function(){ if(DEMO) demoTool("autoreply"); else if(LIVE) openAutoReplyManager(); else toast("Canlı modda kullanılır"); } },
-        { label:"🕐 Mesai Dışı Mesajı", fn:function(){ if(DEMO) demoTool("hours"); else if(LIVE) openHoursSettings(); else toast("Canlı modda kullanılır"); } },
-        { label:"🔑 Şifre Değiştir", fn:function(){ if(DEMO) demoTool("pass"); else if(LIVE) openPassChange(); else toast("Canlı modda kullanılır"); } },
-        { label:(DEMO?"🚪 Girişe Dön":"🔒 Çıkış Yap"), fn:function(){ if (DEMO) exitDemo(); else if (typeof sbLogout === "function" && LIVE) sbLogout(); } }
-      ]);
+      openDrop(e.target.closest("#toolsBtn"), getToolsItems());
       return;
     }
     var cb = e.target.closest("[data-callboard]"); if (cb) { openToCall(); return; }
@@ -3253,13 +3258,26 @@
     document.body.appendChild(nav);
     function setActive(k){ nav.querySelectorAll("button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-mn")===k); }); }
     setActive("list");
+    function openToolsSheet(anchor){
+      // Araçlar menüsünü aç ve mobilde alt navigasyonun HEMEN ÜSTÜNE konumla (parmağa yakın)
+      openDrop(anchor, getToolsItems());
+      if (dropEl){
+        var mh = dropEl.offsetHeight, mw = dropEl.offsetWidth;
+        var rr = anchor.getBoundingClientRect();
+        dropEl.style.top = Math.max(8, rr.top - mh - 10) + "px";
+        var left = rr.left + rr.width/2 - mw/2;
+        dropEl.style.left = Math.max(8, Math.min(left, window.innerWidth - mw - 8)) + "px";
+      }
+    }
     nav.addEventListener("click", function(e){
       var b = e.target.closest("[data-mn]"); if(!b) return;
+      e.stopPropagation();                          // menüyü açar açmaz kapatan belge tıklamasını engelle
+      if (typeof closeDrop === "function") closeDrop();
       var k = b.getAttribute("data-mn");
       if (k==="list"){ document.body.classList.remove("show-chat","show-contact"); setActive("list"); try{ window.scrollTo({top:0,behavior:"smooth"}); }catch(_){}}
       else if (k==="call"){ if(typeof openToCall==="function") openToCall(); setActive("call"); }
       else if (k==="stats"){ if(typeof openAnalytics==="function") openAnalytics(); setActive("stats"); }
-      else if (k==="tools"){ var tb=document.getElementById("toolsBtn"); if(tb) tb.click(); }
+      else if (k==="tools"){ openToolsSheet(b); setActive("tools"); }
     });
     function refreshBadge(){
       try{ var el=document.getElementById("mnavBadge"); if(!el) return;
