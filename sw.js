@@ -1,5 +1,5 @@
 // LeadDm service worker — HTML her zaman ağdan (bayat panel yok), statikler önbellekli
-var CACHE = "leaddm-v2";
+var CACHE = "leaddm-v3";
 self.addEventListener("install", function (e) { self.skipWaiting(); });
 self.addEventListener("activate", function (e) {
   e.waitUntil((async function () {
