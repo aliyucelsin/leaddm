@@ -436,6 +436,14 @@
   .tplm-txt span { display:block; font-size:12px; color:var(--ink2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .tplm-del { border:1px solid #F0C4C4; background:#FDECEC; color:#C0392B; font-weight:700; font-size:12px; padding:6px 12px; border-radius:8px; cursor:pointer; }
   [data-theme="dark"] .tplm-del { background:#3A1E1E; border-color:#5A2A2A; color:#F08A8A; }
+  .ar-rowbtns, .ar-editbtns { display:flex; flex-direction:column; gap:6px; flex:0 0 auto; }
+  .ar-edit { border:1px solid var(--brand-100); background:var(--brand-050); color:var(--brand-d); font-weight:700; font-size:12px; padding:6px 12px; border-radius:8px; cursor:pointer; }
+  .tplm-row.ar-editing { align-items:stretch; flex-direction:column; }
+  .ar-ekw, .ar-erp { width:100%; box-sizing:border-box; padding:9px 11px; border:1px solid var(--line); border-radius:9px; background:var(--paper); color:var(--ink); font-size:13px; outline:none; }
+  .ar-ekw:focus, .ar-erp:focus { border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-050); }
+  .ar-erp { margin-top:6px; resize:vertical; line-height:1.5; }
+  .tplm-row.ar-editing .ar-editbtns { flex-direction:row; margin-top:8px; }
+  .ar-cancel { border:1px solid var(--line); background:var(--panel); color:var(--ink2); font-weight:700; font-size:12px; padding:6px 14px; border-radius:8px; cursor:pointer; }
 
   /* analitik ek */
   .an-load { font-size:12.5px; color:var(--ink3); padding:10px 0; }
@@ -2850,11 +2858,28 @@
     sbGet("leaddm_settings?select=autoreply_on&id=eq.1").then(function(rows){ var s=(rows&&rows[0])||{}; var cb=document.getElementById("autoOn"); if(cb) cb.checked = s.autoreply_on!==false; }).catch(function(){});
     document.getElementById("autoOn").addEventListener("change", function(e){ sbPatch("leaddm_settings?id=eq.1",{ autoreply_on:e.target.checked, updated_at:new Date().toISOString() }); toast(e.target.checked?"Açık":"Kapalı"); });
     var arAcct = (LIVE_CFG.account && LIVE_CFG.account.id) || "";
+    var arEditId = null;
     function render(){
       sbGet("leaddm_autoreply?select=*&account_id=eq."+encodeURIComponent(arAcct)+"&order=sort.asc,created_at.asc").then(function(rows){
         if(!Array.isArray(rows)) rows=[];
         var el=document.getElementById("arList"); if(!el) return;
-        el.innerHTML = rows.length ? rows.map(function(r){ return '<div class="tplm-row"><div class="tplm-txt"><b>'+esc(r.keywords)+'</b><span>'+esc(r.reply)+'</span></div><button class="tplm-del" data-del="'+r.id+'">Sil</button></div>'; }).join("") : '<div class="an-empty">Henüz kural yok. Yukarıdan ekleyin.</div>';
+        el.innerHTML = rows.length ? rows.map(function(r){
+          if(String(r.id)===String(arEditId)){
+            return '<div class="tplm-row ar-editing"><div class="tplm-txt" style="width:100%">'
+              + '<input class="ar-ekw" value="'+esc(r.keywords)+'" placeholder="anahtar kelimeler (virgülle)">'
+              + '<textarea class="ar-erp" rows="4" placeholder="yanıt metni">'+esc(r.reply)+'</textarea>'
+              + '</div><div class="ar-editbtns"><button class="tplm-addbtn" data-save="'+r.id+'">Kaydet</button><button class="ar-cancel" data-cancel="1">İptal</button></div></div>';
+          }
+          return '<div class="tplm-row"><div class="tplm-txt"><b>'+esc(r.keywords)+'</b><span>'+esc(r.reply)+'</span></div><div class="ar-rowbtns"><button class="ar-edit" data-edit="'+r.id+'">Düzenle</button><button class="tplm-del" data-del="'+r.id+'">Sil</button></div></div>';
+        }).join("") : '<div class="an-empty">Henüz kural yok. Yukarıdan ekleyin.</div>';
+        el.querySelectorAll("[data-edit]").forEach(function(b){ b.addEventListener("click", function(){ arEditId=b.getAttribute("data-edit"); render(); }); });
+        el.querySelectorAll("[data-cancel]").forEach(function(b){ b.addEventListener("click", function(){ arEditId=null; render(); }); });
+        el.querySelectorAll("[data-save]").forEach(function(b){ b.addEventListener("click", function(){
+          var row=b.closest(".tplm-row"); var kw=row.querySelector(".ar-ekw").value.trim(); var rp=row.querySelector(".ar-erp").value.trim();
+          if(!kw||!rp){ toast("Kelime ve yanıt gerekli"); return; }
+          fetch(LIVE_CFG.url+"/rest/v1/leaddm_autoreply?id=eq."+encodeURIComponent(b.getAttribute("data-save")),{ method:"PATCH", headers:Object.assign(sbH(),{Prefer:"return=minimal"}), body:JSON.stringify({ keywords:kw, reply:rp }) })
+            .then(function(r){ if(r.ok){ arEditId=null; render(); toast("Güncellendi ✓"); } else toast("Kaydedilemedi"); }).catch(function(){ toast("Bağlantı hatası"); });
+        }); });
         el.querySelectorAll("[data-del]").forEach(function(b){ b.addEventListener("click", function(){ fetch(LIVE_CFG.url+"/rest/v1/leaddm_autoreply?id=eq."+encodeURIComponent(b.getAttribute("data-del")),{ method:"DELETE", headers:{ apikey:LIVE_CFG.anon, Authorization:"Bearer "+sbToken() } }).then(render).then(function(){ toast("Silindi"); }); }); });
       }).catch(function(){});
     }
