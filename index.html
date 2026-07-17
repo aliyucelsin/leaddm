@@ -2849,8 +2849,9 @@
     ov.addEventListener("click", function(e){ if(e.target===ov) closeAutoMgr(); });
     sbGet("leaddm_settings?select=autoreply_on&id=eq.1").then(function(rows){ var s=(rows&&rows[0])||{}; var cb=document.getElementById("autoOn"); if(cb) cb.checked = s.autoreply_on!==false; }).catch(function(){});
     document.getElementById("autoOn").addEventListener("change", function(e){ sbPatch("leaddm_settings?id=eq.1",{ autoreply_on:e.target.checked, updated_at:new Date().toISOString() }); toast(e.target.checked?"Açık":"Kapalı"); });
+    var arAcct = (LIVE_CFG.account && LIVE_CFG.account.id) || "";
     function render(){
-      sbGet("leaddm_autoreply?select=*&order=sort.asc,created_at.asc").then(function(rows){
+      sbGet("leaddm_autoreply?select=*&account_id=eq."+encodeURIComponent(arAcct)+"&order=sort.asc,created_at.asc").then(function(rows){
         if(!Array.isArray(rows)) rows=[];
         var el=document.getElementById("arList"); if(!el) return;
         el.innerHTML = rows.length ? rows.map(function(r){ return '<div class="tplm-row"><div class="tplm-txt"><b>'+esc(r.keywords)+'</b><span>'+esc(r.reply)+'</span></div><button class="tplm-del" data-del="'+r.id+'">Sil</button></div>'; }).join("") : '<div class="an-empty">Henüz kural yok. Yukarıdan ekleyin.</div>';
@@ -2861,7 +2862,7 @@
     document.getElementById("arAdd").addEventListener("click", function(){
       var kw=document.getElementById("arKw").value.trim(), rp=document.getElementById("arReply").value.trim();
       if(!kw||!rp){ toast("Kelime ve yanıt gerekli"); return; }
-      fetch(LIVE_CFG.url+"/rest/v1/leaddm_autoreply",{ method:"POST", headers:Object.assign(sbH(),{Prefer:"return=minimal"}), body:JSON.stringify({ keywords:kw, reply:rp, sort:99 }) })
+      fetch(LIVE_CFG.url+"/rest/v1/leaddm_autoreply",{ method:"POST", headers:Object.assign(sbH(),{Prefer:"return=minimal"}), body:JSON.stringify({ keywords:kw, reply:rp, sort:99, account_id:arAcct }) })
         .then(function(r){ if(r.ok){ document.getElementById("arKw").value=""; document.getElementById("arReply").value=""; render(); toast("Kural eklendi ✓"); } else toast("Eklenemedi"); }).catch(function(){ toast("Bağlantı hatası"); });
     });
   }
