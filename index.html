@@ -92,6 +92,10 @@
     font-size: 11px; color: var(--ink3); font-weight: 500;
     letter-spacing: .3px;
   }
+  a.dev-credit { text-decoration: none; color: var(--gold-d, #A9782C); font-weight: 700; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px; width: fit-content; transition: color .15s, opacity .15s; }
+  a.dev-credit::before { content: "\1F4BB"; font-size: 10px; }
+  a.dev-credit:hover { color: var(--gold, #D8A94E); text-decoration: underline; }
   .stats { display: flex; gap: 8px; margin-left: 6px; }
   .stat {
     display: flex; align-items: baseline; gap: 6px;
@@ -1360,7 +1364,7 @@
       </div>
       <div class="wordmark">
         <span class="name"><span class="wm-lead">Lead</span><span class="wm-dm">Dm</span></span>
-        <span class="sub" id="acctLabel">Instagram DM Hasta Takip</span>
+        <a class="sub dev-credit" id="acctLabel" href="https://wa.me/905055585959?text=Merhaba%20Ali%20Bey%2C%20LeadDm%20paneli%20hakk%C4%B1nda" target="_blank" rel="noreferrer" title="Ali YÜCELSİN · WhatsApp 0505 558 59 59">Developer Ali Yücelsin</a>
       </div>
     </div>
 
@@ -2343,9 +2347,7 @@
     }
   }
   function updateAcctLabel() {
-    var lbl = document.getElementById("acctLabel");
-    if (state.account==="all") lbl.textContent = accounts.length+" hesap bağlı · tüm DM'ler";
-    else lbl.textContent = "@"+acctById(state.account).handle;
+    // Header alt yazısı sabit "Developer Ali Yücelsin" bağlantısıdır; hesap adıyla değiştirilmez.
   }
   function switchAccount(id) {
     if (id==="add") { openConnect(); return; }
@@ -3486,7 +3488,7 @@
     // Canlı: demo verisini temizle, gerçek hesabı ray'a koy, Supabase'den yükle + her 8sn yenile
     leads = []; state.selectedId = null;
     if (LIVE_CFG.account) accounts = [LIVE_CFG.account];
-    document.getElementById("acctLabel").textContent = LIVE_CFG.account ? ("@" + LIVE_CFG.account.handle) : "Canlı";
+    // acctLabel artık sabit "Developer Ali Yücelsin" bağlantısı — üzerine yazma
     renderRail(); renderTop(); renderList(); renderChat(); renderContact();
     sbAuthBoot();
   } else {
