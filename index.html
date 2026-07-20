@@ -2027,10 +2027,12 @@
     thread.scrollTop = thread.scrollHeight;
 
     var ta = document.getElementById("composerText");
+    // Gönderilmemiş taslağı geri yükle (8sn yenilemede yazı kaybolmasın)
+    if (_composeDraft[l.id]) { ta.value = _composeDraft[l.id]; ta.style.height="auto"; ta.style.height=Math.min(ta.scrollHeight,120)+"px"; }
     ta.addEventListener("keydown", function(e){ if (e.key==="Enter" && !e.shiftKey){ e.preventDefault(); doSend(); } });
-    ta.addEventListener("input", function(){ ta.style.height="auto"; ta.style.height=Math.min(ta.scrollHeight,120)+"px"; });
+    ta.addEventListener("input", function(){ _composeDraft[l.id]=ta.value; ta.style.height="auto"; ta.style.height=Math.min(ta.scrollHeight,120)+"px"; });
     document.getElementById("sendBtn").addEventListener("click", doSend);
-    function setComposer(text){ var t=document.getElementById("composerText"); t.value=text; t.focus(); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight,120)+"px"; }
+    function setComposer(text){ var t=document.getElementById("composerText"); t.value=text; _composeDraft[l.id]=text; t.focus(); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight,120)+"px"; }
     document.getElementById("aiBtn").addEventListener("click", function(){ setComposer(aiSuggest(l)); toast("AI önerisi hazır ✦ düzenleyip gönderebilirsiniz"); });
     document.getElementById("tplBtn").addEventListener("click", function(e){ e.stopPropagation(); openTemplateMenu(e.currentTarget, function(t){
       var nm = ((l.ad||l.username||"")+"").trim().split(" ")[0];
@@ -2081,12 +2083,13 @@
     }).catch(function(e){ toast("Hata: "+((e&&e.message)||"").slice(0,50)); });
   }
 
+  var _composeDraft = {};
   function doSend() {
     var ta = document.getElementById("composerText");
     var t = ta.value.trim();
     if (!t) return;
     var l = byId(state.selectedId); if (!l) return;
-    ta.value=""; ta.style.height="auto";
+    ta.value=""; ta.style.height="auto"; _composeDraft[l.id]="";
     l.messages.push({from:"out", text:t, time:new Date().toISOString(), pending: LIVE ? true : false}); l.lastText=t; l.lastTime=new Date().toISOString(); l.lastDir="out";
     renderChat(); renderList(); renderTop();
     var rows = document.querySelectorAll("#thread .msg-row");
