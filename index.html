@@ -2032,7 +2032,11 @@
     document.getElementById("sendBtn").addEventListener("click", doSend);
     function setComposer(text){ var t=document.getElementById("composerText"); t.value=text; t.focus(); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight,120)+"px"; }
     document.getElementById("aiBtn").addEventListener("click", function(){ setComposer(aiSuggest(l)); toast("AI önerisi hazır ✦ düzenleyip gönderebilirsiniz"); });
-    document.getElementById("tplBtn").addEventListener("click", function(e){ e.stopPropagation(); openTemplateMenu(e.currentTarget, setComposer); });
+    document.getElementById("tplBtn").addEventListener("click", function(e){ e.stopPropagation(); openTemplateMenu(e.currentTarget, function(t){
+      var nm = ((l.ad||l.username||"")+"").trim().split(" ")[0];
+      var filled = String(t).split("{isim}").join(nm).split("{ad}").join(nm).split("{kullanici}").join(nm).replace(/\s+([!?.,:])/g,"$1").replace(/[ \t]{2,}/g," ").trim();
+      setComposer(filled);
+    }); });
     var gb = document.getElementById("galBtn"); if (gb) gb.addEventListener("click", function(){ openGallery(l); });
     var rb = document.getElementById("recBtn"); if (rb) rb.addEventListener("click", function(){ toggleVoiceRecord(l, rb); });
   }
@@ -2642,19 +2646,21 @@
     if (userTemplates && userTemplates.length) return userTemplates.map(function(x){ return { id:x.id, t:x.title, m:x.body }; });
     return TEMPLATES.map(function(x){ return { t:x.t, m:x.m }; });
   }
+  function tplAcct(){ return (LIVE_CFG && LIVE_CFG.account && LIVE_CFG.account.id) || ""; }
   function loadTemplates(){
     if(!LIVE) return;
-    sbGet("leaddm_templates?select=*&order=sort.asc,created_at.asc").then(function(rows){
+    var _acct = tplAcct();
+    sbGet("leaddm_templates?select=*&account_id=eq."+encodeURIComponent(_acct)+"&order=sort.asc,created_at.asc").then(function(rows){
       if(!Array.isArray(rows)) return;
       if(rows.length===0){
-        var seed = TEMPLATES.map(function(x,i){ return { title:x.t, body:x.m, sort:i }; });
+        var seed = TEMPLATES.map(function(x,i){ return { title:x.t, body:x.m, sort:i, account_id:_acct }; });
         fetch(LIVE_CFG.url+"/rest/v1/leaddm_templates",{ method:"POST", headers:Object.assign(sbH(),{Prefer:"return=representation"}), body:JSON.stringify(seed) })
           .then(function(r){ return r.json(); }).then(function(d){ userTemplates = Array.isArray(d)?d:[]; }).catch(function(){});
       } else { userTemplates = rows; }
     }).catch(function(e){ console.error("templates", e); });
   }
   function tplAdd(title, body){
-    return fetch(LIVE_CFG.url+"/rest/v1/leaddm_templates",{ method:"POST", headers:Object.assign(sbH(),{Prefer:"return=representation"}), body:JSON.stringify({ title:title, body:body, sort:(userTemplates?userTemplates.length:0) }) })
+    return fetch(LIVE_CFG.url+"/rest/v1/leaddm_templates",{ method:"POST", headers:Object.assign(sbH(),{Prefer:"return=representation"}), body:JSON.stringify({ title:title, body:body, sort:(userTemplates?userTemplates.length:0), account_id:tplAcct() }) })
       .then(function(r){ return r.json(); }).then(function(d){ if(Array.isArray(d)&&d[0]) userTemplates=(userTemplates||[]).concat(d); return d; });
   }
   function tplDel(id){
