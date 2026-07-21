@@ -469,6 +469,9 @@
   /* sohbette görsel/dosya balonu */
   .bubble-img { max-width:220px; width:100%; border-radius:10px; display:block; margin-bottom:4px; }
   .bubble-file { color:inherit; text-decoration:underline; word-break:break-all; }
+  .msg-fail { display:block; font-size:10.5px; color:#C0392B; margin-top:4px; font-weight:700; }
+  .msg-row.out.failed .bubble { border:1px dashed #E0475A; }
+  [data-theme="dark"] .msg-fail { color:#F08A8A; }
   .bubble-audiowrap { display:flex; align-items:center; gap:7px; margin-bottom:3px; font-size:13px; }
   .bubble-audio { height:36px; width:210px; max-width:100%; }
   .bubble-vid { max-width:240px; width:100%; border-radius:10px; display:block; margin-bottom:4px; }
@@ -1993,7 +1996,8 @@
       else if (m.att && m.attType==="video") inner = '<video class="bubble-vid" controls preload="metadata" src="'+esc(m.att)+'"></video>';
       else if (m.att) inner = '<a class="bubble-file" href="'+esc(m.att)+'" target="_blank" rel="noreferrer">'+(esc(m.text)||"📎 Dosya")+'</a>';
       else inner = esc(m.text);
-      return '<div class="msg-row '+(m.from==="out"?"out":"in")+'"><div class="bubble">'+inner+'<span class="t">'+fmtTime(m.time)+'</span></div></div>';
+      var failTag = m.failed ? '<span class="msg-fail">⚠ İletilemedi — 24 saat kuralı ya da ulaşılamadı</span>' : '';
+      return '<div class="msg-row '+(m.from==="out"?"out":"in")+(m.failed?" failed":"")+'"><div class="bubble">'+inner+'<span class="t">'+fmtTime(m.time)+'</span>'+failTag+'</div></div>';
     }).join("");
     var wa = '<a class="qbtn wa" data-wa="'+l.id+'" href="'+waHref(l)+'" target="_blank" rel="noreferrer">'+WA_SVG+' WhatsApp\'a Gönder</a>';
     pane.innerHTML =
@@ -3524,7 +3528,7 @@
     if(!LIVE || !id) return;
     sbGet("ig_messages?select=*&ig_user_id=eq." + encodeURIComponent(id) + "&order=created_at.asc").then(function(rows){
       var l = byId(id); if(!l) return;
-      var dbMsgs = (rows || []).map(function(m){ return { from: m.direction === "out" ? "out" : "in", text: m.text, time: m.created_at, att: m.attachment_url || "", attType: m.attachment_type || "" }; });
+      var dbMsgs = (rows || []).map(function(m){ return { from: m.direction === "out" ? "out" : "in", text: m.text, time: m.created_at, att: m.attachment_url || "", attType: m.attachment_type || "", failed: (m.direction==="out" && m.mid && (m.mid.indexOf("err:")===0 || m.mid.indexOf("lock:")===0)) }; });
       // Veritabanında henüz olmayan (gönderim yolda/başarısız) yerel giden mesajları koru → kaybolmasın
       var seen = {}; dbMsgs.forEach(function(m){ seen[m.from + "|" + m.text] = 1; });
       var pend = (l.messages || []).filter(function(m){ return m.pending && !seen[m.from + "|" + m.text]; });
