@@ -3238,12 +3238,49 @@
     try { if (window.Notification && Notification.permission === "default") Notification.requestPermission(); } catch (e) {}
     loadTemplates();
     liveLoad();
+    setTimeout(showPackageCountdown, 1800);
     if (!window._leaddmPoll) {
       window._leaddmPoll = setInterval(function(){
         if (SESSION && SESSION.expires_at && (SESSION.expires_at - Date.now() < 120000)) sbRefresh();
         liveLoad(); if (state.selectedId) liveMessages(state.selectedId);
       }, 8000);
     }
+  }
+  // Paket bitiş geri sayacı — SON 14 GÜNDE, ekran açılınca bir kez, kapatılabilir. Firma başına LIVE_CFG.expiry (YYYY-MM-DD).
+  function showPackageCountdown(){
+    if (window._pkgShown) return;
+    try {
+      var exp = (LIVE_CFG && LIVE_CFG.expiry) || "";
+      if (!exp) return;
+      var end = new Date(exp + "T23:59:59");
+      if (isNaN(end.getTime())) return;
+      var days = Math.ceil((end.getTime() - Date.now()) / 86400000);
+      if (days > 14) return;               // yalnızca son 14 gün
+      window._pkgShown = true;
+      var expired = days <= 0;
+      var head = expired ? "Paket süreniz doldu" : "Uygulama Paketiniz";
+      var big  = expired ? "Süre doldu" : (days + " gün kaldı");
+      var sub  = expired
+        ? "Uygulamayı kesintisiz kullanmaya devam etmek için lütfen paketinizi yenileyin."
+        : "Paket sürenizin dolmasına " + days + " gün kaldı. Kesintisiz kullanım için yenileyebilirsiniz.";
+      var ov = document.createElement("div"); ov.id = "pkgModal";
+      ov.style.cssText = "position:fixed;inset:0;z-index:100001;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)";
+      ov.innerHTML = '<div style="width:100%;max-width:380px;background:#15151F;border:1px solid rgba(216,169,78,.42);border-radius:18px;box-shadow:0 24px 60px -20px rgba(0,0,0,.8);overflow:hidden">'
+        + '<div style="padding:24px 22px 6px;text-align:center">'
+        + '<div style="font-size:36px">⏳</div>'
+        + '<div style="font-family:Georgia,serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#d8a94e;font-weight:700;margin-top:8px">' + head + '</div>'
+        + '<div style="font-family:Georgia,serif;font-size:31px;font-weight:800;color:#f0e9d2;margin:6px 0">' + big + '</div>'
+        + '<div style="font-size:13px;color:#b7b1a2;line-height:1.55">' + sub + '</div>'
+        + '</div>'
+        + '<div style="padding:16px 22px 20px;display:flex;flex-direction:column;gap:9px">'
+        + '<a href="https://wa.me/905055585959?text=Merhaba%20Ali%20Bey%2C%20LeadDm%20paketimi%20yenilemek%20istiyorum" target="_blank" rel="noreferrer" style="text-decoration:none;text-align:center;padding:12px;border-radius:11px;background:linear-gradient(135deg,#f5d67b,#d4af37 60%,#b8860b);color:#100d05;font-weight:800;font-size:14px">Yenilemek için iletişime geç</a>'
+        + '<button id="pkgClose" type="button" style="border:1px solid #2A2836;background:transparent;color:#b7b1a2;padding:10px;border-radius:11px;cursor:pointer;font-size:13px">Kapat</button>'
+        + '</div></div>';
+      document.body.appendChild(ov);
+      function close(){ if (ov.parentNode) ov.parentNode.removeChild(ov); }
+      ov.addEventListener("click", function(e){ if (e.target === ov) close(); });
+      var pc = document.getElementById("pkgClose"); if (pc) pc.addEventListener("click", close);
+    } catch (e) {}
   }
   // ================= DEMO MODU =================
   function enterDemo(){
